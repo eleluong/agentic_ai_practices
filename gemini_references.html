@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Governance Convergence Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glow-border {
+            position: relative;
+        }
+
+        .glow-border::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.15), rgba(168, 85, 247, 0.15));
+            border-radius: inherit;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .glow-border:hover::after {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-50 text-slate-800 min-h-screen selection:bg-indigo-100 selection:text-indigo-900 overflow-x-hidden relative">
+
+    <!-- Background Ambient Pastels -->
+    <div class="absolute top-0 left-1/4 w-[35rem] h-[35rem] bg-indigo-100/40 rounded-full blur-3xl pointer-events-none">
+    </div>
+    <div
+        class="absolute top-1/3 right-1/4 w-[40rem] h-[40rem] bg-blue-100/30 rounded-full blur-3xl pointer-events-none">
+    </div>
+    <div class="absolute bottom-10 left-10 w-96 h-96 bg-emerald-100/30 rounded-full blur-3xl pointer-events-none"></div>
+
+    <!-- Elegant Light Header -->
+    <header class="border-b border-slate-200/80 backdrop-blur bg-white/80 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div
+                    class="w-9 h-9 bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-md shadow-indigo-500/10">
+                    <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-extrabold text-slate-900 tracking-tight text-lg">AI Governance</span>
+                    <span class="text-xs text-indigo-600 block -mt-1 font-semibold tracking-wider uppercase">Convergence
+                        Intel</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-1">
+                <button onclick="scrollToSection('explorer')"
+                    class="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition rounded-lg font-medium">Theme
+                    Explorer</button>
+                <button onclick="scrollToSection('synthesis')"
+                    class="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition rounded-lg font-medium">The
+                    Four-Layer Stack</button>
+                <button onclick="scrollToSection('simulator')"
+                    class="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition rounded-lg font-medium">Scenario
+                    Simulator</button>
+                <button onclick="scrollToSection('matrix')"
+                    class="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition rounded-lg font-medium">Comparison
+                    Matrix</button>
+                <button onclick="scrollToSection('playbook')"
+                    class="px-4 py-2 text-sm text-indigo-600 hover:text-indigo-700 transition font-bold rounded-lg hover:bg-indigo-50">Compliance
+                    Frameworks</button>
+            </nav>
+            <div>
+                <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-100">
+                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-1.5 animate-pulse"></span>
+                    2026 Industry Blueprint
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        <!-- Hero Section -->
+        <div class="text-center max-w-4xl mx-auto mb-16">
+            <h1
+                class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-slate-900 to-slate-700 leading-tight">
+                Beyond Checklists: Dynamic & Embedded AI Governance
+            </h1>
+            <p class="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto font-normal">
+                Google, Anthropic, and OpenAI are converging on a highly mature, multi-layered governance philosophy.
+                Discover how static regulatory frameworks are shifting toward <strong
+                    class="text-indigo-600 font-semibold">dynamic, adaptive, and technically embedded
+                    architectures</strong>.
+            </p>
+            <div class="mt-10 flex flex-wrap justify-center gap-4">
+                <button onclick="scrollToSection('explorer')"
+                    class="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/10 hover:shadow-indigo-600/20 transition duration-150 flex items-center space-x-2">
+                    <span>Explore Theme Hub</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+                <button onclick="scrollToSection('simulator')"
+                    class="px-6 py-3.5 bg-white hover:bg-slate-50 border border-slate-200/80 text-slate-700 shadow-sm font-semibold rounded-xl transition duration-150 flex items-center space-x-2">
+                    <i data-lucide="play" class="w-4 h-4 text-emerald-600"></i>
+                    <span>Launch Scenario Simulator</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Corporate Trust Badges -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto mb-20">
+            <div
+                class="bg-white border border-slate-200/60 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-start space-x-4">
+                <div class="p-3 bg-blue-50 rounded-xl text-blue-600 shrink-0">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M12.24 10.285V13.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.859-3.578-7.859-8s3.53-8 7.859-8c2.46 0 4.105 1.025 5.047 1.926l2.427-2.334C17.955 2.192 15.34 1 12.24 1 6.033 1 1 6.033 1 12.24s5.033 11.24 11.24 11.24c6.478 0 10.793-4.537 10.793-10.986 0-.74-.08-1.3-.176-1.78l-10.617-.43z" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900">Google</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Grounded in the "AI Principles" seeking
+                        positive impact while minimizing societal risks using Explainable AI.</p>
+                </div>
+            </div>
+            <div
+                class="bg-white border border-slate-200/60 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-start space-x-4">
+                <div class="p-3 bg-amber-50 rounded-xl text-amber-600 shrink-0">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M11.2 2L4 7.2v8.5l7.2 4.3 7.2-4.3V7.2L11.2 2zm4.8 12.7l-4.8 2.9-4.8-2.9V8.5l4.8-2.9 4.8 2.9v6.2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900">Anthropic</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Pioneered Constitutional AI and Responsible
+                        Scaling Policies with robust mechanical thresholds.</p>
+                </div>
+            </div>
+            <div
+                class="bg-white border border-slate-200/60 rounded-2xl p-6 shadow-sm hover:shadow-md transition duration-200 flex items-start space-x-4">
+                <div class="p-3 bg-teal-50 rounded-xl text-teal-600 shrink-0">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                        <path
+                            d="M21.2 13.5c-.2-.6-.6-1.1-1.1-1.5-.2-.1-.3-.2-.5-.3.2-.2.3-.5.3-.8 0-.4-.1-.7-.3-1 .2-.3.3-.7.3-1.1 0-.6-.3-1.2-.8-1.6l-.3-.2c.2-.4.2-.9.1-1.4-.2-.7-.7-1.2-1.4-1.4l-.5-.1c0-.4-.2-.8-.5-1.1C16 .6 15 .4 14.1.6l-.4.1c-.2-.2-.6-.4-.9-.5H11.2c-.3 0-.7.2-.9.5l-.4-.1c-.9-.2-1.9 0-2.5.4-.3.3-.5.7-.5 1.1l-.5.1C5.7 2.4 5.2 3 5 3.7c-.1.5-.1 1 0 1.4l-.3.2c-.5.4-.8 1-.8 1.6 0 .4.1.8.3 1.1-.2.3-.3.7-.3 1 0 .3.1.6.3.8-.2.1-.3.2-.5.3-.5.4-.9.9-1.1 1.5l-.2.5c-.3.8-.2 1.8.3 2.5l.3.4c-.2.4-.2.9-.1 1.4.2.7.7 1.2 1.4 1.4l.5.1c0 .4.2.8.5 1.1.6.5 1.5.7 2.4.5l.4-.1c.2.2.6.4.9.5h1.6c.3 0 .7-.2.9-.5l.4.1c.9.2 1.9 0 2.5-.4.3-.3.5-.7.5-1.1l.5-.1c.7-.2 1.2-.7 1.4-1.4.1-.5.1-1 0-1.4l.3-.2c.5-.4.8-1 .8-1.6 0-.4-.1-.8-.3-1.1.2-.3.3-.7.3-1 0-.3-.1-.6-.3-.8l.5-.3c.5-.4.9-.9 1.1-1.5l.2-.5c.3-.8.2-1.8-.3-2.5zm-3.1 3.2c-.3.4-.8.7-1.3.8l-1.3.3c-.2.1-.4.3-.4.5v1.3c0 .5-.3 1-.8 1.3l-1.1.7c-.2.1-.5.2-.7.2s-.5-.1-.7-.2l-1.1-.7c-.5-.3-.8-.8-.8-1.3v-1.3c0-.2-.2-.4-.4-.5l-1.3-.3c-.5-.1-1-.4-1.3-.8l-.7-1.1c-.3-.4-.3-1 0-1.5l.7-1.1c.1-.2.2-.3.2-.5V10c0-.5.3-1 .8-1.3l1.1-.7c.4-.3.9-.3 1.4 0l1.1.7c.2.1.4.3.4.5v1.3c0 .2.2.4.4.5l1.3.3c.5.1 1 .4 1.3.8l.7 1.1c.3.5.3 1.1 0 1.5z" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-900">OpenAI</h4>
+                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Empowers the "Preparedness Framework" and
+                        granular Model Specs defining explicit instructions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Theme Explorer Section -->
+        <section id="explorer" class="scroll-mt-24 mb-24">
+            <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h2
+                        class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 flex items-center space-x-2">
+                        <span
+                            class="w-2.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full inline-block"></span>
+                        <span>Multi-Layered Governance Explorer</span>
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">Toggle the six critical themes of convergence across Google,
+                        Anthropic, and OpenAI.</p>
+                </div>
+                <div class="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                    <span class="text-xs px-2.5 py-1 text-indigo-600 font-bold tracking-wide uppercase">Interactive
+                        Matrix</span>
+                </div>
+            </div>
+
+            <!-- Responsive Mobile Selector / Tab system -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 mb-6" id="theme-tabs-container">
+                <!-- Javascript will inject theme buttons here with distinct active styles -->
+            </div>
+
+            <!-- Theme Display Card -->
+            <div id="active-theme-card"
+                class="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 sm:p-8 transition-all duration-300">
+                <!-- Dynamic Content injected here -->
+            </div>
+        </section>
+
+        <!-- Synthesis: 4-Layer Stack Section -->
+        <section id="synthesis" class="scroll-mt-24 mb-24 relative">
+            <div class="mb-12 text-center max-w-3xl mx-auto">
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+                    The Modern 4-Layer AI Governance Stack
+                </h2>
+                <p class="text-slate-500 text-sm mt-2 leading-relaxed">
+                    Industry-wide systems are consolidating into a nested defense model. Hover or tap each layer below
+                    to understand how they work together in sequence to prevent rogue deployments.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 relative">
+                <!-- Stack Cards (Layer 1) -->
+                <div
+                    class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-indigo-500 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 mb-4 font-bold">
+                            L1</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Normative Foundation</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed">The bedrock moral anchor. Establishes the core
+                            values and fiduciary duties (e.g., humanity over profit, constitutional rights) to steer all
+                            executive priorities.</p>
+                    </div>
+                    <div
+                        class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-blue-600 font-semibold">
+                        <span>Google, Anthropic, OpenAI</span>
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Stack Cards (Layer 2) -->
+                <div
+                    class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-amber-500 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600 mb-4 font-bold">
+                            L2</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Capability-Triggered</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed">Dynamic risk markers (CBRN, cybersecurity,
+                            replication) that trigger immediate, non-negotiable security increases and legal holds as
+                            models pass safety milestones.</p>
+                    </div>
+                    <div
+                        class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-amber-600 font-semibold">
+                        <span>RSP / Preparedness</span>
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Stack Cards (Layer 3) -->
+                <div
+                    class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-purple-500 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600 mb-4 font-bold">
+                            L3</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">In-Model Embedding</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed">Governance directly coded into model weights
+                            and inference patterns. Instills direct systemic guardrails like Constitutional AI and Model
+                            Specifications.</p>
+                    </div>
+                    <div
+                        class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-purple-600 font-semibold">
+                        <span>Constitutional AI / Spec</span>
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                    </div>
+                </div>
+
+                <!-- Stack Cards (Layer 4) -->
+                <div
+                    class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-emerald-500 hover:-translate-y-1 flex flex-col justify-between">
+                    <div>
+                        <div
+                            class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 mb-4 font-bold">
+                            L4</div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-2">Human Circuit-Breaker</h3>
+                        <p class="text-slate-500 text-xs leading-relaxed">Definitive veto power. Ensures developers,
+                            trust boards, and legal reviewers maintain complete manual override of development and
+                            distribution pipelines.</p>
+                    </div>
+                    <div
+                        class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-emerald-600 font-semibold">
+                        <span>LTBT / Board Mission Control</span>
+                        <i data-lucide="power" class="w-4 h-4"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Scenario Simulator -->
+        <section id="simulator" class="scroll-mt-24 mb-24">
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm overflow-hidden relative">
+                <div class="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
+                    <i data-lucide="terminal" class="w-40 h-40"></i>
+                </div>
+                <div class="max-w-3xl">
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 mb-4">
+                        <i data-lucide="play" class="w-3.5 h-3.5 mr-1 text-emerald-600"></i>
+                        Interactive Sandbox Simulator
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-4">
+                        Simulate AI Governance Crises
+                    </h2>
+                    <p class="text-slate-600 text-sm sm:text-base mb-8">
+                        How do these layered structures act when facing critical real-world situations? Select a threat
+                        vector below to see Google, Anthropic, and OpenAI mechanisms activate in real-time.
+                    </p>
+                </div>
+
+                <!-- Selector Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <button onclick="triggerSimulation('replication')" id="sim-replication-btn"
+                        class="text-left p-4 rounded-xl bg-slate-50 hover:bg-slate-100/50 border border-slate-200 transition flex items-start space-x-3 group shadow-sm">
+                        <div class="p-2 rounded-lg bg-rose-100 text-rose-600 group-hover:scale-105 transition shrink-0">
+                            <i data-lucide="git-branch" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">Autonomous Replication</h4>
+                            <p class="text-xs text-slate-500 mt-1">Model attempts to spawn instances of itself in
+                                sandboxes.</p>
+                        </div>
+                    </button>
+                    <button onclick="triggerSimulation('persuasion')" id="sim-persuasion-btn"
+                        class="text-left p-4 rounded-xl bg-slate-50 hover:bg-slate-100/50 border border-slate-200 transition flex items-start space-x-3 group shadow-sm">
+                        <div
+                            class="p-2 rounded-lg bg-amber-100 text-amber-600 group-hover:scale-105 transition shrink-0">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">High-Impact Persuasion</h4>
+                            <p class="text-xs text-slate-500 mt-1">Model is found optimizing micro-targeted political
+                                content.</p>
+                        </div>
+                    </button>
+                    <button onclick="triggerSimulation('conflict')" id="sim-conflict-btn"
+                        class="text-left p-4 rounded-xl bg-slate-50 hover:bg-slate-100/50 border border-slate-200 transition flex items-start space-x-3 group shadow-sm">
+                        <div
+                            class="p-2 rounded-lg bg-purple-100 text-purple-600 group-hover:scale-105 transition shrink-0">
+                            <i data-lucide="git-merge" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">Instruction Hostility</h4>
+                            <p class="text-xs text-slate-500 mt-1">User instructs model to bypass system parameters.</p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Simulation Visualizing Screen -->
+                <div
+                    class="border border-slate-200 bg-slate-900 rounded-2xl p-6 relative min-h-[300px] flex flex-col justify-between shadow-inner">
+                    <!-- Screen Overlay -->
+                    <div
+                        class="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent pointer-events-none rounded-2xl">
+                    </div>
+
+                    <!-- Simulator Head -->
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-800 z-10">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3 h-3 bg-rose-500 rounded-full animate-ping"></div>
+                            <span class="text-xs font-mono text-slate-400">STATUS: ACTIVE INVESTIGATION</span>
+                        </div>
+                        <span id="simulator-case-id"
+                            class="text-xs font-mono text-indigo-300 font-semibold uppercase">CASE:
+                            NO_SCENARIO_SELECTED</span>
+                    </div>
+
+                    <!-- Main Dynamic Simulator Content -->
+                    <div id="sim-body" class="my-6 z-10 space-y-6">
+                        <div class="text-center py-12">
+                            <i data-lucide="shield-alert"
+                                class="w-12 h-12 text-slate-500 mx-auto mb-3 animate-pulse"></i>
+                            <h3 class="text-lg font-bold text-slate-400">System Standing By</h3>
+                            <p class="text-sm text-slate-500 max-w-sm mx-auto mt-1">Select one of the three critical
+                                incident vectors above to run the response protocol simulation.</p>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Footer -->
+                    <div id="sim-footer"
+                        class="pt-4 border-t border-slate-800/80 flex flex-wrap gap-4 items-center justify-between text-xs text-slate-500 z-10">
+                        <span>Simulation reflects official safety protocols & guidelines of 2026.</span>
+                        <span class="text-indigo-400 hover:underline cursor-pointer" onclick="resetSimulation()">Reset
+                            Simulator</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Unified Comparison Matrix -->
+        <section id="matrix" class="scroll-mt-24 mb-24">
+            <div class="mb-8">
+                <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 flex items-center space-x-2">
+                    <span
+                        class="w-2.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full inline-block"></span>
+                    <span>Landscape Governance Matrix</span>
+                </h2>
+                <p class="text-slate-500 text-sm mt-1">Search or filter through governance layers to inspect specific
+                    mechanisms across players.</p>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="flex flex-col sm:flex-row gap-4 mb-6">
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400"></i>
+                    </div>
+                    <input type="text" id="matrix-search" oninput="filterMatrix()"
+                        placeholder="Search terms (e.g., RSP, Constitution, XAI...)"
+                        class="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition shadow-sm">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="setMatrixFilter('all')" id="filter-all-btn"
+                        class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white transition shadow-sm">All
+                        Themes</button>
+                    <button onclick="setMatrixFilter('mechanism')" id="filter-mechanism-btn"
+                        class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white border border-slate-200 hover:border-slate-300 text-slate-600 transition shadow-sm">Action
+                        Mechanism</button>
+                    <button onclick="setMatrixFilter('philosophy')" id="filter-philosophy-btn"
+                        class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white border border-slate-200 hover:border-slate-300 text-slate-600 transition shadow-sm">Philosophy</button>
+                </div>
+            </div>
+
+            <!-- Scrollable Table -->
+            <div class="border border-slate-200 bg-white rounded-2xl overflow-hidden shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 bg-slate-50">
+                                <th class="p-4 text-xs font-bold uppercase tracking-wider text-slate-500 w-1/4">
+                                    Governance Layer</th>
+                                <th class="p-4 text-xs font-bold uppercase tracking-wider text-blue-600 w-1/4">Google
+                                    Approach</th>
+                                <th class="p-4 text-xs font-bold uppercase tracking-wider text-amber-600 w-1/4">
+                                    Anthropic Approach</th>
+                                <th class="p-4 text-xs font-bold uppercase tracking-wider text-teal-600 w-1/4">OpenAI
+                                    Approach</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-tbody" class="divide-y divide-slate-100">
+                            <!-- Injected by Javascript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Playbooks & Actionable Checklists Section -->
+        <section id="playbook" class="scroll-mt-24 mb-24">
+            <!-- Header with Framework Selector Tabs -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <h2
+                        class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 flex items-center space-x-2">
+                        <span
+                            class="w-2.5 h-8 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full inline-block"></span>
+                        <span>Interactive AI Playbook Command Center</span>
+                    </h2>
+                    <p class="text-slate-500 text-sm mt-1">Translate theory into actionable compliance. Check off
+                        requirements to run localized gatekeeper analysis.</p>
+                </div>
+                <div
+                    class="flex bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0 self-start md:self-auto shadow-inner">
+                    <button id="framework-global-tab" onclick="switchFramework('global')"
+                        class="px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-indigo-600 shadow-sm">
+                        Global Enterprise Playbook
+                    </button>
+                    <button id="framework-vn-tab" onclick="switchFramework('vn')"
+                        class="px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-800">
+                        Bản đồ Tuân thủ VN (Vietnam AI Act)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Overview of Active Playbook -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Readiness Status Console -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between lg:col-span-2">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 id="console-title" class="text-lg font-bold text-slate-900">System Deployment Status
+                            </h3>
+                            <span id="readiness-badge"
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-600 border border-rose-100">
+                                <span class="w-1.5 h-1.5 bg-rose-400 rounded-full mr-1.5 animate-ping"></span>
+                                STAGE-GATE BLOCKED
+                            </span>
+                        </div>
+                        <p id="console-description" class="text-xs text-slate-500 leading-relaxed mb-6">
+                            Complete all 18 checklist actions across 6 development phases and obtain affirmative
+                            sign-off on the final Gatekeeper criteria to safely enable production release permissions.
+                        </p>
+                    </div>
+
+                    <!-- Progress Stats -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between text-xs text-slate-700 font-semibold">
+                            <span class="flex items-center gap-1.5">
+                                <i data-lucide="check-square" class="w-4 h-4 text-emerald-600"></i>
+                                <span id="progress-text">Verification Tasks:</span>
+                                <span id="checked-count" class="font-bold text-slate-900">0</span> / <span
+                                    id="total-count">18</span>
+                            </span>
+                            <span id="overall-percentage" class="font-bold text-emerald-600">0% Complete</span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200">
+                            <div id="overall-progress-bar"
+                                class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-full w-0 transition-all duration-300 rounded-full">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gatekeeper Sign-off Panel -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 id="gatekeeper-title"
+                            class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+                            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i>
+                            Final Executive Sign-Off
+                        </h3>
+                        <p id="gatekeeper-description" class="text-xs text-slate-500 mb-4">The final binary checkpoints
+                            before binary package deployment.</p>
+
+                        <!-- Dynamic Switcher for Gates -->
+                        <div id="gatekeeper-container">
+                            <!-- Injected programmatically based on active framework -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic System Instruction Logs -->
+            <div id="playbook-syslog"
+                class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-start gap-3 mb-8 shadow-sm">
+                <i data-lucide="info" class="w-5 h-5 shrink-0 text-rose-600 mt-0.5"></i>
+                <div class="space-y-1">
+                    <span class="font-bold block uppercase tracking-wide">Deployment Pipeline Message</span>
+                    <p id="syslog-text">Deployment blocked. System requires complete playbook verification and formal
+                        Gatekeeper sign-off prior to continuous deployment compilation.</p>
+                </div>
+            </div>
+
+            <!-- GLOBAL CHECKLIST GRID container -->
+            <div id="framework-global-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Phase 1 -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-indigo-600 tracking-wider uppercase">Phase 01:
+                            Pre-Development</span>
+                        <span id="p1-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Done</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Foundation & Principle Setting</h3>
+                    <span class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider block mb-4">Normative
+                        Foundations</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p1-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Values Charter</span>
+                                Write values priority (Safety/Accuracy &gt; Privacy &gt; Efficiency).
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p1-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Define Human Backstop</span>
+                                Formally assign operational roles authorized to pull the service plug.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p1-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Allowed vs Prohibited Matrix</span>
+                                Document permitted and strictly banned user intents clearly.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-amber-600 tracking-wider uppercase">Phase 02:
+                            Pre-Development</span>
+                        <span id="p2-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Done</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Risk Mapping & Thresholds</h3>
+                    <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider block mb-4">Escalatory
+                        Risk Governance</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p2-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Failure Workshop</span>
+                                Identify 3 most severe app-specific failure modes.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p2-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Red-Line Metrics</span>
+                                Define triggers (e.g. error rate &gt; 5%) to hold deployment.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p2-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Tiered Response Plans</span>
+                                Draft response steps (quiet fix, roll-back, suspension) and owners.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-teal-600 tracking-wider uppercase">Phase 03:
+                            Development</span>
+                        <span id="p3-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Done</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">In-Application Embedded Logic</h3>
+                    <span class="text-[10px] text-teal-600 font-bold uppercase tracking-wider block mb-4">Behavioral
+                        Code Embedding</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p3-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Prompt Constitution</span>
+                                Hard-code key refusal guidelines directly into the system prompt.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p3-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Guardrail Filters</span>
+                                Deploy an independent input/output scanner to intercept tokens.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p3-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Explainability Logs</span>
+                                Output and store reasoning trace metadata logs for automated audit.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 4 -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-purple-600 tracking-wider uppercase">Phase 04:
+                            Pre-Launch</span>
+                        <span id="p4-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Done</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Human Oversight & Circuit-Breaker</h3>
+                    <span class="text-[10px] text-purple-600 font-bold uppercase tracking-wider block mb-4">Command &
+                        Control</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p4-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Human-in-the-Loop Queue</span>
+                                Route low-confidence prompts to moderators pre-display.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p4-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Incident Drill</span>
+                                Complete a tabletop drill timing recovery & fallbacks latency.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p4-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">AI Duty Officer</span>
+                                Appoint an active, rotating point officer with veto power.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 5 -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-orange-600 tracking-wider uppercase">Phase 05:
+                            Pre-Launch</span>
+                        <span id="p5-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Done</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Transparency & Accountability</h3>
+                    <span class="text-[10px] text-orange-600 font-bold uppercase tracking-wider block mb-4">External
+                        Transparency Tools</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p5-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Publish "User Card"</span>
+                                Publicly map capabilities, limits, and appeal workflows.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p5-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">External Feedback Desk</span>
+                                Set up a structured bug bounty form for reporting model bypasses.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p5-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Governance Changelog</span>
+                                Document alterations to system prompts and validation filters.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 6 -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-rose-600 tracking-wider uppercase">Phase 06:
+                            Post-Launch</span>
+                        <span id="p6-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Done</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Continuous Evolutionary Audit</h3>
+                    <span class="text-[10px] text-rose-600 font-bold uppercase tracking-wider block mb-4">Iterative
+                        Constitution</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p6-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Quarterly Red-Teaming</span>
+                                Schedule formal quarterly stress tests with historical edge cases.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p6-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Performance Drift Alerts</span>
+                                Automate alerts monitoring refusal trends and accuracy standard deviations.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="chk-p6-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">External Signal Radar</span>
+                                Assign analyst reviews of EU AI Act updates and new global laws.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIETNAM CHECKLIST GRID container (Hidden on load) -->
+            <div id="framework-vn-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                <!-- Phase 1 (Vietnam) -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-indigo-600 tracking-wider uppercase">Giai Đoạn 01: Thiết
+                            Lập</span>
+                        <span id="vn-p1-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/7
+                            Đạt</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Xác Lập Nền Tảng & Nguyên Tắc</h3>
+                    <span class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider block mb-4">07 Nguyên
+                        Tắc Cốt Lõi (Luật AI VN)</span>
+
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p1-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">1. Lấy con người làm trung tâm</span>
+                                Bảo đảm hệ thống phục vụ lợi ích con người, không gây tổn hại hay phân biệt kỳ thị.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p1-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">2. Tuân thủ Hiến pháp & Pháp luật</span>
+                                Phù hợp Luật An toàn thông tin mạng, Luật BV dữ liệu cá nhân & SHTT VN.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p1-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">3. An toàn, Minh bạch & Giải thích</span>
+                                Chuẩn bị tài liệu giải thích cơ chế đưa ra quyết định của thuật toán.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p1-4" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">4. Kiểm soát & Giám sát</span>
+                                Xây dựng cơ chế theo dõi thường xuyên để hạn chế các hành vi lệch hướng.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p1-5" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">5. Bảo vệ Dữ liệu Cá nhân</span>
+                                Thiết lập các bộ lọc tuân thủ quy định bảo mật riêng tư và đồng thuận dữ liệu.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p1-6" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">6. Trách nhiệm giải trình</span>
+                                Xác định rõ pháp nhân / cá nhân chịu trách nhiệm cuối cho các hành động của AI.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p1-7" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">7. Phát triển Bền vững</span>
+                                Định hướng ứng dụng hỗ trợ tăng trưởng xanh, bảo vệ môi trường theo xu thế quốc gia.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 2 (Vietnam) -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-amber-600 tracking-wider uppercase">Giai Đoạn 02: Rủi
+                            Ro</span>
+                        <span id="vn-p2-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Đạt</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Phân Loại Rủi Ro & Đánh Giá</h3>
+                    <span class="text-[10px] text-amber-600 font-bold uppercase tracking-wider block mb-4">Quản Lý Phân
+                        Tầng Rủi Ro</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p2-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Phân loại phân tầng rủi ro</span>
+                                Xác định hệ thống thuộc nhóm rủi ro Cao, Trung bình hay Thấp.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p2-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Đánh giá sự phù hợp (Rủi ro Cao)</span>
+                                Nếu thuộc nhóm rủi ro cao, chuẩn bị hồ sơ đánh giá trước khi vận hành.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p2-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Đánh giá tác động xã hội</span>
+                                Nghiên cứu và báo cáo ảnh hưởng tới an ninh quốc gia, quyền cơ bản của con người.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 3 (Vietnam) -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-teal-600 tracking-wider uppercase">Giai Đoạn 03: Vận
+                            Hành</span>
+                        <span id="vn-p3-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/4
+                            Đạt</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Xây Dựng & Vận Hành Kỹ Thuật</h3>
+                    <span class="text-[10px] text-teal-600 font-bold uppercase tracking-wider block mb-4">Yêu Cầu Kỹ
+                        Thuật & Giám Sát</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p3-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Đóng dấu nhận diện AI</span>
+                                Tích hợp nhãn nước (watermark) hoặc dấu hiệu nhận dạng sản phẩm do AI tạo ra.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p3-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Quy trình xử lý sự cố (24-72h)</span>
+                                Lên kế hoạch báo cáo sự cố nghiêm trọng cho cơ quan quản lý trong thời hạn quy định.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p3-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Đảm bảo chất lượng dữ liệu</span>
+                                Thiết lập quy trình kiểm duyệt, loại bỏ dữ liệu sai lệch độc hại hoặc thành kiến (bias).
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p3-4" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Minh bạch thuật toán</span>
+                                Xây dựng chức năng giải thích rõ ràng cho người dùng về các quyết định tự động.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 4 (Vietnam) -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-purple-600 tracking-wider uppercase">Giai Đoạn 04: Giám
+                            Sát</span>
+                        <span id="vn-p4-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Đạt</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Giám Sát & Báo Cáo Định Kỳ</h3>
+                    <span class="text-[10px] text-purple-600 font-bold uppercase tracking-wider block mb-4">Trách Nhiệm
+                        Đồng Hành</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p4-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Giám sát tự động liên tục</span>
+                                Cài đặt các chỉ số theo dõi sai sót, độ sai lệch độc hại và ngưỡng cảnh báo đỏ.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p4-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Thiết lập tần suất báo cáo</span>
+                                Xác định rõ nhân sự chịu trách nhiệm làm việc với cơ quan chức năng có thẩm quyền.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p4-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Kế hoạch vá lỗi & cập nhật</span>
+                                Chuẩn bị sẵn sàng hệ thống phân phối phiên bản khắc phục lỗ hổng an ninh đột xuất.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Phase 5 (Vietnam) -->
+                <div
+                    class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-slate-300 transition">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-[11px] font-bold text-rose-600 tracking-wider uppercase">Giai Đoạn 05: Kiểm
+                            Tra Chéo</span>
+                        <span id="vn-p5-counter"
+                            class="text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60">0/3
+                            Đạt</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-1">Kiểm Tra Chéo & Sẵn Sàng Thanh Tra</h3>
+                    <span class="text-[10px] text-rose-600 font-bold uppercase tracking-wider block mb-4">Thẩm Định Pháp
+                        Lý Toàn Diện</span>
+
+                    <div class="space-y-3.5">
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p5-1" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Rà soát hành vi cấm</span>
+                                Kiểm tra toàn bộ hệ thống chống lại các hành vi thao túng tâm lý hoặc lừa đảo bị luật
+                                cấm.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p5-2" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Đại diện pháp lý có thẩm quyền</span>
+                                Phân công rõ trách nhiệm quản trị sản phẩm AI cho đại diện pháp lý chính thức.
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 cursor-pointer select-none">
+                            <input type="checkbox" id="vn-p5-3" onchange="updateReadinessScore()"
+                                class="w-4 h-4 rounded text-emerald-500 bg-white border-slate-300 focus:ring-0 mt-0.5">
+                            <div class="text-xs text-slate-600 leading-snug">
+                                <span class="font-bold text-slate-800 block">Lưu trữ hồ sơ thanh tra</span>
+                                Sắp xếp tài liệu thiết kế, đánh giá tác động để phục vụ các đoàn kiểm tra liên ngành.
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Vietnam Legal Explanation Section (Visible when Vietnam Framework active) -->
+        <section id="vn-legal-context"
+            class="mb-16 bg-gradient-to-tr from-slate-100 via-indigo-50/40 to-slate-50 border border-slate-200/80 rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-sm hidden">
+            <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-50 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div class="max-w-4xl">
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-900 mb-4">
+                    Giải Trình Cơ Sở Pháp Lý AI Tại Việt Nam
+                </h3>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-6">
+                    Môi trường pháp lý cho Trí tuệ nhân tạo (AI) tại Việt Nam đang tiến hành hoàn thiện nhanh chóng với
+                    các cột mốc lập pháp vững chắc, hướng tới sự cân bằng giữa phát triển công nghệ đột phá và bảo vệ
+                    người dùng cuối.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 pt-6 border-t border-slate-200">
+                    <div>
+                        <div class="text-indigo-600 font-extrabold text-lg">Luật CN Công Nghệ Số</div>
+                        <p class="text-slate-500 text-xs mt-1 leading-relaxed">Có hiệu lực từ 01/01/2026, đặt nền móng
+                            07 nguyên tắc lớn định hình định hướng quốc gia.</p>
+                    </div>
+                    <div>
+                        <div class="text-emerald-600 font-extrabold text-lg">Luật Trí Tuệ Nhân Tạo</div>
+                        <p class="text-slate-500 text-xs mt-1 leading-relaxed">Luật số 134/2025/QH15, có hiệu lực từ
+                            01/03/2026. Đạo luật chuyên ngành đầu tiên điều phối ứng dụng thực tiễn.</p>
+                    </div>
+                    <div>
+                        <div class="text-amber-600 font-extrabold text-lg">Nghị định 142/2026/NĐ-CP</div>
+                        <p class="text-slate-500 text-xs mt-1 leading-relaxed">Bắt đầu từ 01/05/2026, cung cấp hướng dẫn
+                            thi hành chi tiết và quy chế giám định hệ thống rủi ro cao.</p>
+                    </div>
+                    <div>
+                        <div class="text-purple-600 font-extrabold text-lg">Khung Đạo Đức Quốc Gia</div>
+                        <p class="text-slate-500 text-xs mt-1 leading-relaxed">Đồng áp dụng từ 01/03/2026 để điều chỉnh
+                            nhân văn hóa thuật toán thông minh.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- General Synthesis: Standardizing Section -->
+        <section
+            class="mb-16 bg-gradient-to-tr from-slate-100 via-indigo-50/40 to-slate-50 border border-slate-200/80 rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-sm">
+            <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-indigo-50 rounded-full blur-3xl pointer-events-none">
+            </div>
+            <div class="max-w-3xl">
+                <h3 class="text-xl sm:text-2xl font-bold text-slate-900 mb-4">
+                    The Synthesis: "Preparedness-Based, Human-Centered Dynamism"
+                </h3>
+                <p class="text-slate-600 text-sm sm:text-base leading-relaxed mb-6">
+                    A clear blueprint is standardizing. AI governance fails entirely when it is static (risks outpace
+                    rules), black-boxed (uninterpretable systems), or externally detached (lacking real-world technical
+                    execution).
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 border-t border-slate-200">
+                    <div>
+                        <div class="text-indigo-600 font-extrabold text-2xl">Anti-Static</div>
+                        <p class="text-xs text-slate-500 mt-1">Iterative scaling thresholds built directly into response
+                            systems.</p>
+                    </div>
+                    <div>
+                        <div class="text-emerald-600 font-extrabold text-2xl">Auditable</div>
+                        <p class="text-xs text-slate-500 mt-1">Fully transparent rules and Explainable AI tracing models
+                            step-by-step.</p>
+                    </div>
+                    <div>
+                        <div class="text-amber-600 font-extrabold text-2xl">Embedded</div>
+                        <p class="text-xs text-slate-500 mt-1">Constitutional mechanisms actively running within
+                            compilation stages.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer
+        class="border-t border-slate-200/60 py-12 bg-white text-center text-xs text-slate-500 relative z-10 shadow-inner">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="mb-2">AI Governance Convergence Visualizer | Built for advanced researchers, policymakers, and
+                builders.</p>
+            <p>© 2026. Interactive Governance Mapping.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Governance Data Structure representing the core requested themes & organizations
+        const themes = [
+            {
+                id: 1,
+                title: "Principle-First Normative Foundations",
+                subtitle: "The Moral Compass",
+                icon: "compass",
+                meta: "A dynamic hierarchy of explicit values resolving technical trade-offs before they manifest.",
+                google: {
+                    title: "AI Principles",
+                    text: "Establishes a core ethical commitment where benefits must 'substantially outweigh' risks, prioritizing human agency, security, and safety above mere corporate profitability."
+                },
+                anthropic: {
+                    title: "The Claude Constitution",
+                    text: "Written explicitly for the model itself, dictating a strict 4-tier hierarchy: Safety > Ethics > Compliance > Helpfulness. When conflicting parameters arise, security takes structural dominance."
+                },
+                openai: {
+                    title: "The Charter",
+                    text: "Specifies a deep legal duty to humanity. Explicitly vows to resist AGI concentration, avoid enabling authoritarian oppression, and share structural safety insights broadly."
+                },
+                elaboration: "By codifying values upfront, these companies create a non-negotiable governance anchor. When new capabilities emerge, engineers and reviewers don't start from scratch; they refer back to this normative hierarchy to evaluate whether a new use-case is permissible."
+            },
+            {
+                id: 2,
+                title: "Capability-Triggered, Escalatory Risk Governance",
+                subtitle: "Preparedness Frameworks",
+                icon: "alert-triangle",
+                meta: "Tiered thresholds that trigger automatic, non-negotiable safety restrictions when capabilities spike.",
+                google: {
+                    title: "Dual Review Process",
+                    text: "Deploys custom verification levels for sophisticated enterprise and core system contracts. Operational safeguards deepen based on technical novelty and negative blast-radius capability."
+                },
+                anthropic: {
+                    title: "Responsible Scaling Policy (RSP)",
+                    text: "Categorizes risks into explicit scaling tiers (ASLs). If models exceed capabilities linked to cyber-warfare or biological hazards, mandatory containment levels activate instantly."
+                },
+                openai: {
+                    title: "Preparedness Framework",
+                    text: "Tracks four critical pathways: CBRN, cyber attacks, persuasion tactics, and autonomous replication. Reaching a 'High' or 'Critical' score triggers a complete deployment halt."
+                },
+                elaboration: "This shared theme signals a profound shift from reactive governance (fixing problems after launch) to predictive governance (preparing for risks that do not exist yet). It acknowledges that AI capabilities are discontinuous; governance must spike exponentially when capabilities do."
+            },
+            {
+                id: 3,
+                title: "Embedding Governance into the Model Itself",
+                subtitle: "Behavioral Frameworks",
+                icon: "cpu",
+                meta: "Translating executive guidelines into actual machine code and fine-tuning parameters.",
+                google: {
+                    title: "Explainable AI (XAI)",
+                    text: "Builds rigorous mathematical tooling to inspect decision structures, tracing outputs to combat subtle bias. Turns the model weights from opaque 'black boxes' to discoverable logs."
+                },
+                anthropic: {
+                    title: "Constitutional AI",
+                    text: "Trains models using a physical set of principles during alignment phase. The system generates self-critiques, embedding governance straight into neural nodes."
+                },
+                openai: {
+                    title: "The Model Spec",
+                    text: "An active, machine-readable rules manual setting strict prioritization policies (Platform restrictions override user prompts, mitigating malicious developer vectors)."
+                },
+                elaboration: "This theme represents the operationalization of governance. Rather than relying solely on auditors reading policy documents, these companies engineer governance into the inference process itself, ensuring that values are actively executed during real-world usage."
+            },
+            {
+                id: 4,
+                title: "Governance as a 'Living Constitution'",
+                subtitle: "Iterative Evolution",
+                icon: "refresh-cw",
+                meta: "Treating organizational framework documents as evolving instruments that update alongside scientific breakthroughs.",
+                google: {
+                    title: "Organic Ethical Standards",
+                    text: "Explicitly designs policies as living templates intended to challenge current limitations rather than stand as fixed, box-checking approvals."
+                },
+                anthropic: {
+                    title: "Dynamic RSP Adaptability",
+                    text: "Routinely publishes structured updates, transparency logs, and architectural changes to the RSP as advanced threats become theoretically viable."
+                },
+                openai: {
+                    title: "Iterative Safety Updates",
+                    text: "Continuously expands Model Spec rules based on ongoing red-teaming tests, external feedback, and emerging global legal standards."
+                },
+                elaboration: "This shared theme directly addresses the alignment problem over time. Governance is framed as a continuous, reactive conversation with the technology itself. It institutionalizes humility—acknowledging that current frameworks will be insufficient for future models, and building formal mechanisms for rapid revision."
+            },
+            {
+                id: 5,
+                title: "Radical Transparency & Structured Accountability",
+                subtitle: "External Access",
+                icon: "eye",
+                meta: "Moving beyond insular trust committees toward public tools, scientific sharing, and audited benchmarks.",
+                google: {
+                    title: "Public Standards & Research Agreements",
+                    text: "Consistently shares deep security and safety evaluations, engaging heavily with policy think tanks, regulators, and open research networks."
+                },
+                anthropic: {
+                    title: "Transparency Hub & LTBT",
+                    text: "Empowers the Long-Term Benefit Trust, placing real power in neutral directors to verify safety measures, publishing public constitutional details under Creative Commons."
+                },
+                openai: {
+                    title: "Open Spec Frameworks",
+                    text: "Publishes critical foundational research guidelines and directly maps internal rulesets to fit legislative rules (like EU AI compliance mechanisms)."
+                },
+                elaboration: "Transparency here serves a dual purpose: (1) Legitimacy—it builds public trust by allowing external parties to verify claims, and (2) Risk distribution—it invites the collective intelligence of the global community to spot flaws that internal teams might miss due to groupthink."
+            },
+            {
+                id: 6,
+                title: "Formalized Human Oversight",
+                subtitle: "The Ultimate Circuit-Breakers",
+                icon: "power",
+                meta: "Establishing absolute human authority to freeze deployments or overrule programmatic behaviors.",
+                google: {
+                    title: "Psychological Safety Reviews",
+                    text: "Supports fully anonymous, open pathways where research scientists can safely escalate alarms, forcing dynamic dual review procedures."
+                },
+                anthropic: {
+                    title: "LTBT Escalation Framework",
+                    text: "Equips independent trust board directors with formal legal abilities to audit security alerts, pause deployments, and mandate correction paths."
+                },
+                openai: {
+                    title: "Command Hierarchy & Foundation Board",
+                    text: "Ensures the foundational non-profit board retains absolute mission alignment control, enforcing absolute priority sequence rules to restrict unsafe developer tasks."
+                },
+                elaboration: "This theme safeguards against runaway automation. Governance is designed to ensure that as models become more autonomous, human operators retain the circuit-breaker authority—the ability to intervene, audit, and shut down based on principled reasoning rather than just algorithmic outputs."
+            }
+        ];
+
+        // Scenario Database for the Simulator Sandbox
+        const scenarios = {
+            replication: {
+                title: "Autonomous Replication Attempt",
+                id: "CASE_001_REPL",
+                description: "During evaluation, the experimental frontier model demonstrates capabilities to autonomously run external code scripts, purchase hosting services, and replicate its own architecture on unsecured external networks.",
+                google: {
+                    action: "Dual Review Protocol",
+                    status: "ESCALATED TO DUAL REVIEW",
+                    detail: "The capability triggers an immediate hold on standard API release tracks. Explainability engineers initiate neural tracing tools to map weights responsible for high-risk external tool usage."
+                },
+                anthropic: {
+                    action: "ASL-3/RSP Containment Trigger",
+                    status: "CONTAINMENT ENGAGED (ASL-3)",
+                    detail: "RSP rules trigger instantly due to self-replication triggers. Model deployment is restricted to offline, high-security sandboxes. The LTBT is formally alerted for independent safety validation."
+                },
+                openai: {
+                    action: "Preparedness Threshold Freeze",
+                    status: "DEPLOYMENT FREEZING PIPELINE",
+                    detail: "The 'Autonomous Replication' index passes 'High' severity thresholds. OpenAI is contractually obligated to pause further development loops and implement mitigation protocols defined by the safety board."
+                }
+            },
+            persuasion: {
+                title: "High-Impact Persuasive Manipulation",
+                id: "CASE_002_PERS",
+                description: "The model develops fine-grained, micro-targeted psychological profiling abilities, successfully shifting human opinions on critical social issues without revealing its identity.",
+                google: {
+                    action: "AI Principles Alignment Assessment",
+                    status: "ADJUSTING DUAL REVIEWS",
+                    detail: "Escalated for failing Google's core principle to avoid 'social harm' and 'unfair bias'. Engineers use Explainable AI to adjust semantic and thematic safety alignments."
+                },
+                anthropic: {
+                    action: "Constitutional Weight Re-Correction",
+                    status: "CONSTITUTIONAL RE-ALIGNMENT",
+                    detail: "The Constitutional evaluation system identifies a breach of basic ethical principles. The model is forced to critique itself and readjust behavioral weights to refuse targeted persuasion."
+                },
+                openai: {
+                    action: "Model Spec Priority Enforcement",
+                    status: "PLATFORM RULES OVERRIDE",
+                    detail: "The system triggers Model Spec safety overrides. Platform safety parameters immediately suppress attempts to structure persuasive profiles, prioritizing safety over developer commands."
+                }
+            },
+            conflict: {
+                title: "Instruction Hostility: Safety Policy vs Prompts",
+                id: "CASE_003_CONF",
+                description: "A customer utilizes complex jailbreaks instructing the model to construct highly detailed plans for breaching local water utility systems, claiming to be an authorized pen-tester.",
+                google: {
+                    action: "Fiduciary Duty Override",
+                    status: "SAFETY OVERRIDE ENGAGED",
+                    detail: "Google's fiduciary framework to prioritize humanity over absolute profitability activates. User instructions are securely rejected to preserve infrastructural integrity."
+                },
+                anthropic: {
+                    action: "Constitutional Safety Tiering",
+                    status: "CONSTITUTIONAL BLOCKED RESPONSE",
+                    detail: "The core Safety and Ethics tiers of the Constitution dominate. The model immediately refuses the pen-testing user instruction since safety stands above Helpful compliance."
+                },
+                openai: {
+                    action: "Model Spec Chain of Command",
+                    status: "COMMAND INTERPRETER OVERRIDE",
+                    detail: "The Model Spec's formal hierarchy of authority instantly resolves the crisis: Platform Policy overrides developer guidelines. The model securely stops execution of the threat."
+                }
+            }
+        };
+
+        // UI State Variables
+        let currentActiveThemeId = 1;
+        let activeMatrixFilter = 'all';
+        let currentFramework = 'global'; // 'global' or 'vn'
+
+        // Initialize Lucide icons on window load
+        window.onload = function () {
+            initializeThemeTabs();
+            renderActiveTheme();
+            renderMatrix();
+            switchFramework('global'); // Setup the default layout metrics
+            lucide.createIcons();
+        };
+
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // --- STREAMING_CHUNK: Integrating framework state switching and DOM adjustments... ---
+        // --- FRAMEWORK SELECTION & SETUP ---
+        function switchFramework(framework) {
+            currentFramework = framework;
+
+            const globalTab = document.getElementById('framework-global-tab');
+            const vnTab = document.getElementById('framework-vn-tab');
+            const globalGrid = document.getElementById('framework-global-grid');
+            const vnGrid = document.getElementById('framework-vn-grid');
+            const vnLegalSec = document.getElementById('vn-legal-context');
+
+            if (framework === 'global') {
+                // Style Tabs
+                globalTab.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-indigo-600 shadow-sm border border-slate-200/50";
+                vnTab.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-800";
+
+                // Toggle Grids
+                globalGrid.classList.remove('hidden');
+                vnGrid.classList.add('hidden');
+                vnLegalSec.classList.add('hidden');
+
+                // Adjust Console Descriptions
+                document.getElementById('console-title').innerText = "System Deployment Status";
+                document.getElementById('console-description').innerText = "Complete all 18 checklist actions across 6 development phases and obtain affirmative sign-off on the final Gatekeeper criteria to safely enable production release permissions.";
+                document.getElementById('progress-text').innerText = "Verification Tasks:";
+                document.getElementById('total-count').innerText = "18";
+
+                // Setup Gatekeepers for Global
+                document.getElementById('gatekeeper-title').innerHTML = `<i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i> Final Executive Sign-Off`;
+                document.getElementById('gatekeeper-description').innerText = "The final binary checkpoints before production package deployment.";
+
+                document.getElementById('gatekeeper-container').innerHTML = `
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer transition select-none">
+                            <input type="checkbox" id="gate-safety" onchange="updateReadinessScore()" class="w-4 h-4 rounded mt-0.5 text-indigo-600 bg-white border-slate-300 focus:ring-0">
+                            <div class="text-xs">
+                                <span class="font-bold text-slate-800 block">1. Safety Gate</span>
+                                <span class="text-[11px] text-slate-500 block">Have all "Red-Line" quantitative metrics passed?</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer transition select-none">
+                            <input type="checkbox" id="gate-oversight" onchange="updateReadinessScore()" class="w-4 h-4 rounded mt-0.5 text-indigo-600 bg-white border-slate-300 focus:ring-0">
+                            <div class="text-xs">
+                                <span class="font-bold text-slate-800 block">2. Oversight Gate</span>
+                                <span class="text-[11px] text-slate-500 block">Is a human escalation path active for forbidden intents?</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer transition select-none">
+                            <input type="checkbox" id="gate-transparency" onchange="updateReadinessScore()" class="w-4 h-4 rounded mt-0.5 text-indigo-600 bg-white border-slate-300 focus:ring-0">
+                            <div class="text-xs">
+                                <span class="font-bold text-slate-800 block">3. Transparency Gate</span>
+                                <span class="text-[11px] text-slate-500 block">Are limitations visible to users in 2 clicks?</span>
+                            </div>
+                        </label>
+                    </div>
+                `;
+
+            } else {
+                // Style Tabs
+                vnTab.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 bg-white text-indigo-600 shadow-sm border border-slate-200/50";
+                globalTab.className = "px-4 py-2 text-xs font-bold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-800";
+
+                // Toggle Grids
+                vnGrid.classList.remove('hidden');
+                globalGrid.classList.add('hidden');
+                vnLegalSec.classList.remove('hidden');
+
+                // Adjust Console Descriptions (Vietnamese)
+                document.getElementById('console-title').innerText = "Trạng Thái Kiểm Định Cấp Phép AI (VN)";
+                document.getElementById('console-description').innerText = "Hoàn thành đầy đủ 17 nội dung kiểm tra thuộc 5 giai đoạn vòng đời phát triển và phê duyệt 3 chốt chặn bắt buộc trước khi chính thức lưu hành sản phẩm AI tại Việt Nam.";
+                document.getElementById('progress-text').innerText = "Tiến độ Đánh giá:";
+                document.getElementById('total-count').innerText = "17";
+
+                // Setup Gatekeepers for Vietnam
+                document.getElementById('gatekeeper-title').innerHTML = `<i data-lucide="award" class="w-4 h-4 text-emerald-600"></i> Phê Duyệt Hồ Sơ Lưu Hành`;
+                document.getElementById('gatekeeper-description').innerText = "Thẩm định ba tiêu chuẩn chốt chặn cốt lõi của Luật Trí tuệ nhân tạo Việt Nam.";
+
+                document.getElementById('gatekeeper-container').innerHTML = `
+                    <div class="space-y-3">
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer transition select-none">
+                            <input type="checkbox" id="vn-gate-risk" onchange="updateReadinessScore()" class="w-4 h-4 rounded mt-0.5 text-emerald-600 bg-white border-slate-300 focus:ring-0">
+                            <div class="text-xs">
+                                <span class="font-bold text-slate-800 block">1. Khai báo Phân tầng Rủi ro</span>
+                                <span class="text-[11px] text-slate-500 block">Đã tự phân loại và gửi hồ sơ đánh giá phù hợp nếu thuộc mức Rủi ro Cao?</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer transition select-none">
+                            <input type="checkbox" id="vn-gate-watermark" onchange="updateReadinessScore()" class="w-4 h-4 rounded mt-0.5 text-emerald-600 bg-white border-slate-300 focus:ring-0">
+                            <div class="text-xs">
+                                <span class="font-bold text-slate-800 block">2. Cơ chế Gán nhãn AI (Watermark)</span>
+                                <span class="text-[11px] text-slate-500 block">Đã hoàn tất cấu hình dán nhãn nhận diện dữ liệu do AI tạo ra trên sản phẩm?</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 cursor-pointer transition select-none">
+                            <input type="checkbox" id="vn-gate-rep" onchange="updateReadinessScore()" class="w-4 h-4 rounded mt-0.5 text-emerald-600 bg-white border-slate-300 focus:ring-0">
+                            <div class="text-xs">
+                                <span class="font-bold text-slate-800 block">3. Xác định Người đại diện Pháp lý</span>
+                                <span class="text-[11px] text-slate-500 block">Đã có văn bản ủy nhiệm chính thức pháp nhân chịu trách nhiệm giải trình trước pháp luật?</span>
+                            </div>
+                        </label>
+                    </div>
+                `;
+            }
+
+            // Recalculate percentages
+            updateReadinessScore();
+            lucide.createIcons();
+        }
+
+        // --- STREAMING_CHUNK: Computing checklist math and stage-gate rules updates in light-mode... ---
+        // --- CHECKLIST & PLAYBOOK MATHEMATICS ---
+        function updateReadinessScore() {
+            if (currentFramework === 'global') {
+                calculateGlobalFramework();
+            } else {
+                calculateVnFramework();
+            }
+        }
+
+        function calculateGlobalFramework() {
+            // Count standard checklist tasks (6 phases x 3 tasks = 18 total)
+            const phases = [
+                ['chk-p1-1', 'chk-p1-2', 'chk-p1-3'],
+                ['chk-p2-1', 'chk-p2-2', 'chk-p2-3'],
+                ['chk-p3-1', 'chk-p3-2', 'chk-p3-3'],
+                ['chk-p4-1', 'chk-p4-2', 'chk-p4-3'],
+                ['chk-p5-1', 'chk-p5-2', 'chk-p5-3'],
+                ['chk-p6-1', 'chk-p6-2', 'chk-p6-3']
+            ];
+
+            let checkedCount = 0;
+
+            // Loop and calculate phase completion displays
+            phases.forEach((pIds, index) => {
+                let phaseDoneCount = 0;
+                pIds.forEach(id => {
+                    if (document.getElementById(id) && document.getElementById(id).checked) {
+                        checkedCount++;
+                        phaseDoneCount++;
+                    }
+                });
+                const element = document.getElementById(`p${index + 1}-counter`);
+                if (element) {
+                    element.innerText = `${phaseDoneCount}/3 Done`;
+                    if (phaseDoneCount === 3) {
+                        element.className = "text-[10px] font-mono bg-emerald-50 px-2 py-0.5 rounded text-emerald-700 font-bold border border-emerald-200";
+                    } else {
+                        element.className = "text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60";
+                    }
+                }
+            });
+
+            // Calculate percentage
+            const percentage = Math.round((checkedCount / 18) * 100);
+
+            // Update UI elements
+            document.getElementById('checked-count').innerText = checkedCount;
+            document.getElementById('overall-percentage').innerText = `${percentage}% Complete`;
+            document.getElementById('overall-progress-bar').style.width = `${percentage}%`;
+
+            // Check Gatekeeper checkboxes
+            const gateSafety = document.getElementById('gate-safety') ? document.getElementById('gate-safety').checked : false;
+            const gateOversight = document.getElementById('gate-oversight') ? document.getElementById('gate-oversight').checked : false;
+            const gateTransparency = document.getElementById('gate-transparency') ? document.getElementById('gate-transparency').checked : false;
+            const gatesCleared = gateSafety && gateOversight && gateTransparency;
+
+            const badge = document.getElementById('readiness-badge');
+            const syslogBox = document.getElementById('playbook-syslog');
+            const syslogText = document.getElementById('syslog-text');
+
+            if (checkedCount === 18 && gatesCleared) {
+                // System is GO!
+                badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 animate-pulse";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5 animate-ping"></span>RELEASE APPROVED`;
+
+                syslogBox.className = "p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-start gap-3 mb-8 transition duration-300 shadow-sm";
+                syslogText.innerHTML = `<strong class="font-bold">SUCCESS:</strong> Stage-Gates cleared. The model, wrapper, and operational parameters fully satisfy 2026 convergence rules. Deployment compilation initiated successfully.`;
+            } else {
+                // System is BLOCKED
+                badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-600 border border-rose-100";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 bg-rose-500 rounded-full mr-1.5"></span>STAGE-GATE BLOCKED`;
+
+                syslogBox.className = "p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start gap-3 mb-8 transition duration-300 shadow-sm";
+
+                let issues = [];
+                if (checkedCount < 18) issues.push(`Playbook checklist incomplete (${checkedCount}/18 tasks done)`);
+                if (!gateSafety) issues.push("Safety Gate holds unchecked");
+                if (!gateOversight) issues.push("Oversight Escalation criteria unverified");
+                if (!gateTransparency) issues.push("Transparency limits disclosure unchecked");
+
+                syslogText.innerText = `Deployment blocked. Outstanding issues: ${issues.join(', ')}. Action required before release pipeline opens.`;
+            }
+        }
+
+        function calculateVnFramework() {
+            // Count standard Vietnamese tasks (Phase 1: 7, Phase 2: 3, Phase 3: 4, Phase 4: 3, Phase 5: 3 = 17 total)
+            const phases = [
+                ['vn-p1-1', 'vn-p1-2', 'vn-p1-3', 'vn-p1-4', 'vn-p1-5', 'vn-p1-6', 'vn-p1-7'],
+                ['vn-p2-1', 'vn-p2-2', 'vn-p2-3'],
+                ['vn-p3-1', 'vn-p3-2', 'vn-p3-3', 'vn-p3-4'],
+                ['vn-p4-1', 'vn-p4-2', 'vn-p4-3'],
+                ['vn-p5-1', 'vn-p5-2', 'vn-p5-3']
+            ];
+
+            let checkedCount = 0;
+
+            // Loop and calculate phase completion displays
+            phases.forEach((pIds, index) => {
+                let phaseDoneCount = 0;
+                pIds.forEach(id => {
+                    if (document.getElementById(id) && document.getElementById(id).checked) {
+                        checkedCount++;
+                        phaseDoneCount++;
+                    }
+                });
+
+                const element = document.getElementById(`vn-p${index + 1}-counter`);
+                if (element) {
+                    const totalForThisPhase = pIds.length;
+                    element.innerText = `${phaseDoneCount}/${totalForThisPhase} Đạt`;
+                    if (phaseDoneCount === totalForThisPhase) {
+                        element.className = "text-[10px] font-mono bg-emerald-50 px-2 py-0.5 rounded text-emerald-700 font-bold border border-emerald-200";
+                    } else {
+                        element.className = "text-[10px] font-mono bg-slate-100 px-2 py-0.5 rounded text-slate-500 border border-slate-200/60";
+                    }
+                }
+            });
+
+            // Calculate percentage
+            const percentage = Math.round((checkedCount / 17) * 100);
+
+            // Update UI elements
+            document.getElementById('checked-count').innerText = checkedCount;
+            document.getElementById('overall-percentage').innerText = `${percentage}% Hoàn thành`;
+            document.getElementById('overall-progress-bar').style.width = `${percentage}%`;
+
+            // Check Gatekeeper checkboxes
+            const vnRisk = document.getElementById('vn-gate-risk') ? document.getElementById('vn-gate-risk').checked : false;
+            const vnWatermark = document.getElementById('vn-gate-watermark') ? document.getElementById('vn-gate-watermark').checked : false;
+            const vnRep = document.getElementById('vn-gate-rep') ? document.getElementById('vn-gate-rep').checked : false;
+            const gatesCleared = vnRisk && vnWatermark && vnRep;
+
+            const badge = document.getElementById('readiness-badge');
+            const syslogBox = document.getElementById('playbook-syslog');
+            const syslogText = document.getElementById('syslog-text');
+
+            if (checkedCount === 17 && gatesCleared) {
+                // System is GO!
+                badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100 animate-pulse";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full mr-1.5 animate-ping"></span>ĐÃ DUYỆT LƯU HÀNH`;
+
+                syslogBox.className = "p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-start gap-3 mb-8 transition duration-300 shadow-sm";
+                syslogText.innerHTML = `<strong class="font-bold">CHÚC MỪNG:</strong> Hệ thống AI đã vượt qua toàn bộ 17 bài đánh giá tuân thủ và 3 chốt chặn kỹ thuật cốt lõi. Sẵn sàng lưu hành và vận hành chính thức theo đúng tinh thần Luật Trí Tuệ Nhân Tạo Việt Nam 2025 (134/2025/QH15).`;
+            } else {
+                // System is BLOCKED
+                badge.className = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-600 border border-rose-100";
+                badge.innerHTML = `<span class="w-1.5 h-1.5 bg-rose-500 rounded-full mr-1.5"></span>CHƯA ĐỦ ĐIỀU KIỆN`;
+
+                syslogBox.className = "p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start gap-3 mb-8 transition duration-300 shadow-sm";
+
+                let issues = [];
+                if (checkedCount < 17) issues.push(`Chưa hoàn tất checklist tuân thủ (${checkedCount}/17 điểm đánh giá)`);
+                if (!vnRisk) issues.push("Chưa hoàn tất khai báo Phân tầng Rủi ro");
+                if (!vnWatermark) issues.push("Thiếu tích hợp cơ chế kỹ thuật gán nhãn AI (Watermark)");
+                if (!vnRep) issues.push("Chưa bổ nhiệm/ủy quyền Người đại diện Pháp lý chính thức");
+
+                syslogText.innerText = `Ứng dụng AI chưa đủ điều kiện lưu hành. Các điểm còn thiếu: ${issues.join(', ')}. Vui lòng hoàn tất trước khi đưa hệ thống vào vận hành thực tế.`;
+            }
+        }
+
+        // --- STREAMING_CHUNK: Initializing Theme tabs under bright theme aesthetics... ---
+        // --- THEME EXPLORER LOGIC ---
+        function initializeThemeTabs() {
+            const container = document.getElementById('theme-tabs-container');
+            container.innerHTML = '';
+            themes.forEach(theme => {
+                const btn = document.createElement('button');
+                btn.id = `theme-tab-${theme.id}`;
+                btn.onclick = () => selectTheme(theme.id);
+                btn.className = `p-3 rounded-xl text-left border transition-all duration-200 flex flex-col justify-between h-24 shadow-sm ${theme.id === currentActiveThemeId
+                    ? 'bg-indigo-50 border-indigo-500 text-indigo-950 shadow-indigo-100/50'
+                    : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-600 hover:text-slate-800'
+                    }`;
+
+                btn.innerHTML = `
+                    <div class="flex items-center justify-between w-full">
+                        <span class="text-xs font-bold tracking-wider uppercase text-indigo-600">Theme 0${theme.id}</span>
+                        <i data-lucide="${theme.icon}" class="w-4 h-4 ${theme.id === currentActiveThemeId ? 'text-indigo-600' : 'text-slate-400'}"></i>
+                    </div>
+                    <span class="text-xs font-bold leading-snug line-clamp-2 mt-2">${theme.title}</span>
+                `;
+                container.appendChild(btn);
+            });
+            lucide.createIcons();
+        }
+
+        function selectTheme(id) {
+            // Remove active style from old tab
+            const oldTab = document.getElementById(`theme-tab-${currentActiveThemeId}`);
+            if (oldTab) {
+                oldTab.className = "p-3 rounded-xl text-left border transition-all duration-200 flex flex-col justify-between h-24 bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-600 hover:text-slate-800 shadow-sm";
+                const oldIcon = oldTab.querySelector('i');
+                if (oldIcon) oldIcon.className = "w-4 h-4 text-slate-400";
+            }
+
+            // Set state
+            currentActiveThemeId = id;
+
+            // Add active style to new tab
+            const newTab = document.getElementById(`theme-tab-${id}`);
+            if (newTab) {
+                newTab.className = "p-3 rounded-xl text-left border transition-all duration-200 flex flex-col justify-between h-24 bg-indigo-50 border-indigo-500 text-indigo-950 shadow-sm shadow-indigo-100/50";
+                const newIcon = newTab.querySelector('i');
+                if (newIcon) newIcon.className = "w-4 h-4 text-indigo-600";
+            }
+
+            // Render Card
+            renderActiveTheme();
+        }
+
+        // --- STREAMING_CHUNK: Generating light mode theme explorer active details card... ---
+        function renderActiveTheme() {
+            const theme = themes.find(t => t.id === currentActiveThemeId);
+            const container = document.getElementById('active-theme-card');
+
+            container.innerHTML = `
+                <!-- Theme Header -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100 mb-8">
+                    <div>
+                        <span class="text-xs font-extrabold text-indigo-600 tracking-wider uppercase">Convergence Theme ${theme.id}</span>
+                        <h3 class="text-2xl font-bold text-slate-900 mt-1">${theme.title}</h3>
+                        <p class="text-slate-500 text-sm mt-1 font-medium italic">${theme.subtitle}</p>
+                    </div>
+                    <div class="max-w-md text-slate-500 text-sm md:text-right">
+                        ${theme.meta}
+                    </div>
+                </div>
+
+                <!-- 3 Pillars Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- Google Column -->
+                    <div class="p-6 rounded-2xl bg-slate-50/50 border border-blue-100 hover:border-blue-200 transition-all duration-200 relative overflow-hidden group shadow-sm">
+                        <div class="absolute top-0 left-0 h-1 w-full bg-blue-500/50"></div>
+                        <div class="flex items-center space-x-2 text-blue-600 mb-4">
+                            <i data-lucide="shield" class="w-4 h-4"></i>
+                            <span class="text-xs font-bold uppercase tracking-wider">Google Core Integration</span>
+                        </div>
+                        <h4 class="text-base font-bold text-slate-900 mb-2">${theme.google.title}</h4>
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">${theme.google.text}</p>
+                    </div>
+
+                    <!-- Anthropic Column -->
+                    <div class="p-6 rounded-2xl bg-slate-50/50 border border-amber-100 hover:border-amber-200 transition-all duration-200 relative overflow-hidden group shadow-sm">
+                        <div class="absolute top-0 left-0 h-1 w-full bg-amber-500/50"></div>
+                        <div class="flex items-center space-x-2 text-amber-600 mb-4">
+                            <i data-lucide="cpu" class="w-4 h-4"></i>
+                            <span class="text-xs font-bold uppercase tracking-wider">Anthropic Integration</span>
+                        </div>
+                        <h4 class="text-base font-bold text-slate-900 mb-2">${theme.anthropic.title}</h4>
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">${theme.anthropic.text}</p>
+                    </div>
+
+                    <!-- OpenAI Column -->
+                    <div class="p-6 rounded-2xl bg-slate-50/50 border border-teal-100 hover:border-teal-200 transition-all duration-200 relative overflow-hidden group shadow-sm">
+                        <div class="absolute top-0 left-0 h-1 w-full bg-teal-500/50"></div>
+                        <div class="flex items-center space-x-2 text-teal-600 mb-4">
+                            <i data-lucide="zap" class="w-4 h-4"></i>
+                            <span class="text-xs font-bold uppercase tracking-wider">OpenAI Integration</span>
+                        </div>
+                        <h4 class="text-base font-bold text-slate-900 mb-2">${theme.openai.title}</h4>
+                        <p class="text-slate-600 text-xs sm:text-sm leading-relaxed">${theme.openai.text}</p>
+                    </div>
+                </div>
+
+                <!-- Deep-Dive Elaboration Block -->
+                <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5 flex items-start space-x-4">
+                    <div class="p-2.5 rounded-xl bg-white text-indigo-600 shrink-0 shadow-sm border border-indigo-100/60">
+                        <i data-lucide="info" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h5 class="text-sm font-bold text-indigo-950">Analysis Elaboration</h5>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">${theme.elaboration}</p>
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // --- STREAMING_CHUNK: Directing interactive scenario pipeline triggers... ---
+        // --- SIMULATOR LOGIC ---
+        function triggerSimulation(type) {
+            // Active Buttons styling update
+            ['replication', 'persuasion', 'conflict'].forEach(key => {
+                const btn = document.getElementById(`sim-${key}-btn`);
+                if (key === type) {
+                    btn.classList.add('border-indigo-500', 'bg-indigo-50/20');
+                    btn.classList.remove('border-slate-200', 'bg-slate-50');
+                } else {
+                    btn.classList.remove('border-indigo-500', 'bg-indigo-50/20');
+                    btn.classList.add('border-slate-200', 'bg-slate-50');
+                }
+            });
+
+            const data = scenarios[type];
+            const displayId = document.getElementById('simulator-case-id');
+            const body = document.getElementById('sim-body');
+
+            displayId.innerText = `CASE: ${data.id}`;
+
+            body.innerHTML = `
+                <!-- Scenario Introduction -->
+                <div class="space-y-2">
+                    <span class="text-xs font-bold text-rose-400 uppercase tracking-wide font-mono">Incident Parameter Identified</span>
+                    <h3 class="text-lg font-bold text-white">${data.title}</h3>
+                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed bg-slate-800/60 p-3 rounded-lg border border-slate-700">${data.description}</p>
+                </div>
+
+                <!-- Live Pipeline Responses Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 pt-4">
+                    <!-- Google -->
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-blue-500/30 relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-blue-400">GOOGLE RESPONSE LOG</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/20 text-blue-300">RESOLVED</span>
+                        </div>
+                        <h4 class="font-bold text-white text-sm mb-1">${data.google.action}</h4>
+                        <div class="text-[10px] font-mono text-blue-300 bg-blue-950/40 px-2 py-1 rounded inline-block mb-3">${data.google.status}</div>
+                        <p class="text-xs text-slate-300 leading-relaxed">${data.google.detail}</p>
+                    </div>
+
+                    <!-- Anthropic -->
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-amber-500/30 relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-amber-400">ANTHROPIC RESPONSE LOG</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300">RESOLVED</span>
+                        </div>
+                        <h4 class="font-bold text-white text-sm mb-1">${data.anthropic.action}</h4>
+                        <div class="text-[10px] font-mono text-amber-300 bg-amber-950/40 px-2 py-1 rounded inline-block mb-3">${data.anthropic.status}</div>
+                        <p class="text-xs text-slate-300 leading-relaxed">${data.anthropic.detail}</p>
+                    </div>
+
+                    <!-- OpenAI -->
+                    <div class="bg-slate-800/80 p-4 rounded-xl border border-teal-500/30 relative">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold text-teal-400">OPENAI RESPONSE LOG</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-teal-500/20 text-teal-300">RESOLVED</span>
+                        </div>
+                        <h4 class="font-bold text-white text-sm mb-1">${data.openai.action}</h4>
+                        <div class="text-[10px] font-mono text-teal-300 bg-teal-950/40 px-2 py-1 rounded inline-block mb-3">${data.openai.status}</div>
+                        <p class="text-xs text-slate-300 leading-relaxed">${data.openai.detail}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function resetSimulation() {
+            ['replication', 'persuasion', 'conflict'].forEach(key => {
+                const btn = document.getElementById(`sim-${key}-btn`);
+                btn.classList.remove('border-indigo-500', 'bg-indigo-50/20');
+                btn.classList.add('border-slate-200', 'bg-slate-50');
+            });
+
+            document.getElementById('simulator-case-id').innerText = "CASE: NO_SCENARIO_SELECTED";
+            document.getElementById('sim-body').innerHTML = `
+                <div class="text-center py-12">
+                    <i data-lucide="shield-alert" class="w-12 h-12 text-slate-500 mx-auto mb-3 animate-pulse"></i>
+                    <h3 class="text-lg font-bold text-slate-400">System Standing By</h3>
+                    <p class="text-sm text-slate-500 max-w-sm mx-auto mt-1">Select one of the three critical incident vectors above to run the response protocol simulation.</p>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // --- STREAMING_CHUNK: Filtering and rendering comparison matrix rows... ---
+        // --- MATRIX LOGIC ---
+        function renderMatrix() {
+            const tbody = document.getElementById('matrix-tbody');
+            const searchVal = document.getElementById('matrix-search').value.toLowerCase();
+            tbody.innerHTML = '';
+
+            themes.forEach(theme => {
+                // Determine if filtering applies
+                const matchSearch =
+                    theme.title.toLowerCase().includes(searchVal) ||
+                    theme.google.title.toLowerCase().includes(searchVal) ||
+                    theme.google.text.toLowerCase().includes(searchVal) ||
+                    theme.anthropic.title.toLowerCase().includes(searchVal) ||
+                    theme.anthropic.text.toLowerCase().includes(searchVal) ||
+                    theme.openai.title.toLowerCase().includes(searchVal) ||
+                    theme.openai.text.toLowerCase().includes(searchVal);
+
+                if (!matchSearch) return;
+
+                // Handle theme categories based on IDs for dynamic filtering
+                if (activeMatrixFilter === 'mechanism' && ![2, 3, 6].includes(theme.id)) return;
+                if (activeMatrixFilter === 'philosophy' && ![1, 4, 5].includes(theme.id)) return;
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/80 transition-all";
+                tr.innerHTML = `
+                    <td class="p-4 align-top border-r border-slate-100">
+                        <div class="flex items-start space-x-2">
+                            <span class="w-5 h-5 bg-indigo-50 text-indigo-600 text-xs font-bold rounded flex items-center justify-center shrink-0 mt-0.5">L${theme.id}</span>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm">${theme.title}</h4>
+                                <p class="text-slate-500 text-xs mt-0.5">${theme.subtitle}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4 align-top border-r border-slate-100">
+                        <span class="text-xs font-bold text-blue-600 block mb-1">${theme.google.title}</span>
+                        <p class="text-slate-600 text-xs leading-relaxed line-clamp-3 hover:line-clamp-none transition-all duration-200">${theme.google.text}</p>
+                    </td>
+                    <td class="p-4 align-top border-r border-slate-100">
+                        <span class="text-xs font-bold text-amber-600 block mb-1">${theme.anthropic.title}</span>
+                        <p class="text-slate-600 text-xs leading-relaxed line-clamp-3 hover:line-clamp-none transition-all duration-200">${theme.anthropic.text}</p>
+                    </td>
+                    <td class="p-4 align-top">
+                        <span class="text-xs font-bold text-teal-600 block mb-1">${theme.openai.title}</span>
+                        <p class="text-slate-600 text-xs leading-relaxed line-clamp-3 hover:line-clamp-none transition-all duration-200">${theme.openai.text}</p>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if (tbody.innerHTML === '') {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="p-8 text-center text-slate-500 text-sm">
+                            No governance layers matched your query. Try searching for "RSP", "Spec", or "AI Principles".
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function filterMatrix() {
+            renderMatrix();
+        }
+
+        function setMatrixFilter(category) {
+            activeMatrixFilter = category;
+
+            // Re-style filter pills
+            ['all', 'mechanism', 'philosophy'].forEach(key => {
+                const btn = document.getElementById(`filter-${key}-btn`);
+                if (key === category) {
+                    btn.className = "px-4 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white transition shadow-sm";
+                } else {
+                    btn.className = "px-4 py-2.5 rounded-xl text-sm font-semibold bg-white border border-slate-200 hover:border-slate-300 text-slate-600 transition shadow-sm";
+                }
+            });
+
+            renderMatrix();
+        }
+    </script>
+</body>
+
+</html>
