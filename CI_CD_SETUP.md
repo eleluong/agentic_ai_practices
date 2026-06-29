@@ -81,10 +81,48 @@ If your repository is **private**, the VM needs permission to pull changes from 
    ```bash
    ssh -T git@github.com
    ```
-5. Ensure the repository URL cloned on the VM uses SSH (`git@github.com:eleluong/agentic_ai_practices.git`) instead of HTTPS. If cloning for the first time manually, run:
-   ```bash
-   git clone git@github.com:eleluong/agentic_ai_practices.git ~/ai_governance_practices
-   ```
+
+   > [!TIP]
+   > **Troubleshooting SSH Connection Timeouts (Port 22 Blocked)**
+   >
+   > If you get `ssh: connect to host github.com port 22: Connection timed out`, it means outbound traffic on port 22 is blocked (common in many cloud VPS environments). You can bypass this by routing SSH traffic over port 443 (HTTPS):
+   >
+   > 1. Test connection to GitHub over port 443 using the deploy key:
+   >    ```bash
+   >    ssh -i ~/.ssh/id_ed25519 -T -p 443 git@ssh.github.com
+   >    ```
+   > 2. If it succeeds, configure your SSH client to always use port 443 and the deploy key for GitHub. Edit (or create) the `~/.ssh/config` file on your VM:
+   >    ```bash
+   >    nano ~/.ssh/config
+   >    ```
+   >    And add the following block:
+   >    ```text
+   >    Host github.com
+   >      Hostname ssh.github.com
+   >      Port 443
+   >      User git
+   >      IdentityFile ~/.ssh/id_ed25519
+   >    ```
+   > 3. Verify the configuration connects successfully:
+   >    ```bash
+   >    ssh -T git@github.com
+   >    ```
+
+5. Ensure the repository URL cloned on the VM uses SSH. If cloning for the first time manually, run one of the following:
+   * **Option A: If you configured `~/.ssh/config` (Recommended)**
+     SSH automatically applies the port and key settings:
+     ```bash
+     git clone git@github.com:eleluong/agentic_ai_practices.git ~/ai_governance_practices
+     ```
+   * **Option B: Specify the key manually (Without config file)**
+     * *Over standard port 22:*
+       ```bash
+       GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519" git clone git@github.com:eleluong/agentic_ai_practices.git ~/ai_governance_practices
+       ```
+     * *Over port 443 (If port 22 is blocked):*
+       ```bash
+       GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519 -p 443" git clone git@ssh.github.com:eleluong/agentic_ai_practices.git ~/ai_governance_practices
+       ```
 
 ---
 
