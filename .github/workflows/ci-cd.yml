@@ -51,8 +51,19 @@ jobs:
 
           # SSH into the VM, pull latest changes, and build/run the containers
           ssh -i ~/.ssh/id_rsa ${{ secrets.VM_USER }}@${{ secrets.VM_HOST }} "
+            # Ensure SSH config on the VM routes github.com and ssh.github.com through port 443
+            mkdir -p ~/.ssh && touch ~/.ssh/config
+            if ! grep -q 'Host github.com' ~/.ssh/config; then
+              echo '' >> ~/.ssh/config
+              echo 'Host github.com ssh.github.com' >> ~/.ssh/config
+              echo '  Hostname ssh.github.com' >> ~/.ssh/config
+              echo '  Port 443' >> ~/.ssh/config
+              echo '  User git' >> ~/.ssh/config
+              chmod 600 ~/.ssh/config
+            fi
+
             # Set up project directory on VM if it doesn't exist
-            if [ ! -d '~/ai_governance_practices' ]; then
+            if [ ! -d ~/ai_governance_practices ]; then
               echo 'Directory does not exist. Cloning repository...'
               git clone https://github.com/eleluong/agentic_ai_practices.git ~/ai_governance_practices
             fi
