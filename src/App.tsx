@@ -10,9 +10,13 @@ import PlaybookConsole from './components/PlaybookConsole';
 import GeneralSynthesis from './components/GeneralSynthesis';
 import PortalLanding from './components/PortalLanding';
 import AIOptimization from './components/AIOptimization';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { translations } from './data/translations';
 
-function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState<'portal' | 'governance' | 'optimization'>('portal');
+  const { lang } = useLanguage();
+  const t = translations[lang];
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -71,14 +75,22 @@ function App() {
       <footer className="border-t border-slate-200/60 py-12 bg-white text-center text-xs text-slate-500 relative z-10 shadow-inner">
         <div className="max-w-7xl mx-auto px-4">
           <p className="mb-2">
-            {currentView === 'portal' && "Apex AI Practices Hub | Built for developers, researchers, and policymakers."}
-            {currentView === 'governance' && "AI Governance Convergence Visualizer | Built for advanced researchers, policymakers, and builders."}
-            {currentView === 'optimization' && "AI Optimization & Performance Hub | Production-ready runtime architectures and compression tools."}
+            {currentView === 'portal' && t.footer.portalText}
+            {currentView === 'governance' && t.footer.govText}
+            {currentView === 'optimization' && t.footer.optText}
           </p>
-          <p>© 2026. Interactive AI Practices Mapping.</p>
+          <p>{t.footer.copyText}</p>
         </div>
       </footer>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 

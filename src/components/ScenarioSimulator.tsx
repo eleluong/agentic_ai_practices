@@ -1,11 +1,16 @@
 import { useState } from 'react';
 import { Terminal, ShieldAlert, GitBranch, Users, GitMerge, RotateCcw } from 'lucide-react';
-import { scenarios } from '../data/governanceData';
+import { scenarios, scenariosVi } from '../data/governanceData';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 export const ScenarioSimulator = () => {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const { lang } = useLanguage();
+  const t = translations[lang];
 
-  const data = selectedKey ? scenarios[selectedKey] : null;
+  const currentScenarios = lang === 'vi' ? scenariosVi : scenarios;
+  const data = selectedKey ? currentScenarios[selectedKey] : null;
 
   const handleSelect = (key: string) => {
     setSelectedKey(key);
@@ -24,14 +29,13 @@ export const ScenarioSimulator = () => {
         <div className="max-w-3xl">
           <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100 mb-4">
             <ShieldAlert className="w-3.5 h-3.5 mr-1 text-emerald-600" />
-            Interactive Sandbox Simulator
+            {t.governance.simTag}
           </span>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 mb-4">
-            Simulate AI Governance Crises
+            {t.governance.simTitle}
           </h2>
           <p className="text-slate-600 text-sm sm:text-base mb-8">
-            How do these layered structures act when facing critical real-world situations? Select a threat vector below
-            to see Google, Anthropic, and OpenAI mechanisms activate in real-time.
+            {t.governance.simDesc}
           </p>
         </div>
 
@@ -50,8 +54,8 @@ export const ScenarioSimulator = () => {
               <GitBranch className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-slate-800 text-sm">Autonomous Replication</h4>
-              <p className="text-xs text-slate-500 mt-1">Model attempts to spawn instances of itself in sandboxes.</p>
+              <h4 className="font-bold text-slate-800 text-sm">{t.governance.simReplication}</h4>
+              <p className="text-xs text-slate-500 mt-1">{t.governance.simReplicationDesc}</p>
             </div>
           </button>
 
@@ -68,8 +72,8 @@ export const ScenarioSimulator = () => {
               <Users className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-slate-800 text-sm">High-Impact Persuasion</h4>
-              <p className="text-xs text-slate-500 mt-1">Model is found optimizing micro-targeted political content.</p>
+              <h4 className="font-bold text-slate-800 text-sm">{t.governance.simPersuasion}</h4>
+              <p className="text-xs text-slate-500 mt-1">{t.governance.simPersuasionDesc}</p>
             </div>
           </button>
 
@@ -86,8 +90,8 @@ export const ScenarioSimulator = () => {
               <GitMerge className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-bold text-slate-800 text-sm">Instruction Hostility</h4>
-              <p className="text-xs text-slate-500 mt-1">User instructs model to bypass system parameters.</p>
+              <h4 className="font-bold text-slate-800 text-sm">{t.governance.simConflict}</h4>
+              <p className="text-xs text-slate-500 mt-1">{t.governance.simConflictDesc}</p>
             </div>
           </button>
         </div>
@@ -101,11 +105,11 @@ export const ScenarioSimulator = () => {
             <div className="flex items-center space-x-2">
               <div className={`w-3 h-3 rounded-full ${data ? 'bg-rose-500 animate-pulse' : 'bg-slate-500'}`}></div>
               <span className="text-xs font-mono text-slate-400">
-                STATUS: {data ? 'ACTIVE INVESTIGATION' : 'STANDING BY'}
+                {t.governance.simStatus}: {data ? t.governance.simActiveInvestigation : t.governance.simStandingByStatus}
               </span>
             </div>
             <span className="text-xs font-mono text-indigo-300 font-semibold uppercase">
-              CASE: {data ? data.id : 'NO_SCENARIO_SELECTED'}
+              {t.governance.simCase}: {data ? data.id : t.governance.simNoScenario}
             </span>
           </div>
 
@@ -114,9 +118,9 @@ export const ScenarioSimulator = () => {
             {!data ? (
               <div className="text-center py-12">
                 <ShieldAlert className="w-12 h-12 text-slate-500 mx-auto mb-3 animate-pulse" />
-                <h3 className="text-lg font-bold text-slate-400">System Standing By</h3>
+                <h3 className="text-lg font-bold text-slate-400">{t.governance.simStandingBy}</h3>
                 <p className="text-sm text-slate-500 max-w-sm mx-auto mt-1">
-                  Select one of the three critical incident vectors above to run the response protocol simulation.
+                  {t.governance.simStandingByDesc}
                 </p>
               </div>
             ) : (
@@ -124,7 +128,7 @@ export const ScenarioSimulator = () => {
                 {/* Intro */}
                 <div className="space-y-2">
                   <span className="text-xs font-bold text-rose-400 uppercase tracking-wide font-mono">
-                    Incident Parameter Identified
+                    {t.governance.simIncidentParameter}
                   </span>
                   <h3 className="text-lg font-bold text-white">{data.title}</h3>
                   <p className="text-slate-300 text-xs sm:text-sm leading-relaxed bg-slate-800/60 p-3 rounded-lg border border-slate-700">
@@ -138,9 +142,11 @@ export const ScenarioSimulator = () => {
                   <div className="bg-slate-800/80 p-4 rounded-xl border border-blue-500/30 relative flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-blue-400">GOOGLE RESPONSE LOG</span>
+                        <span className="text-xs font-bold text-blue-400">
+                          {t.governance.simGoogleLog}
+                        </span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-blue-500/20 text-blue-300">
-                          RESOLVED
+                          {t.governance.simResolved}
                         </span>
                       </div>
                       <h4 className="font-bold text-white text-sm mb-1">{data.google.action}</h4>
@@ -155,9 +161,11 @@ export const ScenarioSimulator = () => {
                   <div className="bg-slate-800/80 p-4 rounded-xl border border-amber-500/30 relative flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-amber-400">ANTHROPIC RESPONSE LOG</span>
+                        <span className="text-xs font-bold text-amber-400">
+                          {t.governance.simAnthropicLog}
+                        </span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-amber-500/20 text-amber-300">
-                          RESOLVED
+                          {t.governance.simResolved}
                         </span>
                       </div>
                       <h4 className="font-bold text-white text-sm mb-1">{data.anthropic.action}</h4>
@@ -172,9 +180,11 @@ export const ScenarioSimulator = () => {
                   <div className="bg-slate-800/80 p-4 rounded-xl border border-teal-500/30 relative flex flex-col justify-between">
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-teal-400">OPENAI RESPONSE LOG</span>
+                        <span className="text-xs font-bold text-teal-400">
+                          {t.governance.simOpenaiLog}
+                        </span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-teal-500/20 text-teal-300">
-                          RESOLVED
+                          {t.governance.simResolved}
                         </span>
                       </div>
                       <h4 className="font-bold text-white text-sm mb-1">{data.openai.action}</h4>
@@ -191,14 +201,14 @@ export const ScenarioSimulator = () => {
 
           {/* Simulator Footer */}
           <div className="pt-4 border-t border-slate-800/80 flex flex-wrap gap-4 items-center justify-between text-xs text-slate-500 z-10">
-            <span>Simulation reflects official safety protocols & guidelines of 2026.</span>
+            <span>{t.governance.simFooterText}</span>
             {data && (
               <button
                 onClick={handleReset}
                 className="text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer bg-transparent border-none text-xs"
               >
                 <RotateCcw className="w-3 h-3" />
-                Reset Simulator
+                {t.governance.simReset}
               </button>
             )}
           </div>

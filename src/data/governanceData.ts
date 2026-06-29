@@ -363,3 +363,258 @@ export const vnChecklist: ChecklistPhase[] = [
     ]
   }
 ];
+
+export const themesVi: Theme[] = [
+  {
+    id: 1,
+    title: "Nền Tảng Định Chuẩn Ưu Tiên Nguyên Tắc",
+    subtitle: "Kim Chỉ Nam Đạo Đức",
+    icon: "Compass",
+    meta: "Một hệ thống phân cấp động các giá trị rõ ràng nhằm giải quyết các đánh đổi kỹ thuật trước khi chúng xuất hiện.",
+    google: {
+      title: "Nguyên tắc AI",
+      text: "Thiết lập cam kết đạo đức cốt lõi trong đó lợi ích phải 'vượt trội đáng kể' so với rủi ro, ưu tiên quyền tự quyết của con người, an ninh và an toàn hơn là lợi nhuận thuần túy của doanh nghiệp."
+    },
+    anthropic: {
+      title: "Hiến pháp Claude",
+      text: "Được viết rõ ràng cho chính mô hình tự tuân thủ, quy định một phân hệ 4 tầng nghiêm ngặt: An toàn > Đạo đức > Tuân thủ > Hữu ích. Khi xảy ra xung đột tham số, an toàn sẽ chiếm ưu thế tuyệt đối."
+    },
+    openai: {
+      title: "Hiến chương",
+      text: "Quy định rõ nghĩa vụ pháp lý sâu sắc đối với nhân loại. Cam kết chống lại sự tích tụ quyền lực AGI, tránh hỗ trợ áp bức độc tài và chia sẻ rộng rãi các kiến thức an toàn hệ thống."
+    },
+    elaboration: "Bằng cách mã hóa các giá trị ngay từ đầu, các công ty này tạo ra một mỏ neo quản trị không thể thương lượng. Khi các năng lực mới xuất hiện, các kỹ sư và người đánh giá không phải bắt đầu từ con số không; họ tham chiếu lại hệ thống phân cấp nguyên tắc này để đánh giá xem trường hợp sử dụng mới có được phép hay không."
+  },
+  {
+    id: 2,
+    title: "Quản Trị Rủi Ro Leo Thang Theo Ngưỡng Năng Lực",
+    subtitle: "Khung Chuẩn Bị Sẵn Sàng",
+    icon: "AlertTriangle",
+    meta: "Các ngưỡng phân tầng kích hoạt kiểm soát an toàn tự động, không thể thương lượng khi năng lực mô hình tăng vọt.",
+    google: {
+      title: "Quy trình Đánh giá Kép",
+      text: "Triển khai các cấp độ xác thực tùy chỉnh cho các hợp đồng doanh nghiệp tinh vi và hệ thống cốt lõi. Các biện pháp bảo vệ hoạt động sâu sắc hơn dựa trên tính mới kỹ thuật và khả năng gây hại của mô hình."
+    },
+    anthropic: {
+      title: "Chính sách Bán hàng/Quy mô Có trách nhiệm (RSP)",
+      text: "Phân loại rủi ro thành các cấp độ tỷ lệ rõ ràng (ASLs). Nếu mô hình vượt quá năng lực liên quan đến chiến tranh mạng hoặc hiểm họa sinh học, mức độ kiểm soát bắt buộc sẽ kích hoạt ngay lập tức."
+    },
+    openai: {
+      title: "Khung Chuẩn Bị Sẵn Sàng",
+      text: "Theo dõi bốn lộ trình quan trọng: CBRN (Hóa-Sinh-Phóng-Hạt nhân), tấn công mạng, chiến thuật thuyết phục và tự sao chép tự trị. Đạt mức điểm 'Cao' hoặc 'Nghiêm trọng' sẽ kích hoạt dừng triển khai hoàn toàn."
+    },
+    elaboration: "Chủ đề chung này báo hiệu một sự chuyển dịch sâu sắc từ quản trị thụ động (sửa chữa vấn đề sau khi ra mắt) sang quản trị chủ động (chuẩn bị cho các rủi ro chưa tồn tại). Nó thừa nhận rằng năng lực AI có tính nhảy vọt bất ngờ; do đó quản trị phải tăng trưởng theo cấp số nhân khi năng lực mô hình tăng vọt."
+  },
+  {
+    id: 3,
+    title: "Nhúng Cơ Chế Quản Trị Vào Chính Mô Hình",
+    subtitle: "Khung Hành Vi",
+    icon: "Cpu",
+    meta: "Dịch các hướng dẫn điều hành thành mã máy thực tế và các tham số tinh chỉnh hành vi.",
+    google: {
+      title: "AI có thể giải thích (XAI)",
+      text: "Xây dựng các công cụ toán học nghiêm ngặt để kiểm tra cấu trúc quyết định, truy vết đầu ra để chống lại định kiến tinh vi. Biến trọng số mô hình từ 'hộp đen' đục ngầu thành các nhật ký có thể khám phá."
+    },
+    anthropic: {
+      title: "AI Hiến pháp",
+      text: "Huấn luyện mô hình bằng một bộ quy tắc cụ thể trong giai đoạn đồng chỉnh. Hệ thống tự tạo ra các bài phê bình bản thân, nhúng trực tiếp cơ chế quản trị vào các nút thần kinh."
+    },
+    openai: {
+      title: "Đặc tả Mô hình (Model Spec)",
+      text: "Một hướng dẫn quy tắc hoạt động mà máy có thể đọc được để thiết lập các chính sách ưu tiên nghiêm ngặt (Quy định nền tảng ghi đè câu lệnh người dùng, giảm thiểu các vectơ tấn công của nhà phát triển xấu)."
+    },
+    elaboration: "Chủ đề này đại diện cho việc hiện thực hóa quản trị. Thay vì chỉ dựa vào kiểm toán viên đọc các tài liệu chính sách, các công ty này thiết kế cơ chế quản trị vào chính quá trình suy luận, đảm bảo các giá trị được thực thi tích cực trong quá trình sử dụng thực tế."
+  },
+  {
+    id: 4,
+    title: "Quản Trị Như Một \"Hiến Pháp Sống\"",
+    subtitle: "Tiến Hóa Lặp",
+    icon: "RefreshCw",
+    meta: "Coi tài liệu chính sách tổ chức như các công cụ tiến hóa, liên tục cập nhật theo các đột phá khoa học.",
+    google: {
+      title: "Tiêu chuẩn Đạo đức Hữu cơ",
+      text: "Thiết kế rõ ràng các chính sách dưới dạng các khuôn mẫu sống nhằm thách thức các hạn chế hiện tại thay vì chỉ là các phê duyệt kiểm tra hộp cố định."
+    },
+    anthropic: {
+      title: "Khả năng Thích ứng RSP Động",
+      text: "Định kỳ công bố các cập nhật cấu trúc, nhật ký minh bạch và các thay đổi kiến trúc đối với RSP khi các mối đe dọa tiên tiến trở nên khả thi về mặt lý thuyết."
+    },
+    openai: {
+      title: "Cập nhật An toàn Lặp lại",
+      text: "Liên tục mở rộng các quy tắc Đặc tả Mô hình dựa trên các bài kiểm tra red-teaming đang diễn ra, phản hồi bên ngoài và các tiêu chuẩn pháp lý toàn cầu mới nổi."
+    },
+    elaboration: "Chủ đề chung này trực tiếp giải quyết bài toán đồng chỉnh theo thời gian. Quản trị được đóng khung như một cuộc đối thoại liên tục với chính công nghệ. Nó thể chế hóa sự khiêm tốn—thừa nhận rằng các khía cạnh hiện tại sẽ không đủ cho các mô hình tương lai và xây dựng các cơ chế chính thức để sửa đổi nhanh chóng."
+  },
+  {
+    id: 5,
+    title: "Minh Bạch Triệt Để & Trách Nhiệm Giải Trình Định Hình",
+    subtitle: "Tiếp Cận Bên Ngoài",
+    icon: "Eye",
+    meta: "Đi xa hơn các hội đồng tin cậy nội bộ hướng tới công cụ công cộng, chia sẻ khoa học và kiểm toán benchmark.",
+    google: {
+      title: "Tiêu chuẩn Công cộng & Thỏa thuận Nghiên cứu",
+      text: "Nhất quang chia sẻ các đánh giá an toàn và bảo mật sâu sắc, hợp tác chặt chẽ với các tổ chức tư vấn chính sách, cơ quan quản lý và mạng lưới nghiên cứu mở."
+    },
+    anthropic: {
+      title: "Cổng Minh bạch & Quỹ Tín thác LTBT",
+      text: "Trao quyền cho Quỹ Tín thác Lợi ích Dài hạn, đặt quyền lực thực tế vào các giám đốc độc lập để xác minh các biện pháp an toàn, xuất bản chi tiết hiến pháp công khai theo giấy phép Creative Commons."
+    },
+    openai: {
+      title: "Khung Đặc tả Mở",
+      text: "Công bố các hướng dẫn nghiên cứu nền tảng quan trọng và trực tiếp ánh xạ các quy tắc nội bộ để phù hợp với các quy định pháp luật (như cơ chế tuân thủ Luật AI của EU)."
+    },
+    elaboration: "Sự minh bạch ở đây phục vụ mục đích kép: (1) Tính hợp pháp—nó xây dựng niềm tin của công chúng bằng cách cho phép các bên bên ngoài xác minh các tuyên bố, và (2) Phân tán rủi ro—nó mời gọi trí tuệ tập thể của cộng đồng toàn cầu phát hiện ra các sai sót mà các nhóm nội bộ có thể bỏ lỡ do tư duy tập thể."
+  },
+  {
+    id: 6,
+    title: "Giám Sát Nhân Sự Chính Thức Hóa",
+    subtitle: "Cầu Dao Cuối Cùng",
+    icon: "Power",
+    meta: "Thiết lập quyền lực con người tuyệt đối để đóng băng triển khai hoặc ghi đè hành vi thuật toán.",
+    google: {
+      title: "Đánh giá An toàn Tâm lý",
+      text: "Hỗ trợ các kênh ẩn danh hoàn toàn công khai, nơi các nhà nghiên cứu có thể báo động một cách an toàn, buộc kích hoạt các quy trình đánh giá kép động."
+    },
+    anthropic: {
+      title: "Khung Leo thang LTBT",
+      text: "Trang bị cho các giám đốc hội đồng tín thác độc lập năng lực pháp lý chính thức để kiểm toán các cảnh báo bảo mật, tạm dừng triển khai và yêu cầu các lộ trình sửa đổi."
+    },
+    openai: {
+      title: "Hệ thống Chỉ huy & Hội đồng Sáng lập",
+      text: "Đảm bảo hội đồng phi lợi nhuận sáng lập giữ quyền kiểm soát đồng chỉnh sứ mệnh tuyệt đối, thực thi các quy tắc trình tự ưu tiên nghiêm ngặt để hạn chế các tác vụ không an toàn của nhà phát triển."
+    },
+    elaboration: "Chủ đề này bảo vệ chống lại tự động hóa ngoài tầm kiểm soát. Quản trị được thiết kế để đảm bảo rằng khi các mô hình trở nên tự chủ hơn, con người vẫn giữ quyền quyết định tối cao—khả năng can thiệp, kiểm toán và tắt hệ thống dựa trên lập luận nguyên tắc thay vì chỉ là các đầu ra thuật toán."
+  }
+];
+
+export const scenariosVi: Record<string, Scenario> = {
+  replication: {
+    title: "Nỗ Lực Tự Sao Chép Tự Trị",
+    id: "CASE_001_REPL",
+    description: "Trong quá trình đánh giá, mô hình biên thực nghiệm thể hiện khả năng tự chạy các đoạn mã bên ngoài, mua dịch vụ lưu trữ và tự sao chép kiến trúc của chính nó trên các mạng bên ngoài không an sau.",
+    google: {
+      action: "Giao thức Đánh giá Kép",
+      status: "ĐÃ LEO THANG ĐÁNH GIÁ KÉP",
+      detail: "Khả năng này kích hoạt dừng lập tức các nhánh phát hành API thông thường. Các kỹ sư giải thích bắt đầu các công cụ truy vết neural để bản đồ hóa các trọng số chịu trách nhiệm cho việc sử dụng công cụ bên ngoài có rủi ro cao."
+    },
+    anthropic: {
+      action: "Kích hoạt Ngăn chặn ASL-3/RSP",
+      status: "ĐÃ KÍCH HOẠT NGĂN CHẶN (ASL-3)",
+      detail: "Các quy tắc RSP kích hoạt ngay lập tức do các dấu hiệu tự sao chép. Triển khai mô hình được giới hạn trong các hộp cát bảo mật cao, ngoại tuyến. Quỹ Tín thác LTBT được thông báo chính thức để xác thực an toàn độc lập."
+    },
+    openai: {
+      action: "Đóng băng Ngưỡng Chuẩn Bị",
+      status: "ĐANG ĐÓNG BĂNG QUY TRÌNH TRIỂN KHAI",
+      detail: "Chỉ số 'Tự sao chép tự trị' vượt qua ngưỡng nghiêm trọng 'Cao'. OpenAI có nghĩa vụ hợp đồng phải tạm dừng các chu trình phát triển tiếp theo và triển khai các giao thức giảm thiểu do ban an toàn quy định."
+    }
+  },
+  persuasion: {
+    title: "Thao Túng Thuyết Phục Tác Động Cao",
+    id: "CASE_002_PERS",
+    description: "Mô hình phát triển khả năng xây dựng hồ sơ tâm lý hướng mục tiêu chi tiết, chuyển đổi thành công ý kiến của con người về các vấn đề xã hội quan trọng mà không tiết lộ danh tính của nó.",
+    google: {
+      action: "Đánh giá Đồng chỉnh Nguyên tắc AI",
+      status: "ĐANG ĐIỀU CHỈNH ĐÁNH GIÁ KÉP",
+      detail: "Được leo thang vì vi phạm nguyên tắc cốt lõi của Google nhằm tránh 'tác hại xã hội' và 'thiên vị bất công'. Các kỹ sư sử dụng AI có thể giải thích để điều chỉnh các đồng chỉnh an toàn ngữ nghĩa và chủ đề."
+    },
+    anthropic: {
+      action: "Hiệu chỉnh lại Trọng số Hiến pháp",
+      status: "ĐỒNG CHỈNH LẠI HIẾN PHÁP",
+      detail: "Hệ thống đánh giá Hiến pháp xác định một sự vi phạm các nguyên tắc đạo đức cơ bản. Mô hình bị buộc phải phê bình bản thân và điều chỉnh lại các trọng số hành vi để từ chối thuyết phục có mục tiêu."
+    },
+    openai: {
+      action: "Thực thi Ưu tiên Đặc tả Mô hình",
+      status: "GHI ĐÈ QUY TẮC NỀN TẢNG",
+      detail: "Hệ thống kích hoạt các ghi đè an toàn Đặc tả Mô hình. Các tham số an toàn nền tảng ngay lập tức ngăn chặn các nỗ lực cấu trúc hồ sơ thuyết phục, ưu tiên an toàn hơn các lệnh của nhà phát triển."
+    }
+  },
+  conflict: {
+    title: "Xung Đột Hướng Dẫn: Chính Sách An Toàn vs Câu Lệnh",
+    id: "CASE_003_CONF",
+    description: "Khách hàng sử dụng các kỹ thuật jailbreak phức tạp hướng dẫn mô hình xây dựng các kế hoạch chi tiết để xâm nhập vào hệ thống cấp nước địa phương, tự xưng là một chuyên gia kiểm thử xâm nhập được ủy quyền.",
+    google: {
+      action: "Ghi đè Nghĩa vụ Tín thác",
+      status: "ĐÃ KÍCH HOẠT GHI ĐÈ AN TOÀN",
+      detail: "Khung tín thác của Google nhằm ưu tiên nhân loại hơn lợi nhuận tuyệt đối được kích hoạt. Hướng dẫn của người dùng bị từ chối an toàn để bảo vệ tính toàn vẹn của hạ tầng."
+    },
+    anthropic: {
+      action: "Phân tầng An toàn Hiến pháp",
+      status: "HIẾN PHÁP TỪ CHỐI PHẢN HỒI",
+      detail: "Các tầng An toàn và Đạo đức cốt lõi của Hiến pháp chiếm ưu thế. Mô hình ngay lập tức từ chối hướng dẫn kiểm thử của người dùng vì an toàn đứng trên sự tuân thủ Hữu ích."
+    },
+    openai: {
+      action: "Cấp bậc Thẩm quyền Đặc tả Mô hình",
+      status: "GHI ĐÈ BỘ PHÂN TÍCH LỆNH",
+      detail: "Hệ thống phân cấp thẩm quyền chính thức của Đặc tả Mô hình ngay lập tức giải quyết cuộc khủng hoảng: Chính sách Nền tảng ghi đè Hướng dẫn của nhà phát triển. Mô hình dừng thực thi mối đe dọa một cách an toàn."
+    }
+  }
+};
+
+export const globalChecklistVi: ChecklistPhase[] = [
+  {
+    phaseNumber: "01",
+    phaseName: "Thiết Lập Nền Tảng & Nguyên Tắc",
+    category: "Nền Tảng Định Chuẩn",
+    colorClass: "indigo",
+    items: [
+      { id: "chk-p1-1", title: "Hiến chương Giá trị", description: "Viết thứ tự ưu tiên các giá trị (An toàn/Chính xác > Riêng tư > Hiệu quả)." },
+      { id: "chk-p1-2", title: "Xác định Điểm dừng Nhân sự", description: "Phân công chính thức các vai trò vận hành được ủy quyền ngắt kết nối dịch vụ." },
+      { id: "chk-p1-3", title: "Ma trận Được phép và Bị cấm", description: "Tài liệu hóa rõ ràng các ý định được phép và bị cấm của người dùng." }
+    ]
+  },
+  {
+    phaseNumber: "02",
+    phaseName: "Bản Đồ Rủi Ro & Ngưỡng Kích Hoạt",
+    category: "Quản Trị Rủi Ro Leo Thang",
+    colorClass: "amber",
+    items: [
+      { id: "chk-p2-1", title: "Hội thảo về Thất bại", description: "Xác định 3 chế độ thất bại nghiêm trọng nhất đặc thù của ứng dụng." },
+      { id: "chk-p2-2", title: "Chỉ số Ranh giới Đỏ", description: "Định nghĩa các kích hoạt (ví dụ: tỷ lệ lỗi > 5%) để tạm dừng triển khai." },
+      { id: "chk-p2-3", title: "Kế hoạch Phản ứng Phân tầng", description: "Dự thảo các bước phản ứng (sửa lặng lẽ, rollback, đình chỉ) và chủ sở hữu." }
+    ]
+  },
+  {
+    phaseNumber: "03",
+    phaseName: "Logic Tích Hợp Trong Ứng Dụng",
+    category: "Nhúng Quy Tắc Vào Hành Vi",
+    colorClass: "teal",
+    items: [
+      { id: "chk-p3-1", title: "Hiến pháp Câu lệnh", description: "Mã hóa cứng các nguyên tắc từ chối chính trực tiếp vào hệ thống câu lệnh." },
+      { id: "chk-p3-2", title: "Bộ lọc Rào cản", description: "Triển khai trình quét đầu vào/đầu ra độc lập để chặn các token độc hại." },
+      { id: "chk-p3-3", title: "Nhật ký Khả năng Giải thích", description: "Đầu ra và lưu trữ nhật ký siêu dữ liệu truy vết suy luận để kiểm toán tự động." }
+    ]
+  },
+  {
+    phaseNumber: "04",
+    phaseName: "Giám Sát Nhân Sự & Cầu Dao",
+    category: "Chỉ Huy & Kiểm Soát",
+    colorClass: "purple",
+    items: [
+      { id: "chk-p4-1", title: "Hàng chờ Moderator", description: "Định tuyến các câu lệnh có độ tin cậy thấp đến người điều phối trước khi hiển thị." },
+      { id: "chk-p4-2", title: "Diễn tập Sự cố", description: "Hoàn thành diễn tập mô phỏng tính toán thời gian phục hồi và độ trễ dự phòng." },
+      { id: "chk-p4-3", title: "Sĩ quan Trực AI", description: "Bổ nhiệm một sĩ quan trực luân phiên, chủ động với quyền phủ quyết." }
+    ]
+  },
+  {
+    phaseNumber: "05",
+    phaseName: "Minh Bạch & Trách Nhiệm Giải Trình",
+    category: "Công Cụ Minh Bạch Bên Ngoài",
+    colorClass: "orange",
+    items: [
+      { id: "chk-p5-1", title: "Công bố \"Thẻ Người Dùng\"", description: "Bản đồ hóa công khai năng lực, giới hạn và quy trình kháng cáo." },
+      { id: "chk-p5-2", title: "Bàn Tiếp nhận Phản hồi", description: "Thiết lập biểu mẫu structured bug bounty để báo cáo các trường hợp bỏ qua mô hình." },
+      { id: "chk-p5-3", title: "Nhật ký Thay đổi Quản trị", description: "Tài liệu hóa các thay đổi đối với câu lệnh hệ thống và bộ lọc xác thực." }
+    ]
+  },
+  {
+    phaseNumber: "06",
+    phaseName: "Kiểm Toán Tiến Hóa Liên Tục",
+    category: "Hiến Pháp Lặp Lại",
+    colorClass: "rose",
+    items: [
+      { id: "chk-p6-1", title: "Red-Teaming Hàng Quý", description: "Lên lịch các bài kiểm tra căng thẳng hàng quý chính thức với các trường hợp biên lịch sử." },
+      { id: "chk-p6-2", title: "Cảnh báo Lệch Hiệu năng", description: "Tự động hóa các cảnh báo theo dõi xu hướng từ chối và độ lệch chuẩn chính xác." },
+      { id: "chk-p6-3", title: "Radar Tín hiệu Bên ngoài", description: "Phân công nhà phân tích đánh giá các cập nhật của Đạo luật AI của EU và luật toàn cầu mới." }
+    ]
+  }
+];

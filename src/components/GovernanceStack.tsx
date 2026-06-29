@@ -1,5 +1,7 @@
 import React from 'react';
 import { Shield, Zap, Cpu, Power, ArrowRight, ArrowDown } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 interface StackLayerProps {
   level: string;
@@ -42,7 +44,55 @@ const StackLayer = ({
 };
 
 export const GovernanceStack = () => {
-  const layers = [
+  const { lang } = useLanguage();
+  const t = translations[lang];
+
+  const layers = lang === 'vi' ? [
+    {
+      level: 'L1',
+      title: 'Nền Tảng Định Chuẩn',
+      description:
+        'Mỏ neo đạo đức nền tảng. Thiết lập các giá trị cốt lõi và nghĩa vụ tín thác (ví dụ: nhân loại trên lợi nhuận, quyền hiến định) để định hướng mọi ưu tiên điều hành.',
+      footerLabel: 'Google, Anthropic, OpenAI',
+      icon: <Shield className="w-4 h-4" />,
+      colorBorder: 'blue',
+      colorBg: 'bg-blue-50',
+      colorText: 'text-blue-600',
+    },
+    {
+      level: 'L2',
+      title: 'Kích Hoạt Theo Năng Lực',
+      description:
+        'Các dấu hiệu rủi ro động (CBRN, an ninh mạng, tự sao chép) kích hoạt tăng cường bảo mật và rào cản pháp lý lập tức, không thể thương lượng khi mô hình đạt các mốc an toàn.',
+      footerLabel: 'RSP / Sự Chuẩn Bị',
+      icon: <Zap className="w-4 h-4" />,
+      colorBorder: 'amber',
+      colorBg: 'bg-amber-50',
+      colorText: 'text-amber-600',
+    },
+    {
+      level: 'L3',
+      title: 'Nhúng Trực Tiếp Vào Mô Hình',
+      description:
+        'Quản trị được mã hóa trực tiếp vào trọng số mô hình và các mô hình suy luận. Truyền tải các rào cản hệ thống trực tiếp như Constitutional AI và Đặc tả Mô hình.',
+      footerLabel: 'Constitutional AI / Đặc tả',
+      icon: <Cpu className="w-4 h-4" />,
+      colorBorder: 'purple',
+      colorBg: 'bg-purple-50',
+      colorText: 'text-purple-600',
+    },
+    {
+      level: 'L4',
+      title: 'Cầu Dao Nhân Sự',
+      description:
+        'Quyền phủ quyết dứt khoát. Đảm bảo các nhà phát triển, ban tín thác và người đánh giá pháp lý duy trì sự can thiệp thủ công hoàn toàn đối với quy trình phát triển và phân phối.',
+      footerLabel: 'LTBT / Ban Chỉ Huy Sứ Mệnh',
+      icon: <Power className="w-4 h-4" />,
+      colorBorder: 'emerald',
+      colorBg: 'bg-emerald-50',
+      colorText: 'text-emerald-600',
+    },
+  ] : [
     {
       level: 'L1',
       title: 'Normative Foundation',
@@ -93,11 +143,10 @@ export const GovernanceStack = () => {
     <section id="synthesis" className="scroll-mt-24 mb-24 relative px-4">
       <div className="mb-12 text-center max-w-3xl mx-auto">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
-          The Modern 4-Layer AI Governance Stack
+          {t.governance.stackTitle}
         </h2>
         <p className="text-slate-500 text-sm mt-2 leading-relaxed">
-          Industry-wide systems are consolidating into a nested defense model. Hover or tap each layer below to understand
-          how they work together in sequence to prevent rogue deployments.
+          {t.governance.stackSubtitle}
         </p>
       </div>
 

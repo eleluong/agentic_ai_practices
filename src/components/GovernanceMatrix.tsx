@@ -1,12 +1,18 @@
 import { useState } from 'react';
 import { Search } from 'lucide-react';
-import { themes } from '../data/governanceData';
+import { themes, themesVi } from '../data/governanceData';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 export const GovernanceMatrix = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'mechanism' | 'philosophy'>('all');
+  const { lang } = useLanguage();
+  const t = translations[lang];
 
-  const filteredThemes = themes.filter((theme) => {
+  const currentThemes = lang === 'vi' ? themesVi : themes;
+
+  const filteredThemes = currentThemes.filter((theme) => {
     // Search match
     const searchLower = searchQuery.toLowerCase();
     const matchesSearch =
@@ -33,10 +39,10 @@ export const GovernanceMatrix = () => {
       <div className="mb-8">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 flex items-center space-x-2">
           <span className="w-2.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full inline-block"></span>
-          <span>Landscape Governance Matrix</span>
+          <span>{t.governance.matrixTitle}</span>
         </h2>
         <p className="text-slate-500 text-sm mt-1">
-          Search or filter through governance layers to inspect specific mechanisms across players.
+          {t.governance.matrixSubtitle}
         </p>
       </div>
 
@@ -50,7 +56,7 @@ export const GovernanceMatrix = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search terms (e.g., RSP, Constitution, XAI...)"
+            placeholder={t.governance.matrixSearchPlaceholder}
             className="w-full bg-white border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition shadow-xs"
           />
         </div>
@@ -63,7 +69,7 @@ export const GovernanceMatrix = () => {
                 : 'bg-white border border-slate-200 hover:border-slate-300 text-slate-600'
             }`}
           >
-            All Themes
+            {t.governance.matrixAllThemes}
           </button>
           <button
             onClick={() => setActiveFilter('mechanism')}
@@ -73,7 +79,7 @@ export const GovernanceMatrix = () => {
                 : 'bg-white border border-slate-200 hover:border-slate-300 text-slate-600'
             }`}
           >
-            Action Mechanism
+            {t.governance.matrixAction}
           </button>
           <button
             onClick={() => setActiveFilter('philosophy')}
@@ -83,7 +89,7 @@ export const GovernanceMatrix = () => {
                 : 'bg-white border border-slate-200 hover:border-slate-300 text-slate-600'
             }`}
           >
-            Philosophy
+            {t.governance.matrixPhilosophy}
           </button>
         </div>
       </div>
@@ -96,16 +102,16 @@ export const GovernanceMatrix = () => {
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50">
                 <th className="p-4 text-xs font-bold uppercase tracking-wider text-slate-500 w-1/4">
-                  Governance Layer
+                  {t.governance.matrixHeaderLayer}
                 </th>
                 <th className="p-4 text-xs font-bold uppercase tracking-wider text-blue-600 w-1/4">
-                  Google Approach
+                  {t.governance.matrixHeaderGoogle}
                 </th>
                 <th className="p-4 text-xs font-bold uppercase tracking-wider text-amber-600 w-1/4">
-                  Anthropic Approach
+                  {t.governance.matrixHeaderAnthropic}
                 </th>
                 <th className="p-4 text-xs font-bold uppercase tracking-wider text-teal-600 w-1/4">
-                  OpenAI Approach
+                  {t.governance.matrixHeaderOpenAI}
                 </th>
               </tr>
             </thead>
@@ -113,7 +119,7 @@ export const GovernanceMatrix = () => {
               {filteredThemes.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="p-8 text-center text-slate-500 text-sm">
-                    No governance layers matched your query. Try searching for "RSP", "Spec", or "AI Principles".
+                    {t.governance.matrixNoResults}
                   </td>
                 </tr>
               ) : (
@@ -134,7 +140,7 @@ export const GovernanceMatrix = () => {
                       <span className="text-xs font-bold text-blue-600 block mb-1">
                         {theme.google.title}
                       </span>
-                      <p className="text-slate-600 text-xs leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-200">
+                      <p className="text-slate-605 text-xs leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-200">
                         {theme.google.text}
                       </p>
                     </td>
@@ -142,7 +148,7 @@ export const GovernanceMatrix = () => {
                       <span className="text-xs font-bold text-amber-600 block mb-1">
                         {theme.anthropic.title}
                       </span>
-                      <p className="text-slate-600 text-xs leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-200">
+                      <p className="text-slate-605 text-xs leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-200">
                         {theme.anthropic.text}
                       </p>
                     </td>
@@ -150,7 +156,7 @@ export const GovernanceMatrix = () => {
                       <span className="text-xs font-bold text-teal-600 block mb-1">
                         {theme.openai.title}
                       </span>
-                      <p className="text-slate-600 text-xs leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-200">
+                      <p className="text-slate-605 text-xs leading-relaxed line-clamp-4 hover:line-clamp-none transition-all duration-200">
                         {theme.openai.text}
                       </p>
                     </td>
@@ -166,7 +172,7 @@ export const GovernanceMatrix = () => {
       <div className="md:hidden space-y-4">
         {filteredThemes.length === 0 ? (
           <div className="bg-white border border-slate-200 rounded-xl p-6 text-center text-slate-500 text-sm shadow-xs">
-            No governance layers matched your query. Try searching for "RSP", "Spec", or "AI Principles".
+            {t.governance.matrixNoResults}
           </div>
         ) : (
           filteredThemes.map((theme) => (

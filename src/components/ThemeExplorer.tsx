@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import * as Icons from 'lucide-react';
-import { themes } from '../data/governanceData';
+import { themes, themesVi } from '../data/governanceData';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../data/translations';
 
 // Dynamically resolve icon components
 const IconRenderer = ({ name, className }: { name: string; className?: string }) => {
@@ -11,18 +13,21 @@ const IconRenderer = ({ name, className }: { name: string; className?: string })
 
 const getReferenceUrl = (title: string) => {
   const t = title.toLowerCase();
-  if (t.includes('principles')) return 'https://ai.google/responsibility/principles/';
-  if (t.includes('constitution') || t.includes('constitutional')) return 'https://www.anthropic.com/constitution';
-  if (t.includes('scaling policy') || t.includes('rsp')) return 'https://www.anthropic.com/news/responsible-scaling-policy-updates';
-  if (t.includes('preparedness')) return 'https://openai.com/news/our-updated-preparedness-framework';
-  if (t.includes('charter')) return 'https://openai.com/charter';
+  if (t.includes('principles') || t.includes('nguyên tắc')) return 'https://ai.google/responsibility/principles/';
+  if (t.includes('constitution') || t.includes('constitutional') || t.includes('hiến pháp')) return 'https://www.anthropic.com/constitution';
+  if (t.includes('scaling policy') || t.includes('rsp') || t.includes('sách bán')) return 'https://www.anthropic.com/news/responsible-scaling-policy-updates';
+  if (t.includes('preparedness') || t.includes('chuẩn bị')) return 'https://openai.com/news/our-updated-preparedness-framework';
+  if (t.includes('charter') || t.includes('hiến chương')) return 'https://openai.com/charter';
   return null;
 };
 
 export const ThemeExplorer = () => {
   const [activeThemeId, setActiveThemeId] = useState(1);
+  const { lang } = useLanguage();
+  const t = translations[lang];
 
-  const activeTheme = themes.find((t) => t.id === activeThemeId) || themes[0];
+  const currentThemes = lang === 'vi' ? themesVi : themes;
+  const activeTheme = currentThemes.find((t) => t.id === activeThemeId) || currentThemes[0];
 
   return (
     <section id="explorer" className="scroll-mt-24 mb-24 px-4">
@@ -31,15 +36,15 @@ export const ThemeExplorer = () => {
         <div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 flex items-center space-x-2">
             <span className="w-2.5 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full inline-block"></span>
-            <span>Multi-Layered Governance Explorer</span>
+            <span>{t.governance.themeTitle}</span>
           </h2>
           <p className="text-slate-500 text-sm mt-1">
-            Toggle the six critical themes of convergence across Google, Anthropic, and OpenAI.
+            {t.governance.themeSubtitle}
           </p>
         </div>
         <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-lg border border-slate-200">
           <span className="text-xs px-2.5 py-1 text-indigo-600 font-bold tracking-wide uppercase">
-            Interactive Matrix
+            {t.governance.themeMatrix}
           </span>
         </div>
       </div>
@@ -49,13 +54,13 @@ export const ThemeExplorer = () => {
         className="flex md:grid md:grid-cols-3 lg:grid-cols-6 gap-2 mb-6 overflow-x-auto pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
-        {themes.map((theme) => {
+        {currentThemes.map((theme) => {
           const isActive = theme.id === activeThemeId;
           return (
             <button
               key={theme.id}
               onClick={() => setActiveThemeId(theme.id)}
-              className={`p-3 rounded-xl text-left border transition-all duration-200 flex flex-col justify-between h-24 min-w-[160px] md:min-w-0 snap-start shrink-0 cursor-pointer ${
+              className={`p-3 rounded-xl text-left border transition-all duration-200 flex flex-col justify-between min-h-[6.5rem] h-auto min-w-[160px] md:min-w-0 snap-start shrink-0 cursor-pointer ${
                 isActive
                   ? 'bg-indigo-50 border-indigo-500 text-indigo-950 shadow-xs shadow-indigo-100/50'
                   : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300 text-slate-600'
@@ -63,7 +68,7 @@ export const ThemeExplorer = () => {
             >
               <div className="flex items-center justify-between w-full">
                 <span className="text-[10px] font-bold tracking-wider uppercase text-indigo-600">
-                  Theme 0{theme.id}
+                  {t.governance.themeTheme} 0{theme.id}
                 </span>
                 <IconRenderer
                   name={theme.icon}
@@ -82,7 +87,7 @@ export const ThemeExplorer = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100 mb-8">
           <div>
             <span className="text-xs font-extrabold text-indigo-600 tracking-wider uppercase">
-              Convergence Theme {activeTheme.id}
+              {t.governance.themeTheme} {activeTheme.id}
             </span>
             <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">{activeTheme.title}</h3>
             <p className="text-slate-500 text-xs sm:text-sm mt-1 font-medium italic">{activeTheme.subtitle}</p>
@@ -100,7 +105,9 @@ export const ThemeExplorer = () => {
               <div className="absolute top-0 left-0 h-1 w-full bg-blue-500/50"></div>
               <div className="flex items-center space-x-2 text-blue-600 mb-4">
                 <Icons.Shield className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-wider">Google Core Integration</span>
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  {t.governance.googleIntegration}
+                </span>
               </div>
               <h4 className="text-base font-bold text-slate-900 mb-2">{activeTheme.google.title}</h4>
               <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">{activeTheme.google.text}</p>
@@ -112,7 +119,7 @@ export const ThemeExplorer = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-[10px] text-blue-600 hover:text-blue-700 font-bold mt-4 hover:underline cursor-pointer"
               >
-                View Source Document ↗
+                {t.governance.themeSource}
               </a>
             )}
           </div>
@@ -123,7 +130,9 @@ export const ThemeExplorer = () => {
               <div className="absolute top-0 left-0 h-1 w-full bg-amber-500/50"></div>
               <div className="flex items-center space-x-2 text-amber-600 mb-4">
                 <Icons.Cpu className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-wider">Anthropic Integration</span>
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  {t.governance.anthropicIntegration}
+                </span>
               </div>
               <h4 className="text-base font-bold text-slate-900 mb-2">{activeTheme.anthropic.title}</h4>
               <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">{activeTheme.anthropic.text}</p>
@@ -135,7 +144,7 @@ export const ThemeExplorer = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-[10px] text-amber-600 hover:text-amber-700 font-bold mt-4 hover:underline cursor-pointer"
               >
-                View Source Document ↗
+                {t.governance.themeSource}
               </a>
             )}
           </div>
@@ -146,7 +155,9 @@ export const ThemeExplorer = () => {
               <div className="absolute top-0 left-0 h-1 w-full bg-teal-500/50"></div>
               <div className="flex items-center space-x-2 text-teal-600 mb-4">
                 <Icons.Zap className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase tracking-wider">OpenAI Integration</span>
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  {t.governance.openaiIntegration}
+                </span>
               </div>
               <h4 className="text-base font-bold text-slate-900 mb-2">{activeTheme.openai.title}</h4>
               <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">{activeTheme.openai.text}</p>
@@ -158,7 +169,7 @@ export const ThemeExplorer = () => {
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-[10px] text-teal-600 hover:text-teal-700 font-bold mt-4 hover:underline cursor-pointer"
               >
-                View Source Document ↗
+                {t.governance.themeSource}
               </a>
             )}
           </div>
@@ -170,7 +181,7 @@ export const ThemeExplorer = () => {
             <Icons.Info className="w-5 h-5" />
           </div>
           <div>
-            <h5 className="text-sm font-bold text-indigo-950">Analysis Elaboration</h5>
+            <h5 className="text-sm font-bold text-indigo-950">{t.governance.themeAnalysis}</h5>
             <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">{activeTheme.elaboration}</p>
           </div>
         </div>
@@ -179,3 +190,4 @@ export const ThemeExplorer = () => {
   );
 };
 export default ThemeExplorer;
+
