@@ -12,15 +12,32 @@ import PortalLanding from './components/PortalLanding';
 import AIOptimization from './components/AIOptimization';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { translations } from './data/translations';
+import { getPathView, getViewPath, type AppView } from './utils/router';
 
 function AppContent() {
-  const [currentView, setCurrentView] = useState<'portal' | 'governance' | 'optimization'>('portal');
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const { lang } = useLanguage();
   const t = translations[lang];
+
+  const currentView = getPathView(currentPath);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentView]);
+
+  const navigateTo = (view: AppView) => {
+    const path = getViewPath(view);
+    window.history.pushState(null, '', path);
+    setCurrentPath(path);
+  };
 
   const scrollToSection = (id: string) => {
     if (id === 'root') {
@@ -44,13 +61,13 @@ function AppContent() {
       <Header 
         scrollToSection={scrollToSection} 
         currentView={currentView}
-        setCurrentView={setCurrentView}
+        setCurrentView={navigateTo}
       />
 
       {/* Main Page Layout */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
         {currentView === 'portal' && (
-          <PortalLanding onSelectTopic={setCurrentView} />
+          <PortalLanding onSelectTopic={navigateTo} />
         )}
         
         {currentView === 'governance' && (
