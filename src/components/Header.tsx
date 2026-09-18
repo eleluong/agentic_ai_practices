@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { ShieldCheck, Cpu, Sparkles, ArrowLeft, Menu, X } from 'lucide-react';
+import { ShieldCheck, Cpu, Sparkles, ArrowLeft, Menu, X, Zap, Bot, Bug } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../data/translations';
 
+type HeaderView = 'portal' | 'governance' | 'optimization' | 'patterns' | 'agentic' | 'debug';
+
 interface HeaderProps {
   scrollToSection: (id: string) => void;
-  currentView: 'portal' | 'governance' | 'optimization';
-  setCurrentView: (view: 'portal' | 'governance' | 'optimization') => void;
+  currentView: HeaderView;
+  setCurrentView: (view: HeaderView) => void;
 }
 
 export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderProps) => {
@@ -19,6 +21,12 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
       setCurrentView('governance');
     } else if (target === 'optimization-link') {
       setCurrentView('optimization');
+    } else if (target === 'patterns-link') {
+      setCurrentView('patterns');
+    } else if (target === 'agentic-link') {
+      setCurrentView('agentic');
+    } else if (target === 'debug-link') {
+      setCurrentView('debug');
     } else {
       scrollToSection(target);
     }
@@ -46,6 +54,27 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
           title: t.portal.optCardTitle,
           subtitle: t.header.logoOptSubtitle,
           gradient: "from-emerald-500 via-teal-500 to-indigo-600"
+        };
+      case 'patterns':
+        return {
+          icon: <Zap className="w-5 h-5 text-white" />,
+          title: lang === 'vi' ? 'Mô Hình AI Ổn Định' : 'Stable AI Patterns',
+          subtitle: 'Workflow Architecture',
+          gradient: "from-blue-600 via-indigo-500 to-purple-500"
+        };
+      case 'agentic':
+        return {
+          icon: <Bot className="w-5 h-5 text-white" />,
+          title: lang === 'vi' ? 'Các Loại Agent' : 'Agentic Types',
+          subtitle: t.header.logoAgenticSubtitle,
+          gradient: "from-orange-500 via-amber-500 to-rose-500"
+        };
+      case 'debug':
+        return {
+          icon: <Bug className="w-5 h-5 text-white" />,
+          title: lang === 'vi' ? 'Gỡ Lỗi Agent' : 'Agentic Debug',
+          subtitle: t.header.logoDebugSubtitle,
+          gradient: "from-rose-500 via-red-500 to-orange-500"
         };
       default:
         return {
@@ -76,9 +105,43 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
         { label: t.header.navChecklist, target: 'checklist' },
       ];
     }
+    if (currentView === 'patterns') {
+      return [
+        { label: '1. Divide & Conquer', target: 'divide-conquer' },
+        { label: '2. Enrichment', target: 'enrichment' },
+        { label: '3. Reflection', target: 'reflection' },
+        { label: '4. Branch & Merge', target: 'branch-merge' },
+        { label: '⚡ Live Sandbox', target: 'sandbox' },
+        { label: 'Summary Matrix', target: 'matrix' },
+      ];
+    }
+    if (currentView === 'agentic') {
+      return [
+        { label: 'Comparison Matrix', target: 'comparison-matrix' },
+        { label: '1. LLM Call', target: 'llm-call' },
+        { label: '2. Workflow', target: 'agentic-workflow' },
+        { label: '3. Agent', target: 'autonomous-agent' },
+        { label: '⚡ Live Demo', target: 'live-lab' },
+        { label: 'Decision Flow', target: 'decision-flow' },
+        { label: 'Implementation', target: 'implementation-guide' },
+      ];
+    }
+    if (currentView === 'debug') {
+      return [
+        { label: 'Reliability Crisis', target: 'reliability-crisis' },
+        { label: 'Failure Modes', target: 'failure-modes' },
+        { label: 'Observability', target: 'observability' },
+        { label: 'Methodologies', target: 'debug-loop' },
+        { label: 'Patterns', target: 'patterns' },
+        { label: 'Guardrails', target: 'governance' },
+      ];
+    }
     return [
       { label: t.header.navGov, target: 'governance-link' },
       { label: t.header.navOpt, target: 'optimization-link' },
+      { label: lang === 'vi' ? 'Mô Hình AI' : 'AI Patterns', target: 'patterns-link' },
+      { label: t.header.navAgentic, target: 'agentic-link' },
+      { label: t.header.navDebug, target: 'debug-link' },
     ];
   };
 
@@ -88,7 +151,7 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
   return (
     <header className="border-b border-slate-200/80 backdrop-blur bg-white/80 sticky top-0 z-50 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        
+
         {/* Logo and Branding */}
         <div className="flex items-center space-x-3 cursor-pointer select-none" onClick={handleLogoClick}>
           <div className={`w-9 h-9 bg-gradient-to-tr ${branding.gradient} rounded-lg flex items-center justify-center shadow-md shadow-indigo-500/10`}>
@@ -113,7 +176,7 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
               {item.label}
             </button>
           ))}
-          
+
           {currentView === 'governance' && (
             <button
               onClick={() => handleNavClick('playbook')}
@@ -148,7 +211,7 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
               {t.header.industryBlueprints}
             </span>
           )}
-          
+
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 lg:hidden cursor-pointer"
@@ -172,7 +235,7 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
                 {item.label}
               </button>
             ))}
-            
+
             {currentView === 'governance' && (
               <button
                 onClick={() => handleNavClick('playbook')}
@@ -200,7 +263,7 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
                 <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full mr-1.5 animate-pulse"></span>
                 {t.header.industryBlueprints}
               </span>
-              
+
               <button
                 onClick={() => {
                   setLang(lang === 'en' ? 'vi' : 'en');

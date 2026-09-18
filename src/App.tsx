@@ -10,6 +10,9 @@ import PlaybookConsole from './components/PlaybookConsole';
 import GeneralSynthesis from './components/GeneralSynthesis';
 import PortalLanding from './components/PortalLanding';
 import AIOptimization from './components/AIOptimization';
+import AIPatterns from './components/AIPatterns';
+import AgentTypesBlog from './components/AgentTypesBlog';
+import AgenticDebug from './components/AgenticDebug';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { translations } from './data/translations';
 import { getPathView, getViewPath, type AppView } from './utils/router';
@@ -58,8 +61,8 @@ function AppContent() {
       <div className="absolute bottom-10 left-10 w-96 h-96 bg-emerald-100/30 rounded-full blur-3xl pointer-events-none z-0"></div>
 
       {/* Sticky Navigation Header */}
-      <Header 
-        scrollToSection={scrollToSection} 
+      <Header
+        scrollToSection={scrollToSection}
         currentView={currentView}
         setCurrentView={navigateTo}
       />
@@ -69,7 +72,7 @@ function AppContent() {
         {currentView === 'portal' && (
           <PortalLanding onSelectTopic={navigateTo} />
         )}
-        
+
         {currentView === 'governance' && (
           <>
             <Hero scrollToSection={scrollToSection} />
@@ -86,6 +89,18 @@ function AppContent() {
         {currentView === 'optimization' && (
           <AIOptimization />
         )}
+
+        {currentView === 'patterns' && (
+          <AIPatterns />
+        )}
+
+        {currentView === 'agentic' && (
+          <AgentTypesBlog />
+        )}
+
+        {currentView === 'debug' && (
+          <AgenticDebug />
+        )}
       </main>
 
       {/* Footer */}
@@ -95,6 +110,9 @@ function AppContent() {
             {currentView === 'portal' && t.footer.portalText}
             {currentView === 'governance' && t.footer.govText}
             {currentView === 'optimization' && t.footer.optText}
+            {currentView === 'patterns' && t.footer.patternsText}
+            {currentView === 'agentic' && t.footer.agenticText}
+            {currentView === 'debug' && t.footer.debugText}
           </p>
           <p>{t.footer.copyText}</p>
         </div>

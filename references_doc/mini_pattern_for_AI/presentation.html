@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Patterns for Stable AI Workflows - Interactive Visualizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f6ff',
+                            100: '#e0edff',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            900: '#1e3a8a',
+                        },
+                        dark: {
+                            bg: '#0b0f17',
+                            card: '#131b2e',
+                            border: '#1e293b',
+                            hover: '#1e293b'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.2)' },
+                            '100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f17;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glow-box-blue {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.25);
+        }
+
+        .glow-box-emerald {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+        }
+
+        .glow-box-amber {
+            box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.25);
+        }
+
+        .glow-box-purple {
+            box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.25);
+        }
+
+        /* Dynamic node connections and custom animations */
+        .node-pulse {
+            animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+
+            50% {
+                transform: scale(1.05);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+        }
+
+        .flow-line {
+            stroke-dasharray: 8;
+            animation: dash 1s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -16;
+            }
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0b0f17;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-dark-bg/80 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div
+                        class="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/20">
+                        <i class="fa-solid font-mono text-lg">⚡</i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg text-white tracking-tight">Stable AI Patterns</span>
+                        <span
+                            class="hidden sm:inline-block ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">Workflow
+                            Architecture</span>
+                    </div>
+                </div>
+
+                <nav class="hidden md:flex items-center space-x-1 text-sm font-medium">
+                    <a href="#divide-conquer"
+                        class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">1.
+                        Divide & Conquer</a>
+                    <a href="#enrichment"
+                        class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">2.
+                        Enrichment</a>
+                    <a href="#reflection"
+                        class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">3.
+                        Reflection</a>
+                    <a href="#branch-merge"
+                        class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">4.
+                        Branch & Merge</a>
+                    <a href="#sandbox"
+                        class="ml-2 px-3.5 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-play text-xs"></i> Live Sandbox
+                    </a>
+                </nav>
+
+                <div class="flex items-center space-x-2">
+                    <a href="#matrix"
+                        class="text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition">
+                        <i class="fa-solid fa-table border-none mr-1"></i> Summary
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section
+        class="relative py-12 lg:py-16 overflow-hidden border-b border-slate-800 bg-gradient-to-b from-slate-900/40 via-dark-bg to-dark-bg">
+        <div
+            class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b15_1px,transparent_1px),linear-gradient(to_bottom,#1e293b15_1px,transparent_1px)] bg-[size:4rem_4rem]">
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="text-center max-w-3xl mx-auto">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-medium text-slate-300 mb-6">
+                    <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Architectural Guide for Reliable Agentic Systems
+                </div>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6">
+                    Mini Patterns for <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400">Stable
+                        AI Workflows</span>
+                </h1>
+                <p class="text-base sm:text-lg text-slate-400 leading-relaxed mb-8">
+                    Stop relying on brittle monolithic LLM calls. Control complexity, isolate failure modes, and
+                    maintain predictable state using four lightweight design patterns.
+                </p>
+
+                <!-- Core Pillars Quick Overview Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-left">
+                    <a href="#divide-conquer"
+                        class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/50 transition group">
+                        <div class="text-blue-400 text-lg mb-1 group-hover:scale-110 transition-transform"><i
+                                class="fa-solid fa-sitemap"></i></div>
+                        <div class="text-xs font-mono text-blue-400 uppercase tracking-wider mb-1">Pattern 1</div>
+                        <div class="text-sm font-semibold text-white">Divide & Conquer</div>
+                        <div class="text-xs text-slate-400 mt-1">Split complex tasks into subtasks</div>
+                    </a>
+                    <a href="#enrichment"
+                        class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-800/50 transition group">
+                        <div class="text-emerald-400 text-lg mb-1 group-hover:scale-110 transition-transform"><i
+                                class="fa-solid fa-layer-group"></i></div>
+                        <div class="text-xs font-mono text-emerald-400 uppercase tracking-wider mb-1">Pattern 2</div>
+                        <div class="text-sm font-semibold text-white">Enrichment</div>
+                        <div class="text-xs text-slate-400 mt-1">Enhance state without regenerating</div>
+                    </a>
+                    <a href="#reflection"
+                        class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-amber-500/50 hover:bg-slate-800/50 transition group">
+                        <div class="text-amber-400 text-lg mb-1 group-hover:scale-110 transition-transform"><i
+                                class="fa-solid fa-rotate-right"></i></div>
+                        <div class="text-xs font-mono text-amber-400 uppercase tracking-wider mb-1">Pattern 3</div>
+                        <div class="text-sm font-semibold text-white">Reflection</div>
+                        <div class="text-xs text-slate-400 mt-1">Inspect & correct before accept</div>
+                    </a>
+                    <a href="#branch-merge"
+                        class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/50 hover:bg-slate-800/50 transition group">
+                        <div class="text-purple-400 text-lg mb-1 group-hover:scale-110 transition-transform"><i
+                                class="fa-solid fa-code-fork"></i></div>
+                        <div class="text-xs font-mono text-purple-400 uppercase tracking-wider mb-1">Pattern 4</div>
+                        <div class="text-sm font-semibold text-white">Branch → Merge</div>
+                        <div class="text-xs text-slate-400 mt-1">Fork & resolve in isolation</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pattern 1: Divide & Conquer -->
+    <section id="divide-conquer" class="py-12 border-b border-slate-800 scroll-mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-start gap-8">
+                <!-- Left Details -->
+                <div class="w-full lg:w-5/12">
+                    <div class="flex items-center gap-2 text-blue-400 text-xs font-mono uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-sitemap"></i> Pattern 01
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">Divide & Conquer</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        Break a complex, high-entropy prompt into small, independent subtasks. Instead of demanding one
+                        monolithic LLM solve an entire problem in a single pass, isolate the logic.
+                    </p>
+
+                    <div
+                        class="p-4 rounded-xl bg-blue-950/30 border border-blue-900/50 text-blue-200 text-xs leading-relaxed mb-6 font-mono">
+                        <strong class="text-blue-400 font-bold block mb-1">CORE PRINCIPLE:</strong>
+                        Complexity is easier to control, debug, and model accurately when isolated into smaller units.
+                    </div>
+
+                    <div class="space-y-3 text-xs text-slate-400 mb-6">
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
+                            <span><strong class="text-slate-200">Decompose:</strong> Structure the complex prompt into
+                                distinct mini-prompts.</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</span>
+                            <span><strong class="text-slate-200">Solve Independently:</strong> Run subtasks in parallel
+                                or sequential isolated steps.</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</span>
+                            <span><strong class="text-slate-200">Aggregate:</strong> Combine deterministic schemas into
+                                the final output.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="runDivideSim()"
+                            class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-blue-600/30">
+                            <i class="fa-solid fa-play"></i> Simulate Step-by-Step
+                        </button>
+                        <button onclick="resetDivideSim()"
+                            class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Visual Diagram Canvas / Container -->
+                <div
+                    class="w-full lg:w-7/12 bg-dark-card border border-slate-800 rounded-2xl p-6 glow-box-blue relative overflow-hidden">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-6">
+                        <span class="text-xs font-mono text-slate-400 flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full bg-blue-500"></span> Flowchart: Divide & Conquer
+                        </span>
+                        <span id="divide-status"
+                            class="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">Idle</span>
+                    </div>
+
+                    <!-- Flow Diagram -->
+                    <div class="relative py-4 flex flex-col items-center justify-center gap-6">
+                        <!-- Top Input Node -->
+                        <div id="d-node-main"
+                            class="p-3.5 px-6 rounded-xl bg-slate-800/90 border border-slate-700 text-center transition-all duration-300 w-64 shadow-md">
+                            <div class="text-xs font-mono text-slate-400">INPUT TASK</div>
+                            <div class="text-sm font-semibold text-white">Complex Reasoning Task</div>
+                        </div>
+
+                        <!-- Arrow Down -->
+                        <div class="h-6 w-0.5 bg-slate-700 relative">
+                            <div id="d-arrow-1"
+                                class="absolute inset-0 bg-blue-500 transition-all duration-300 opacity-0"></div>
+                        </div>
+
+                        <!-- Decomposer Node -->
+                        <div id="d-node-decomp"
+                            class="p-3 px-6 rounded-xl bg-blue-950/40 border border-blue-800/60 text-center transition-all duration-300 w-56 shadow-md">
+                            <div class="text-xs font-mono text-blue-400">STEP 1: DECOMPOSE</div>
+                            <div class="text-xs font-medium text-slate-200">Planner / Router AI</div>
+                        </div>
+
+                        <!-- Split Connector Lines -->
+                        <div class="w-full max-w-md h-6 relative">
+                            <svg class="w-full h-full text-slate-700" preserveAspectRatio="none" viewBox="0 0 100 24">
+                                <path d="M 50 0 L 50 10 L 15 10 L 15 24 M 50 10 L 50 24 M 50 10 L 85 10 L 85 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" />
+                                <path id="d-path-sub"
+                                    d="M 50 0 L 50 10 L 15 10 L 15 24 M 50 10 L 50 24 M 50 10 L 85 10 L 85 24"
+                                    fill="none" stroke="#3b82f6" stroke-width="2.5"
+                                    class="opacity-0 transition-opacity duration-300" />
+                            </svg>
+                        </div>
+
+                        <!-- 3 Subtask Nodes -->
+                        <div class="grid grid-cols-3 gap-3 w-full max-w-lg">
+                            <div id="d-sub-1"
+                                class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-center transition-all duration-300">
+                                <div class="text-[10px] font-mono text-slate-400">SUBTASK 1</div>
+                                <div class="text-xs font-medium text-slate-200 mt-0.5">Parse Data</div>
+                            </div>
+                            <div id="d-sub-2"
+                                class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-center transition-all duration-300">
+                                <div class="text-[10px] font-mono text-slate-400">SUBTASK 2</div>
+                                <div class="text-xs font-medium text-slate-200 mt-0.5">Analyze logic</div>
+                            </div>
+                            <div id="d-sub-3"
+                                class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-center transition-all duration-300">
+                                <div class="text-[10px] font-mono text-slate-400">SUBTASK 3</div>
+                                <div class="text-xs font-medium text-slate-200 mt-0.5">Format Schema</div>
+                            </div>
+                        </div>
+
+                        <!-- Merge Lines -->
+                        <div class="w-full max-w-md h-6 relative">
+                            <svg class="w-full h-full text-slate-700" preserveAspectRatio="none" viewBox="0 0 100 24">
+                                <path d="M 15 0 L 15 14 L 50 14 L 50 24 M 50 0 L 50 24 M 85 0 L 85 14 L 50 14 L 50 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" />
+                                <path id="d-path-agg"
+                                    d="M 15 0 L 15 14 L 50 14 L 50 24 M 50 0 L 50 24 M 85 0 L 85 14 L 50 14 L 50 24"
+                                    fill="none" stroke="#3b82f6" stroke-width="2.5"
+                                    class="opacity-0 transition-opacity duration-300" />
+                            </svg>
+                        </div>
+
+                        <!-- Aggregator Node -->
+                        <div id="d-node-agg"
+                            class="p-3 px-6 rounded-xl bg-blue-950/40 border border-blue-800/60 text-center transition-all duration-300 w-56 shadow-md">
+                            <div class="text-xs font-mono text-blue-400">STEP 2: AGGREGATE</div>
+                            <div class="text-xs font-medium text-slate-200">Synthesizer Agent</div>
+                        </div>
+
+                        <div class="h-4 w-0.5 bg-slate-700"></div>
+
+                        <!-- Final Result Node -->
+                        <div id="d-node-final"
+                            class="p-3.5 px-6 rounded-xl bg-slate-900 border border-slate-800 text-center transition-all duration-300 w-64">
+                            <div class="text-[10px] font-mono text-emerald-400">OUTPUT</div>
+                            <div class="text-xs font-bold text-white">Final High-Precision Result</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pattern 2: Enrichment, Not Replacement -->
+    <section id="enrichment" class="py-12 border-b border-slate-800 scroll-mt-16 bg-slate-900/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row-reverse items-start gap-8">
+                <!-- Right Details -->
+                <div class="w-full lg:w-5/12">
+                    <div
+                        class="flex items-center gap-2 text-emerald-400 text-xs font-mono uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-layer-group"></i> Pattern 02
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">Enrichment, Not Replacement</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        Use new information to selectively update or expand an existing result rather than regenerating
+                        everything from scratch.
+                    </p>
+
+                    <div
+                        class="p-4 rounded-xl bg-emerald-950/30 border border-emerald-900/50 text-emerald-200 text-xs leading-relaxed mb-6 font-mono">
+                        <strong class="text-emerald-400 font-bold block mb-1">CORE PRINCIPLE:</strong>
+                        Incremental improvement preserves state, avoids context collapse, and reduces latency compared
+                        to full rewrites.
+                    </div>
+
+                    <div class="space-y-3 text-xs text-slate-400 mb-6">
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
+                            <span><strong class="text-slate-200">Preserve Output:</strong> Lock verified output fields
+                                (e.g., base code structure).</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</span>
+                            <span><strong class="text-slate-200">Inject Context:</strong> Retrieve search results, user
+                                context, or dynamic tools.</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</span>
+                            <span><strong class="text-slate-200">Delta Update:</strong> Append missing details without
+                                disturbing verified content.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="runEnrichSim()"
+                            class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-600/30">
+                            <i class="fa-solid fa-play"></i> Simulate Enrichment
+                        </button>
+                        <button onclick="resetEnrichSim()"
+                            class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Left Visual Visualizer Container -->
+                <div
+                    class="w-full lg:w-7/12 bg-dark-card border border-slate-800 rounded-2xl p-6 glow-box-emerald relative">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-6">
+                        <span class="text-xs font-mono text-slate-400 flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full bg-emerald-500"></span> Flowchart: Enrichment Engine
+                        </span>
+                        <span id="enrich-status"
+                            class="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">Ready</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                        <!-- Source A: Existing Output -->
+                        <div id="e-box-existing"
+                            class="p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-mono text-emerald-400 font-semibold">Existing State</span>
+                                <span
+                                    class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">Preserved</span>
+                            </div>
+                            <div
+                                class="text-xs font-mono text-slate-300 bg-black/40 p-2.5 rounded border border-slate-800">
+                                { <br>
+                                &nbsp;&nbsp;"title": "Quarterly Report",<br>
+                                &nbsp;&nbsp;"status": "Draft"<br>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Source B: New Information -->
+                        <div id="e-box-info" class="p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-mono text-blue-400 font-semibold">New Context</span>
+                                <span
+                                    class="text-[10px] bg-blue-900/40 text-blue-300 px-1.5 py-0.5 rounded">Delta</span>
+                            </div>
+                            <div
+                                class="text-xs font-mono text-slate-300 bg-black/40 p-2.5 rounded border border-slate-800">
+                                + Live Financial Metrics<br>
+                                + Q4 Citation Sources
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enrichment Transformation Node -->
+                    <div class="flex items-center justify-center my-4">
+                        <div id="e-node-enrich"
+                            class="w-full max-w-md p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-800/60 text-center transition-all duration-300">
+                            <div class="text-xs font-mono text-emerald-400 font-bold mb-1">
+                                <i class="fa-solid fa-microchip mr-1"></i> ENRICHMENT PROCESSOR
+                            </div>
+                            <div class="text-xs text-slate-300">Merges Context into Preserved Model State</div>
+                        </div>
+                    </div>
+
+                    <!-- Final Improved Output -->
+                    <div id="e-box-result"
+                        class="p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all duration-300">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-mono text-emerald-400 font-bold">Improved Output (Preserved +
+                                Enriched)</span>
+                            <span id="e-badge-final"
+                                class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">Waiting...</span>
+                        </div>
+                        <div id="e-code-result"
+                            class="text-xs font-mono text-slate-400 bg-black/60 p-3 rounded border border-slate-800 min-h-[90px]">
+                            // Run simulation to observe incremental state enrichment without full regeneration...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pattern 3: Reflection -->
+    <section id="reflection" class="py-12 border-b border-slate-800 scroll-mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-start gap-8">
+                <!-- Left Details -->
+                <div class="w-full lg:w-5/12">
+                    <div class="flex items-center gap-2 text-amber-400 text-xs font-mono uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-rotate-right"></i> Pattern 03
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">Reflection Loop</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        Introduce an explicit verification step before accepting an output. Separate the generation
+                        model from the evaluation model to catch hallucinations and logic bugs.
+                    </p>
+
+                    <div
+                        class="p-4 rounded-xl bg-amber-950/30 border border-amber-900/50 text-amber-200 text-xs leading-relaxed mb-6 font-mono">
+                        <strong class="text-amber-400 font-bold block mb-1">CORE PRINCIPLE:</strong>
+                        Separate generation from verification. AI self-evaluates outputs against explicit rules before
+                        releasing.
+                    </div>
+
+                    <div class="space-y-3 text-xs text-slate-400 mb-6">
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
+                            <span><strong class="text-slate-200">Generate:</strong> Produce an initial draft
+                                response.</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</span>
+                            <span><strong class="text-slate-200">Reflect:</strong> Critic agent inspects output for
+                                errors, missed edge cases, or format flaws.</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-amber-500/10 text-amber-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</span>
+                            <span><strong class="text-slate-200">Correct or Accept:</strong> If issues are found,
+                                re-route to generator with feedback. Repeat until valid.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="runReflectionSim()"
+                            class="px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-amber-600/30">
+                            <i class="fa-solid fa-play"></i> Trigger Reflection Loop
+                        </button>
+                        <button onclick="resetReflectionSim()"
+                            class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Visual Visualizer -->
+                <div
+                    class="w-full lg:w-7/12 bg-dark-card border border-slate-800 rounded-2xl p-6 glow-box-amber relative">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-6">
+                        <span class="text-xs font-mono text-slate-400 flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full bg-amber-500"></span> Loop Diagram: Reflection & Revision
+                        </span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-400 font-mono">Iter Loop:</span>
+                            <span id="r-iter-count"
+                                class="text-xs font-bold font-mono px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Circular Feedback Loop Visualizer -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 relative">
+                        <!-- Generator Node -->
+                        <div id="r-node-gen"
+                            class="p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all duration-300">
+                            <div class="flex items-center gap-2 text-xs font-mono text-slate-300 font-bold mb-2">
+                                <i class="fa-solid fa-pen-nib text-amber-400"></i> Generator Agent
+                            </div>
+                            <div class="text-xs text-slate-400 mb-3">Drafting code or text solution...</div>
+                            <div id="r-gen-output"
+                                class="text-xs font-mono p-2 rounded bg-black/50 border border-slate-800 text-slate-400">
+                                Pending generation...
+                            </div>
+                        </div>
+
+                        <!-- Reflector / Evaluator Node -->
+                        <div id="r-node-critic"
+                            class="p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all duration-300">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2 text-xs font-mono text-slate-300 font-bold">
+                                    <i class="fa-solid fa-magnifying-glass-chart text-amber-400"></i> Evaluator /
+                                    Inspector
+                                </div>
+                            </div>
+                            <div class="text-xs text-slate-400 mb-3">Checking for hallucinations/bugs...</div>
+                            <div id="r-critic-output"
+                                class="text-xs font-mono p-2 rounded bg-black/50 border border-slate-800 text-slate-400">
+                                Idle
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loop Decision Fork -->
+                    <div class="mt-6 p-4 rounded-xl bg-slate-900 border border-slate-800">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div>
+                                <div class="text-xs font-mono text-slate-400 uppercase">Decision Fork</div>
+                                <div id="r-decision-text" class="text-sm font-semibold text-white">Awaiting Evaluation
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <div id="r-badge-issues"
+                                    class="px-3 py-1 rounded border text-xs font-mono bg-slate-800 text-slate-400 border-slate-700">
+                                    Issues: Unknown
+                                </div>
+                                <div id="r-badge-final"
+                                    class="px-3 py-1 rounded border text-xs font-mono bg-slate-800 text-slate-400 border-slate-700">
+                                    Status: Unverified
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STREAMING_CHUNK:Rendering Pattern 4: Branch -> Resolve -> Merge... -->
+    <!-- Pattern 4: Branch -> Resolve -> Merge -->
+    <section id="branch-merge" class="py-12 border-b border-slate-800 scroll-mt-16 bg-slate-900/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row-reverse items-start gap-8">
+                <!-- Right Details -->
+                <div class="w-full lg:w-5/12">
+                    <div
+                        class="flex items-center gap-2 text-purple-400 text-xs font-mono uppercase tracking-wider mb-2">
+                        <i class="fa-solid fa-code-fork"></i> Pattern 04
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-4">Branch → Resolve → Merge</h2>
+                    <p class="text-slate-300 text-sm leading-relaxed mb-4">
+                        Keep the primary workflow thread running safely while isolating uncertain subproblems or
+                        long-running debugging steps into temporary sub-agent branches.
+                    </p>
+
+                    <div
+                        class="p-4 rounded-xl bg-purple-950/30 border border-purple-900/50 text-purple-200 text-xs leading-relaxed mb-6 font-mono">
+                        <strong class="text-purple-400 font-bold block mb-1">KEY IDEA:</strong>
+                        Don't block or crash the main agent pipeline. Fork the problem, fix and validate in isolation,
+                        and merge back clean context.
+                    </div>
+
+                    <div class="space-y-3 text-xs text-slate-400 mb-6">
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">1</span>
+                            <span><strong class="text-slate-200">Branch:</strong> Fork state when encountering an
+                                ambiguity, error, or mini-task.</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">2</span>
+                            <span><strong class="text-slate-200">Resolve:</strong> Mini-agent resolves the isolated
+                                issue without corrupting main memory.</span>
+                        </div>
+                        <div class="flex items-start gap-2.5">
+                            <span
+                                class="w-5 h-5 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">3</span>
+                            <span><strong class="text-slate-200">Merge & Continue:</strong> Integrate only the verified
+                                fix and continue primary execution.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="runBranchSim()"
+                            class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-medium text-xs transition flex items-center gap-2 shadow-lg shadow-purple-600/30">
+                            <i class="fa-solid fa-play"></i> Simulate Git-Style Branch
+                        </button>
+                        <button onclick="resetBranchSim()"
+                            class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Left Visual Visualizer -->
+                <div
+                    class="w-full lg:w-7/12 bg-dark-card border border-slate-800 rounded-2xl p-6 glow-box-purple relative">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3 mb-4">
+                        <span class="text-xs font-mono text-slate-400 flex items-center gap-2">
+                            <span class="h-2 w-2 rounded-full bg-purple-500"></span> Interactive Git-Style DAG Diagram
+                        </span>
+                        <span id="b-status"
+                            class="text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">Main Branch
+                            Active</span>
+                    </div>
+
+                    <!-- Git Branch Canvas Visual -->
+                    <div
+                        class="relative py-4 min-h-[300px] flex flex-col justify-center bg-slate-950/60 rounded-xl border border-slate-800/80 p-4 overflow-x-auto">
+
+                        <!-- Git Graph Canvas / SVG -->
+                        <div class="min-w-[500px] relative">
+                            <!-- SVG Connections -->
+                            <svg class="w-full h-48 absolute inset-0 pointer-events-none z-0" viewBox="0 0 500 180"
+                                preserveAspectRatio="xMidYMid meet">
+                                <defs>
+                                    <linearGradient id="mainGradient" x1="60" y1="45" x2="440" y2="45" gradientUnits="userSpaceOnUse">
+                                        <stop offset="0%" stop-color="#3b82f6" />
+                                        <stop offset="50%" stop-color="#60a5fa" />
+                                        <stop offset="100%" stop-color="#10b981" />
+                                    </linearGradient>
+                                    <linearGradient id="branchGradient" x1="90" y1="45" x2="410" y2="45" gradientUnits="userSpaceOnUse">
+                                        <stop offset="0%" stop-color="#a855f7" />
+                                        <stop offset="70%" stop-color="#c084fc" />
+                                        <stop offset="100%" stop-color="#10b981" />
+                                    </linearGradient>
+                                </defs>
+
+                                <!-- Main Branch Rail Line -->
+                                <path d="M 60 45 L 440 45" stroke="#334155" stroke-width="4" stroke-dasharray="6 6" />
+                                <path id="git-main-path" d="M 60 45 L 440 45" stroke="url(#mainGradient)"
+                                    stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="380" stroke-dashoffset="380"
+                                    class="transition-all duration-700" />
+
+                                <!-- Fork Curve (Main M1 -> Branch B1 -> Merge M3) -->
+                                <path d="M 90 45 C 130 45, 130 135, 170 135 L 330 135 C 370 135, 370 45, 410 45"
+                                    stroke="#334155" stroke-width="3" fill="none" stroke-dasharray="4 4" />
+                                <path id="git-branch-path"
+                                    d="M 90 45 C 130 45, 130 135, 170 135 L 330 135 C 370 135, 370 45, 410 45"
+                                    stroke="url(#branchGradient)" stroke-width="3.5" fill="none" stroke-dasharray="600"
+                                    stroke-dashoffset="600" class="transition-all duration-700" />
+                            </svg>
+
+                            <!-- DAG Nodes Container -->
+                            <div class="relative z-10 grid grid-rows-2 gap-12 py-2">
+                                <!-- Main Branch Line Nodes -->
+                                <div class="flex items-center justify-between px-2">
+                                    <!-- Node M1 -->
+                                    <div id="git-m1"
+                                        class="flex flex-col items-center group cursor-pointer transition-all duration-300">
+                                        <div
+                                            class="flex items-center gap-1.5 mb-1 bg-blue-500/10 border border-blue-500/30 px-2 py-0.5 rounded text-[10px] font-mono text-blue-400">
+                                            <i class="fa-solid fa-code-commit text-[9px]"></i> main
+                                        </div>
+                                        <div
+                                            class="w-9 h-9 rounded-full bg-slate-900 border-2 border-blue-500 flex items-center justify-center text-blue-400 text-xs font-bold shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
+                                            c1
+                                        </div>
+                                        <span class="text-[10px] font-mono text-slate-300 mt-1 font-semibold">Initial
+                                            Context</span>
+                                    </div>
+
+                                    <!-- Node M2 -->
+                                    <div id="git-m2"
+                                        class="flex flex-col items-center group cursor-pointer transition-all duration-300">
+                                        <div
+                                            class="flex items-center gap-1.5 mb-1 bg-slate-800 border border-slate-700 px-2 py-0.5 rounded text-[10px] font-mono text-slate-400">
+                                            <i class="fa-solid fa-code-commit text-[9px]"></i> main
+                                        </div>
+                                        <div
+                                            class="w-9 h-9 rounded-full bg-slate-900 border-2 border-slate-700 flex items-center justify-center text-slate-400 text-xs font-bold group-hover:scale-110 transition-all">
+                                            c2
+                                        </div>
+                                        <span class="text-[10px] font-mono text-slate-400 mt-1">Main Stays Active</span>
+                                    </div>
+
+                                    <!-- Node M3 (Merge Commit) -->
+                                    <div id="git-m3"
+                                        class="flex flex-col items-center group cursor-pointer transition-all duration-300">
+                                        <div
+                                            class="flex items-center gap-1.5 mb-1 bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 rounded text-[10px] font-mono text-emerald-400">
+                                            <i class="fa-solid fa-code-merge text-[9px]"></i> merge
+                                        </div>
+                                        <div
+                                            class="w-9 h-9 rounded-full bg-slate-900 border-2 border-slate-700 flex items-center justify-center text-slate-400 text-xs font-bold group-hover:scale-110 transition-all">
+                                            c3
+                                        </div>
+                                        <span class="text-[10px] font-mono text-slate-400 mt-1 font-semibold">State
+                                            Integrated</span>
+                                    </div>
+                                </div>
+
+                                <!-- Feature / Sub-Agent Branch Nodes -->
+                                <div class="flex items-center justify-center gap-16 px-12">
+                                    <!-- Node B1 -->
+                                    <div id="git-b1"
+                                        class="flex flex-col items-center group cursor-pointer transition-all duration-300 opacity-50">
+                                        <div
+                                            class="flex items-center gap-1.5 mb-1 bg-purple-500/10 border border-purple-500/30 px-2 py-0.5 rounded text-[10px] font-mono text-purple-400">
+                                            <i class="fa-solid fa-code-branch text-[9px]"></i> feature/isolate-task
+                                        </div>
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-slate-900 border-2 border-purple-500/50 flex items-center justify-center text-purple-400 text-xs font-bold group-hover:scale-110 transition-all">
+                                            b1
+                                        </div>
+                                        <span class="text-[10px] font-mono text-slate-400 mt-1">Fork & Isolate</span>
+                                    </div>
+
+                                    <!-- Node B2 -->
+                                    <div id="git-b2"
+                                        class="flex flex-col items-center group cursor-pointer transition-all duration-300 opacity-50">
+                                        <div
+                                            class="flex items-center gap-1.5 mb-1 bg-purple-500/10 border border-purple-500/30 px-2 py-0.5 rounded text-[10px] font-mono text-purple-400">
+                                            <i class="fa-solid fa-check text-[9px]"></i> validated
+                                        </div>
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-slate-900 border-2 border-purple-500/50 flex items-center justify-center text-purple-400 text-xs font-bold group-hover:scale-110 transition-all">
+                                            b2
+                                        </div>
+                                        <span class="text-[10px] font-mono text-slate-400 mt-1">Resolve & Test</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mini Status Card below DAG -->
+                        <div id="git-info-card"
+                            class="mt-4 p-3 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs font-mono">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+                                <span id="git-info-text" class="text-slate-300">Click "Simulate Git-Style Branch" to run
+                                    execution...</span>
+                            </div>
+                            <span id="git-commit-hash"
+                                class="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded">HEAD: main
+                                (c1)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive AI Workflow Sandbox -->
+    <section id="sandbox" class="py-12 border-b border-slate-800 scroll-mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-10">
+                <span
+                    class="text-xs font-mono px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                    Interactive Playground
+                </span>
+                <h2 class="text-3xl font-bold text-white mt-3 mb-2">Live AI Workflow Execution Simulator</h2>
+                <p class="text-xs sm:text-sm text-slate-400">
+                    Select a complex task scenario and toggle which Mini Patterns to apply. Watch live execution logs
+                    and state visualizer.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Sandbox Controls Column -->
+                <div class="lg:col-span-5 bg-dark-card border border-slate-800 rounded-2xl p-5 space-y-5">
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 uppercase mb-2">1. Select AI Task
+                            Scenario</label>
+                        <select id="sb-task"
+                            class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-blue-500">
+                            <option value="code">Refactor Legacy Codebase with Security Patching</option>
+                            <option value="research">Aggregate & Synthesize 10 Research Papers</option>
+                            <option value="customer">Automate Enterprise Refund & Dispute Resolution</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-mono text-slate-400 uppercase mb-2">2. Enabled Patterns</label>
+                        <div class="space-y-2">
+                            <label
+                                class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
+                                <span class="text-xs font-medium text-slate-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-sitemap text-blue-400"></i> Pattern 1: Divide & Conquer
+                                </span>
+                                <input type="checkbox" id="chk-divide" checked
+                                    class="rounded bg-slate-800 border-slate-700 text-blue-600 focus:ring-0">
+                            </label>
+                            <label
+                                class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
+                                <span class="text-xs font-medium text-slate-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-layer-group text-emerald-400"></i> Pattern 2: Enrichment
+                                </span>
+                                <input type="checkbox" id="chk-enrich" checked
+                                    class="rounded bg-slate-800 border-slate-700 text-emerald-600 focus:ring-0">
+                            </label>
+                            <label
+                                class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
+                                <span class="text-xs font-medium text-slate-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-rotate-right text-amber-400"></i> Pattern 3: Reflection Loop
+                                </span>
+                                <input type="checkbox" id="chk-reflect" checked
+                                    class="rounded bg-slate-800 border-slate-700 text-amber-600 focus:ring-0">
+                            </label>
+                            <label
+                                class="flex items-center justify-between p-2.5 rounded-lg bg-slate-900 border border-slate-800 cursor-pointer hover:border-slate-700">
+                                <span class="text-xs font-medium text-slate-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-code-fork text-purple-400"></i> Pattern 4: Branch & Merge
+                                </span>
+                                <input type="checkbox" id="chk-branch" checked
+                                    class="rounded bg-slate-800 border-slate-700 text-purple-600 focus:ring-0">
+                            </label>
+                        </div>
+                    </div>
+
+                    <button onclick="executeSandboxWorkflow()" id="sb-run-btn"
+                        class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs transition shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> Run Agentic Workflow
+                    </button>
+                </div>
+
+                <!-- Live Stream Console & Visual State -->
+                <div
+                    class="lg:col-span-7 bg-dark-card border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
+                            <span class="text-xs font-mono text-slate-400 flex items-center gap-2">
+                                <i class="fa-solid fa-terminal text-blue-400"></i> Workflow Execution Logs
+                            </span>
+                            <span id="sb-status-pill"
+                                class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+                                Ready
+                            </span>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div
+                            class="w-full bg-slate-900 rounded-full h-1.5 mb-4 overflow-hidden border border-slate-800">
+                            <div id="sb-progress"
+                                class="bg-gradient-to-r from-blue-500 via-emerald-400 to-purple-500 h-1.5 w-0 transition-all duration-300">
+                            </div>
+                        </div>
+
+                        <!-- Console Output -->
+                        <div id="sb-console"
+                            class="font-mono text-xs text-slate-300 bg-black/80 rounded-xl p-4 h-64 overflow-y-auto border border-slate-800 space-y-2">
+                            <div class="text-slate-500">// System initialized. Configure parameters and click "Run
+                                Agentic Workflow".</div>
+                        </div>
+                    </div>
+
+                    <div id="sb-metrics"
+                        class="mt-4 pt-3 border-t border-slate-800/80 grid grid-cols-3 gap-2 text-center text-xs">
+                        <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                            <div class="text-[10px] text-slate-400 font-mono">RELIABILITY</div>
+                            <div id="m-rel" class="font-bold text-emerald-400">99.4%</div>
+                        </div>
+                        <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                            <div class="text-[10px] text-slate-400 font-mono">TOKEN REUSE</div>
+                            <div id="m-reuse" class="font-bold text-blue-400">78%</div>
+                        </div>
+                        <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                            <div class="text-[10px] text-slate-400 font-mono">RETRIES</div>
+                            <div id="m-retry" class="font-bold text-amber-400">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pattern Summary & Comparison Matrix -->
+    <section id="matrix" class="py-12 border-b border-slate-800 scroll-mt-16 bg-slate-900/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2">The Pattern Matrix</h2>
+                <p class="text-xs sm:text-sm text-slate-400">
+                    A concise architectural comparison of the 4 core mechanisms for building predictable AI systems.
+                </p>
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-dark-card shadow-xl">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 bg-slate-900/80 text-slate-300 font-mono">
+                            <th class="p-4 font-semibold">Pattern</th>
+                            <th class="p-4 font-semibold">Purpose</th>
+                            <th class="p-4 font-semibold">Core Mechanism</th>
+                            <th class="p-4 font-semibold">When To Use</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/80 text-slate-300">
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="p-4 font-semibold text-blue-400 font-mono flex items-center gap-2">
+                                <i class="fa-solid fa-sitemap"></i> Divide & Conquer
+                            </td>
+                            <td class="p-4 font-medium text-slate-200">Control complexity</td>
+                            <td class="p-4 text-slate-400">Split a large task into smaller, independent subtasks →
+                                Aggregate</td>
+                            <td class="p-4 text-slate-400">Multi-step document processing, long code synthesis,
+                                multi-variable analysis</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="p-4 font-semibold text-emerald-400 font-mono flex items-center gap-2">
+                                <i class="fa-solid fa-layer-group"></i> Enrichment, Not Replacement
+                            </td>
+                            <td class="p-4 font-medium text-slate-200">Preserve stability</td>
+                            <td class="p-4 text-slate-400">Improve existing state with new context without full
+                                regeneration</td>
+                            <td class="p-4 text-slate-400">Live search integration, updating structured JSON schemas,
+                                draft refinement</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="p-4 font-semibold text-amber-400 font-mono flex items-center gap-2">
+                                <i class="fa-solid fa-rotate-right"></i> Reflection
+                            </td>
+                            <td class="p-4 font-medium text-slate-200">Catch errors & hallucinations</td>
+                            <td class="p-4 text-slate-400">Generate → Inspect via critic model → Correct before
+                                finalizing</td>
+                            <td class="p-4 text-slate-400">Code syntax checks, compliance validation, mathematical
+                                reasoning</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="p-4 font-semibold text-purple-400 font-mono flex items-center gap-2">
+                                <i class="fa-solid fa-code-fork"></i> Branch → Resolve → Merge
+                            </td>
+                            <td class="p-4 font-medium text-slate-200">Isolate failures</td>
+                            <td class="p-4 text-slate-400">Fork main thread → solve sub-problem in isolation → merge
+                                validated fix</td>
+                            <td class="p-4 text-slate-400">Long-running autonomous agents, bug fix loops, optional tool
+                                discovery</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Overall Philosophy Banner -->
+            <div
+                class="mt-8 p-6 rounded-2xl bg-gradient-to-r from-blue-950/40 via-indigo-950/30 to-purple-950/40 border border-indigo-900/50 text-center">
+                <div class="text-xs font-mono text-indigo-400 uppercase tracking-widest mb-2">Unifying Philosophy</div>
+                <p class="text-sm sm:text-base text-slate-200 max-w-3xl mx-auto font-medium">
+                    "Decompose complexity, preserve useful state, verify continuously, and isolate problems without
+                    disrupting the main workflow."
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-8 bg-dark-bg text-center text-xs text-slate-500 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4">
+            <p>Mini Patterns for Stable AI Workflows — Interactive Visual Specification</p>
+        </div>
+    </footer>
+
+    <script>
+        let divideStep = 0;
+        function runDivideSim() {
+            const status = document.getElementById('divide-status');
+            const mainNode = document.getElementById('d-node-main');
+            const decompNode = document.getElementById('d-node-decomp');
+            const pathSub = document.getElementById('d-path-sub');
+            const sub1 = document.getElementById('d-sub-1');
+            const sub2 = document.getElementById('d-sub-2');
+            const sub3 = document.getElementById('d-sub-3');
+            const pathAgg = document.getElementById('d-path-agg');
+            const aggNode = document.getElementById('d-node-agg');
+            const finalNode = document.getElementById('d-node-final');
+
+            resetDivideSim();
+
+            status.innerText = "Step 1: Decomposing";
+            status.className = "text-xs font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30";
+
+            mainNode.classList.add('border-blue-500', 'bg-blue-900/30');
+
+            setTimeout(() => {
+                decompNode.classList.add('ring-2', 'ring-blue-500', 'bg-blue-900/50');
+                pathSub.classList.remove('opacity-0');
+            }, 500);
+
+            setTimeout(() => {
+                status.innerText = "Step 2: Parallel Subtasks";
+                sub1.classList.add('border-blue-500', 'bg-blue-900/40', 'scale-105');
+                sub2.classList.add('border-blue-500', 'bg-blue-900/40', 'scale-105');
+                sub3.classList.add('border-blue-500', 'bg-blue-900/40', 'scale-105');
+            }, 1200);
+
+            setTimeout(() => {
+                status.innerText = "Step 3: Aggregating";
+                pathAgg.classList.remove('opacity-0');
+                aggNode.classList.add('ring-2', 'ring-blue-500', 'bg-blue-900/50');
+            }, 2000);
+
+            setTimeout(() => {
+                status.innerText = "Complete";
+                status.className = "text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                finalNode.classList.add('border-emerald-500', 'bg-emerald-950/40', 'scale-105');
+            }, 2800);
+        }
+
+        function resetDivideSim() {
+            document.getElementById('divide-status').innerText = "Idle";
+            document.getElementById('divide-status').className = "text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400";
+
+            ['d-node-main', 'd-node-decomp', 'd-sub-1', 'd-sub-2', 'd-sub-3', 'd-node-agg', 'd-node-final'].forEach(id => {
+                const el = document.getElementById(id);
+                el.className = el.className.replace(/border-blue-500|bg-blue-900\/30|bg-blue-900\/40|bg-blue-900\/50|ring-2|ring-blue-500|border-emerald-500|bg-emerald-950\/40|scale-105/g, '').trim();
+            });
+            document.getElementById('d-path-sub').classList.add('opacity-0');
+            document.getElementById('d-path-agg').classList.add('opacity-0');
+        }
+
+        function runEnrichSim() {
+            const status = document.getElementById('enrich-status');
+            const existBox = document.getElementById('e-box-existing');
+            const infoBox = document.getElementById('e-box-info');
+            const enrichNode = document.getElementById('e-node-enrich');
+            const resultBox = document.getElementById('e-box-result');
+            const resultCode = document.getElementById('e-code-result');
+            const badge = document.getElementById('e-badge-final');
+
+            status.innerText = "Merging Info...";
+            status.className = "text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400";
+
+            existBox.classList.add('border-emerald-500', 'bg-emerald-950/20');
+            infoBox.classList.add('border-blue-500', 'bg-blue-950/20');
+
+            setTimeout(() => {
+                enrichNode.classList.add('ring-2', 'ring-emerald-500', 'scale-105');
+            }, 600);
+
+            setTimeout(() => {
+                resultBox.classList.add('border-emerald-500', 'bg-emerald-950/30');
+                badge.innerText = "Preserved & Extended";
+                badge.className = "text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30";
+
+                resultCode.innerHTML = `<span class="text-slate-400">{</span><br>` +
+                    `&nbsp;&nbsp;<span class="text-emerald-400">"title": "Quarterly Report", // (Preserved)</span><br>` +
+                    `&nbsp;&nbsp;<span class="text-emerald-400">"status": "Draft", // (Preserved)</span><br>` +
+                    `&nbsp;&nbsp;<span class="text-amber-300">"metrics": { "Q4_Revenue": "$2.4M", "Growth": "+18%" }, // (Enriched)</span><br>` +
+                    `&nbsp;&nbsp;<span class="text-amber-300">"verified_sources": ["SEC-10K", "Internal Audit"] // (Enriched)</span><br>` +
+                    `<span class="text-slate-400">}</span>`;
+
+                status.innerText = "Success (No Regeneration)";
+            }, 1400);
+        }
+
+        function resetEnrichSim() {
+            document.getElementById('enrich-status').innerText = "Ready";
+            document.getElementById('enrich-status').className = "text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400";
+
+            document.getElementById('e-box-existing').className = "p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all";
+            document.getElementById('e-box-info').className = "p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all";
+            document.getElementById('e-node-enrich').className = "w-full max-w-md p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-800/60 text-center transition-all duration-300";
+            document.getElementById('e-box-result').className = "p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all duration-300";
+
+            document.getElementById('e-badge-final').innerText = "Waiting...";
+            document.getElementById('e-badge-final').className = "text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded";
+
+            document.getElementById('e-code-result').innerHTML = "// Run simulation to observe incremental state enrichment without full regeneration...";
+        }
+
+        function runReflectionSim() {
+            const iterCount = document.getElementById('r-iter-count');
+            const genNode = document.getElementById('r-node-gen');
+            const genOut = document.getElementById('r-gen-output');
+            const criticNode = document.getElementById('r-node-critic');
+            const criticOut = document.getElementById('r-critic-output');
+            const decisionText = document.getElementById('r-decision-text');
+            const badgeIssues = document.getElementById('r-badge-issues');
+            const badgeFinal = document.getElementById('r-badge-final');
+
+            resetReflectionSim();
+
+            // Iteration 1: Draft with bug
+            iterCount.innerText = "1";
+            genNode.classList.add('border-amber-500', 'bg-amber-950/20');
+            genOut.innerText = "def parse_data(raw): return raw.split(',') # Missed null check";
+
+            setTimeout(() => {
+                criticNode.classList.add('border-amber-500', 'bg-amber-950/20');
+                criticOut.innerText = "❌ Issue Detected: Fails if 'raw' is None or contains trailing whitespace.";
+                badgeIssues.innerText = "Issues: Found (1)";
+                badgeIssues.className = "px-3 py-1 rounded text-xs font-mono bg-red-500/20 text-red-400 border border-red-500/30";
+                decisionText.innerText = "Rejecting Draft → Requesting Correction";
+            }, 1000);
+
+            // Iteration 2: Correction
+            setTimeout(() => {
+                iterCount.innerText = "2";
+                genOut.innerText = "def parse_data(raw):\n    if not raw: return []\n    return [x.strip() for x in raw.split(',')]";
+                genNode.classList.add('ring-2', 'ring-amber-500');
+            }, 2200);
+
+            setTimeout(() => {
+                criticOut.innerText = "✅ Verification Passed! Zero syntax or boundary errors.";
+                badgeIssues.innerText = "Issues: Clean";
+                badgeIssues.className = "px-3 py-1 rounded text-xs font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                badgeFinal.innerText = "Status: ACCEPTED";
+                badgeFinal.className = "px-3 py-1 rounded text-xs font-mono bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold";
+                decisionText.innerText = "Verified Safe for Production Execution";
+            }, 3200);
+        }
+
+        function resetReflectionSim() {
+            document.getElementById('r-iter-count').innerText = "0";
+            document.getElementById('r-node-gen').className = "p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all duration-300";
+            document.getElementById('r-gen-output').innerText = "Pending generation...";
+            document.getElementById('r-node-critic').className = "p-4 rounded-xl bg-slate-900 border border-slate-800 transition-all duration-300";
+            document.getElementById('r-critic-output').innerText = "Idle";
+            document.getElementById('r-decision-text').innerText = "Awaiting Evaluation";
+            document.getElementById('r-badge-issues').innerText = "Issues: Unknown";
+            document.getElementById('r-badge-issues').className = "px-3 py-1 rounded border text-xs font-mono bg-slate-800 text-slate-400 border-slate-700";
+            document.getElementById('r-badge-final').innerText = "Status: Unverified";
+            document.getElementById('r-badge-final').className = "px-3 py-1 rounded border text-xs font-mono bg-slate-800 text-slate-400 border-slate-700";
+        }
+
+        function runBranchSim() {
+            const status = document.getElementById('b-status');
+            const mainPath = document.getElementById('git-main-path');
+            const branchPath = document.getElementById('git-branch-path');
+            const m1 = document.getElementById('git-m1');
+            const m2 = document.getElementById('git-m2');
+            const m3 = document.getElementById('git-m3');
+            const b1 = document.getElementById('git-b1');
+            const b2 = document.getElementById('git-b2');
+            const infoText = document.getElementById('git-info-text');
+            const commitHash = document.getElementById('git-commit-hash');
+
+            resetBranchSim();
+
+            // Step 1: Main running
+            status.innerText = "Main Pipeline Active";
+            status.className = "text-xs font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30";
+            if (mainPath) mainPath.style.strokeDashoffset = "190";
+            if (infoText) infoText.innerText = "Main pipeline initialized at commit c1 (Context stable).";
+            if (commitHash) commitHash.innerText = "HEAD: main (c1)";
+
+            // Step 2: Fork sub-branch feature/isolate-task
+            setTimeout(() => {
+                status.innerText = "Forked: feature/isolate-task";
+                status.className = "text-xs font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30";
+                if (branchPath) branchPath.style.strokeDashoffset = "300";
+                if (b1) {
+                    b1.classList.remove('opacity-50');
+                    const c = b1.querySelector('div:nth-child(2)');
+                    if (c) c.className = "w-8 h-8 rounded-full bg-slate-900 border-2 border-purple-400 text-purple-300 text-xs font-bold shadow-lg shadow-purple-500/30 scale-110 transition-all";
+                }
+                if (infoText) infoText.innerText = "🌿 Forked sub-agent branch to solve isolated error without blocking main thread.";
+                if (commitHash) commitHash.innerText = "HEAD: feature/isolate-task (b1)";
+            }, 900);
+
+            // Step 3: Main stays active (c2) while sub-branch resolves (b2)
+            setTimeout(() => {
+                if (mainPath) mainPath.style.strokeDashoffset = "95";
+                if (m2) {
+                    const c = m2.querySelector('div:nth-child(2)');
+                    if (c) c.className = "w-9 h-9 rounded-full bg-slate-900 border-2 border-blue-400 text-blue-300 text-xs font-bold shadow-lg shadow-blue-500/20 scale-105 transition-all";
+                }
+                if (b2) {
+                    b2.classList.remove('opacity-50');
+                    const c = b2.querySelector('div:nth-child(2)');
+                    if (c) c.className = "w-8 h-8 rounded-full bg-slate-900 border-2 border-emerald-400 text-emerald-300 text-xs font-bold shadow-lg shadow-emerald-500/30 scale-110 transition-all";
+                }
+                if (infoText) infoText.innerText = "✅ Sub-agent resolved & verified fix (b2). Main thread continued running (c2).";
+                if (commitHash) commitHash.innerText = "HEAD: feature/isolate-task (b2)";
+            }, 1900);
+
+            // Step 4: Merge back into Main (c3)
+            setTimeout(() => {
+                if (branchPath) branchPath.style.strokeDashoffset = "0";
+                if (mainPath) mainPath.style.strokeDashoffset = "0";
+
+                if (m3) {
+                    const c = m3.querySelector('div:nth-child(2)');
+                    if (c) c.className = "w-9 h-9 rounded-full bg-emerald-950 border-2 border-emerald-400 text-emerald-300 text-xs font-bold shadow-lg shadow-emerald-500/40 scale-110 transition-all";
+                }
+                status.innerText = "Merged to Main (Fast-Forward / Clean)";
+                status.className = "text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                if (infoText) infoText.innerText = "🔀 Merged verified fix into main execution path (c3). Pipeline running cleanly.";
+                if (commitHash) commitHash.innerText = "HEAD: main (c3: merge)";
+            }, 2900);
+        }
+
+        function resetBranchSim() {
+            const status = document.getElementById('b-status');
+            if (status) {
+                status.innerText = "Main Branch Active";
+                status.className = "text-xs font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400";
+            }
+
+            const mainPath = document.getElementById('git-main-path');
+            const branchPath = document.getElementById('git-branch-path');
+            if (mainPath) mainPath.style.strokeDashoffset = "380";
+            if (branchPath) branchPath.style.strokeDashoffset = "600";
+
+            ['git-m1', 'git-m2', 'git-m3'].forEach(id => {
+                const node = document.getElementById(id);
+                if (node) {
+                    const circle = node.querySelector('div:nth-child(2)');
+                    if (circle) circle.className = "w-9 h-9 rounded-full bg-slate-900 border-2 border-slate-700 flex items-center justify-center text-slate-400 text-xs font-bold transition-all";
+                }
+            });
+
+            const m1Circle = document.getElementById('git-m1')?.querySelector('div:nth-child(2)');
+            if (m1Circle) m1Circle.className = "w-9 h-9 rounded-full bg-slate-900 border-2 border-blue-500 flex items-center justify-center text-blue-400 text-xs font-bold transition-all";
+
+            ['git-b1', 'git-b2'].forEach(id => {
+                const node = document.getElementById(id);
+                if (node) {
+                    node.classList.add('opacity-50');
+                    const circle = node.querySelector('div:nth-child(2)');
+                    if (circle) circle.className = "w-8 h-8 rounded-full bg-slate-900 border-2 border-purple-500/50 flex items-center justify-center text-purple-400 text-xs font-bold transition-all";
+                }
+            });
+
+            const infoText = document.getElementById('git-info-text');
+            const commitHash = document.getElementById('git-commit-hash');
+            if (infoText) infoText.innerText = 'Click "Simulate Git-Style Branch" to run execution...';
+            if (commitHash) commitHash.innerText = "HEAD: main (c1)";
+        }
+
+        function executeSandboxWorkflow() {
+            const consoleEl = document.getElementById('sb-console');
+            const progressBar = document.getElementById('sb-progress');
+            const statusPill = document.getElementById('sb-status-pill');
+            const task = document.getElementById('sb-task').value;
+            const btn = document.getElementById('sb-run-btn');
+
+            const useDivide = document.getElementById('chk-divide').checked;
+            const useEnrich = document.getElementById('chk-enrich').checked;
+            const useReflect = document.getElementById('chk-reflect').checked;
+            const useBranch = document.getElementById('chk-branch').checked;
+
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            consoleEl.innerHTML = `<div class="text-blue-400">[START] Initializing workflow execution for task: <span class="text-white">${task}</span></div>`;
+            progressBar.style.width = "5%";
+            statusPill.innerText = "Executing...";
+            statusPill.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30";
+
+            let delay = 600;
+            let stepProgress = 10;
+
+            function logMsg(msg, color = "text-slate-300") {
+                setTimeout(() => {
+                    consoleEl.innerHTML += `<div class="${color}">${msg}</div>`;
+                    consoleEl.scrollTop = consoleEl.scrollHeight;
+                    stepProgress += 20;
+                    progressBar.style.width = `${Math.min(stepProgress, 95)}%`;
+                }, delay);
+                delay += 800;
+            }
+
+            if (useDivide) {
+                logMsg(`⚡ [Divide & Conquer] Decomposing monolithic request into 3 structured sub-tasks...`, "text-blue-400");
+                logMsg(`&nbsp;&nbsp;├─ Subtask A: Schema Extraction & Setup`, "text-slate-400");
+                logMsg(`&nbsp;&nbsp;├─ Subtask B: Core Business Logic Processing`, "text-slate-400");
+                logMsg(`&nbsp;&nbsp;└─ Subtask C: Formatting & Edge Case Alignment`, "text-slate-400");
+            } else {
+                logMsg(`⚠️ [Monolithic Step] Sending entire massive prompt directly to LLM without decomposition...`, "text-amber-400");
+            }
+
+            if (useBranch) {
+                logMsg(`🌿 [Branch → Resolve → Merge] Subtask B encountered missing variable references. Forking sub-agent branch #b12...`, "text-purple-400");
+                logMsg(`&nbsp;&nbsp;└─ Branch #b12: Resolving context in isolation without blocking main state... Merged!`, "text-purple-300");
+            }
+
+            if (useEnrich) {
+                logMsg(`✨ [Enrichment] Ingesting dynamic tool outputs. Injecting delta updates into preserved output state...`, "text-emerald-400");
+            }
+
+            if (useReflect) {
+                logMsg(`🔄 [Reflection] Critic Agent inspecting combined state...`, "text-amber-400");
+                logMsg(`&nbsp;&nbsp;├─ Check 1: Schema validation -> PASS`, "text-slate-400");
+                logMsg(`&nbsp;&nbsp;└─ Check 2: Constraint compliance -> PASS`, "text-slate-400");
+            }
+
+            setTimeout(() => {
+                progressBar.style.width = "100%";
+                statusPill.innerText = "Finished";
+                statusPill.className = "text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                consoleEl.innerHTML += `<div class="text-emerald-400 font-bold mt-2">[SUCCESS] Workflow completed cleanly with high predictability!</div>`;
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+
+                // Dynamic metrics update
+                const numPatterns = [useDivide, useEnrich, useReflect, useBranch].filter(Boolean).length;
+                document.getElementById('m-rel').innerText = `${(85 + numPatterns * 3.5).toFixed(1)}%`;
+                document.getElementById('m-reuse').innerText = `${20 + numPatterns * 15}%`;
+                document.getElementById('m-retry').innerText = `${useReflect ? 1 : 0}`;
+            }, delay);
+        }
+    </script>
+</body>
+
+</html>
