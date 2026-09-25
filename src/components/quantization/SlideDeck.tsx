@@ -26,6 +26,7 @@ import {
     KV_TIERS,
 } from '../../data/quantizationData';
 import {
+    AlgorithmVisual,
     EmpiricalDualAxis,
     FormatThroughput,
     GptqAwqBars,
@@ -262,15 +263,16 @@ export const SlideDeck = ({ open, onClose }: SlideDeckProps) => {
                         <h2 className="text-3xl font-black text-slate-900 mb-6">LLM.int8() & QLoRA / NF4</h2>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             {ALGORITHM_CARDS.filter((c) => c.id === 'llm-int8' || c.id === 'qlora-nf4').map((c) => (
-                                <div key={c.name} className={`glass-card rounded-2xl p-5 border ${ACCENT[c.accent].border}`}>
+                                <div key={c.id} className={`glass-card rounded-2xl p-5 border ${ACCENT[c.accent].border}`}>
                                     <h3 className="text-base font-bold text-slate-900 mb-1">{c.name}</h3>
                                     <div className={`text-[10px] font-mono mb-3 ${ACCENT[c.accent].text}`}>{c.category}</div>
-                                    <p className="text-[11px] text-slate-500 leading-relaxed mb-3">{c.summary}</p>
+                                    <AlgorithmVisual id={c.id} />
+                                    <p className="text-[11px] text-slate-500 leading-relaxed mt-3 mb-3">{c.tagline}</p>
                                     <ul className="space-y-1 text-[11px] text-slate-600">
-                                        {c.bullets.map((b) => (
-                                            <li key={b.text}>
-                                                {b.strong && <strong className="text-slate-900">{b.strong} </strong>}
-                                                {b.text}
+                                        {c.steps.slice(0, 3).map((s) => (
+                                            <li key={s} className="flex gap-1.5">
+                                                <span className={`shrink-0 ${ACCENT[c.accent].text}`}>•</span>
+                                                <span>{s}</span>
                                             </li>
                                         ))}
                                     </ul>
@@ -301,34 +303,10 @@ export const SlideDeck = ({ open, onClose }: SlideDeckProps) => {
                 );
             case 7:
                 return (
-                    <SlideShell accent="purple">
-                        <SlideTag accent="purple">Slide 8 — Activation Outliers</SlideTag>
-                        <h2 className="text-3xl font-black text-slate-900 mb-6">SmoothQuant & Layer Rotations</h2>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            {ALGORITHM_CARDS.filter((c) => c.id === 'smoothquant' || c.id === 'quarot-spinquant').map((c) => (
-                                <div key={c.name} className={`glass-card rounded-2xl p-5 border ${ACCENT[c.accent].border}`}>
-                                    <h3 className="text-base font-bold text-slate-900 mb-1">{c.name}</h3>
-                                    <div className={`text-[10px] font-mono mb-3 ${ACCENT[c.accent].text}`}>{c.category}</div>
-                                    <p className="text-[11px] text-slate-500 leading-relaxed mb-3">{c.summary}</p>
-                                    <ul className="space-y-1 text-[11px] text-slate-600">
-                                        {c.bullets.map((b) => (
-                                            <li key={b.text}>
-                                                {b.strong && <strong className="text-slate-900">{b.strong} </strong>}
-                                                {b.text}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
-                        </div>
-                    </SlideShell>
-                );
-            case 8:
-                return (
                     <SlideShell accent="blue">
-                        <SlideTag accent="blue">Slide 9 — Formats</SlideTag>
+                        <SlideTag accent="blue">Slide 8 — Formats</SlideTag>
                         <h2 className="text-3xl font-black text-slate-900 mb-6">FP8, OCP MX & NVFP4</h2>
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
                             <div className="grid grid-cols-1 gap-3">
                                 {FORMAT_CARDS.map((c) => (
                                     <div key={c.title} className={`rounded-xl p-4 bg-slate-50 border ${ACCENT[c.accent].border}`}>
@@ -336,7 +314,8 @@ export const SlideDeck = ({ open, onClose }: SlideDeckProps) => {
                                             <h3 className="text-xs font-bold text-slate-900">{c.title}</h3>
                                             <span className="text-[9px] font-mono text-slate-500">{c.badgeNote}</span>
                                         </div>
-                                        <p className="text-[10px] text-slate-500 leading-relaxed">{c.desc}</p>
+                                        <p className="text-[10px] text-slate-500 leading-relaxed mb-2">{c.desc}</p>
+                                        {(c.id === 'fp8' || c.id === 'nvfp4') && <AlgorithmVisual id={c.id} />}
                                     </div>
                                 ))}
                             </div>
@@ -344,10 +323,10 @@ export const SlideDeck = ({ open, onClose }: SlideDeckProps) => {
                         </div>
                     </SlideShell>
                 );
-            case 9:
+            case 8:
                 return (
                     <SlideShell accent="emerald">
-                        <SlideTag accent="emerald">Slide 10 — DeepSeek-V3</SlideTag>
+                        <SlideTag accent="emerald">Slide 9 — DeepSeek-V3</SlideTag>
                         <h2 className="text-3xl font-black text-slate-900 mb-6">Pre-Training 671B in FP8</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {DEEPSEEK_POINTS.map((p) => (
@@ -360,10 +339,10 @@ export const SlideDeck = ({ open, onClose }: SlideDeckProps) => {
                         </div>
                     </SlideShell>
                 );
-            case 10:
+            case 9:
                 return (
                     <SlideShell accent="blue">
-                        <SlideTag accent="blue">Slide 11 — KV Cache</SlideTag>
+                        <SlideTag accent="blue">Slide 10 — KV Cache</SlideTag>
                         <h2 className="text-3xl font-black text-slate-900 mb-6">Size It Right, Then Quantize It</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {KV_TIERS.map((t) => (
@@ -378,10 +357,10 @@ export const SlideDeck = ({ open, onClose }: SlideDeckProps) => {
                         </p>
                     </SlideShell>
                 );
-            case 11:
+            case 10:
                 return (
                     <SlideShell accent="emerald">
-                        <SlideTag accent="emerald">Slide 12 — Local & Edge</SlideTag>
+                        <SlideTag accent="emerald">Slide 11 — Local & Edge</SlideTag>
                         <h2 className="text-3xl font-black text-slate-900 mb-6">MLX vs. GGUF (llama.cpp)</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {EDGE_PLATFORMS.map((p) => (
@@ -405,10 +384,10 @@ export const SlideDeck = ({ open, onClose }: SlideDeckProps) => {
                         </div>
                     </SlideShell>
                 );
-            case 12:
+            case 11:
                 return (
                     <SlideShell accent="cyan">
-                        <SlideTag accent="cyan">Slide 13 — Decision Framework</SlideTag>
+                        <SlideTag accent="cyan">Slide 12 — Decision Framework</SlideTag>
                         <h2 className="text-3xl font-black text-slate-900 mb-5">Decision Flow & 5 Rules of Thumb</h2>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div className="space-y-1.5">
@@ -434,7 +413,7 @@ export const SlideDeck = ({ open, onClose }: SlideDeckProps) => {
                         </div>
                     </SlideShell>
                 );
-            case 13:
+            case 12:
                 return (
                     <SlideShell accent="blue">
                         <SlideTag accent="blue">Backup B1 — References</SlideTag>

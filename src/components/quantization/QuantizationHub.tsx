@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-    ArrowUpRight,
     Boxes,
     CircleAlert,
     Gauge,
@@ -40,7 +39,7 @@ import {
     SHOOTOUT_ROWS,
     STRATEGY_CARDS,
 } from '../../data/quantizationData';
-import { ModelFootprintBar, EmpiricalDualAxis, GptqAwqBars, TrilemmaRadar, FormatThroughput } from './charts';
+import { ModelFootprintBar, EmpiricalDualAxis, GptqAwqBars, TrilemmaRadar, FormatThroughput, AlgorithmVisual } from './charts';
 import { SlideDeck } from './SlideDeck';
 import { VramCalculator } from './VramCalculator';
 import { useLanguage } from '../../context/LanguageContext';
@@ -403,32 +402,80 @@ export const QuantizationHub = ({ scrollToSection }: QuantizationHubProps) => {
             <section id="algorithms" className={SECTION}>
                 <SectionHeading {...qm(3)} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-                    {ALGORITHM_CARDS.map((c) => (
-                        <div key={c.name} className={`glass-card rounded-2xl p-6 border ${ACCENT[c.accent].border} flex flex-col`}>
-                            <div className="flex items-start justify-between mb-2">
-                                <h3 className="text-base font-bold text-slate-900">{c.name}</h3>
-                                <Workflow size={16} className={ACCENT[c.accent].text} />
-                            </div>
-                            <div className={`text-[10px] font-mono mb-3 ${ACCENT[c.accent].text}`}>{c.category}</div>
-                            <p className="text-[11px] text-slate-500 leading-relaxed mb-4">{c.summary}</p>
-                            <ul className="space-y-2 text-[11px] text-slate-600 mt-auto">
-                                {c.bullets.map((b) => (
-                                    <li key={b.text} className="flex items-start gap-2">
-                                        <ArrowUpRight size={12} className={`mt-0.5 shrink-0 ${ACCENT[c.accent].text}`} />
-                                        <span>
-                                            {b.strong && <strong className="text-slate-900">{b.strong} </strong>}
-                                            {b.text}
-                                        </span>
-                                    </li>
-                                ))}
-                            </ul>
-                            {c.warning && (
-                                <div className="mt-4 flex items-start gap-2 text-[10px] text-rose-600 border-t border-slate-200 pt-3">
-                                    <TriangleAlert size={12} className="mt-0.5 shrink-0" />
-                                    {c.warning}
+                <div className="space-y-6 mb-8">
+                    {ALGORITHM_CARDS.map((c, idx) => (
+                        <div key={c.id} className={`glass-card rounded-2xl p-6 border ${ACCENT[c.accent].border}`}>
+                            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                                {/* Visualization + identity + metrics */}
+                                <div className="lg:col-span-5 space-y-4">
+                                    <AlgorithmVisual id={c.id} />
+                                    <div className="rounded-xl border border-slate-200 bg-white p-3 font-mono text-[11px] text-slate-700 break-words">
+                                        <div className={`text-[9px] uppercase tracking-widest mb-1 ${ACCENT[c.accent].text}`}>identity</div>
+                                        {c.formula}
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {c.metrics.map((m) => (
+                                            <div key={m.label} className="rounded-lg border border-slate-200 bg-slate-50 p-2.5">
+                                                <div className="text-[9px] font-mono text-slate-500">{m.label}</div>
+                                                <div className={`text-xs font-bold mt-0.5 ${ACCENT[c.accent].text}`}>{m.value}</div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                            )}
+
+                                {/* Detail */}
+                                <div className="lg:col-span-7">
+                                    <div className="flex items-start justify-between gap-3 mb-1">
+                                        <div>
+                                            <div className={`text-[10px] font-mono font-bold tracking-widest uppercase mb-1 ${ACCENT[c.accent].text}`}>
+                                                {String(idx + 1).padStart(2, '0')} · {c.category}
+                                            </div>
+                                            <h3 className="text-lg font-bold text-slate-900">{c.name}</h3>
+                                        </div>
+                                        <Workflow size={18} className={ACCENT[c.accent].text} />
+                                    </div>
+                                    <p className="text-sm text-slate-600 leading-relaxed mb-3">{c.tagline}</p>
+                                    <p className="text-xs text-slate-600 leading-relaxed mb-4">{c.principle}</p>
+
+                                    <div className="text-[10px] font-mono font-bold text-slate-500 mb-2">MECHANISM</div>
+                                    <ol className="space-y-2 mb-4">
+                                        {c.steps.map((s, i) => (
+                                            <li key={s} className="flex items-start gap-2 text-[11px] text-slate-600">
+                                                <span className={`shrink-0 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-mono font-bold ${ACCENT[c.accent].bg} ${ACCENT[c.accent].text}`}>
+                                                    {i + 1}
+                                                </span>
+                                                {s}
+                                            </li>
+                                        ))}
+                                    </ol>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                                        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                            <div className="text-[9px] font-mono text-slate-500 mb-1">KERNEL</div>
+                                            <div className="text-[11px] text-slate-700">{c.kernel}</div>
+                                        </div>
+                                        <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+                                            <div className="text-[9px] font-mono text-slate-500 mb-1">RUNTIME</div>
+                                            <div className="text-[11px] text-slate-700">{c.runtime}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-1.5 mb-3">
+                                        {c.bestFor.map((b) => (
+                                            <span key={b} className={`text-[10px] rounded-full border px-2.5 py-1 ${ACCENT[c.accent].border} ${ACCENT[c.accent].bg} ${ACCENT[c.accent].text}`}>
+                                                {b}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    {c.warning && (
+                                        <div className="flex items-start gap-2 text-[10px] text-rose-600 border-t border-slate-200 pt-3">
+                                            <TriangleAlert size={12} className="mt-0.5 shrink-0" />
+                                            {c.warning}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -496,6 +543,12 @@ export const QuantizationHub = ({ scrollToSection }: QuantizationHubProps) => {
                                     </div>
                                 ))}
                             </div>
+                            {(c.id === 'fp8' || c.id === 'nvfp4') && (
+                                <div className="mb-4">
+                                    <AlgorithmVisual id={c.id} />
+                                </div>
+                            )}
+
                             <div
                                 className={`text-[10px] font-mono font-semibold ${c.footerTone === 'warn' ? 'text-amber-600' : 'text-emerald-600'
                                     }`}

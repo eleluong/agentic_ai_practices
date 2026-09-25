@@ -121,11 +121,11 @@ export const QUANT_MODULES: QuantModule[] = [
     heading: 'Taming Outliers & The Production Face-Off',
     headingVi: 'Thuần Hóa Outlier & Cuộc Đối Đầu Sản Xuất',
     subtitle:
-      'LLM.int8() outlier channels, QLoRA NF4, GPTQ vs. AWQ, and SmoothQuant difficulty migration.',
+      'LLM.int8() outlier channels, QLoRA NF4, and the GPTQ vs. AWQ production face-off.',
     subtitleVi:
-      'Kênh outlier LLM.int8(), QLoRA NF4, GPTQ so với AWQ, và di chuyển độ khó SmoothQuant.',
+      'Kênh outlier LLM.int8(), QLoRA NF4, và cuộc đối đầu sản xuất GPTQ so với AWQ.',
     accent: 'purple',
-    slideRefs: 'Slides 6–8',
+    slideRefs: 'Slides 6–7',
   },
   {
     id: 'formats',
@@ -139,7 +139,7 @@ export const QUANT_MODULES: QuantModule[] = [
     subtitleVi:
       'Vì sao số mũ vượt trội lưới số nguyên ở bit thấp, và thực tế phần cứng trên Hopper, Ada và Blackwell.',
     accent: 'blue',
-    slideRefs: 'Slide 9',
+    slideRefs: 'Slide 8',
   },
   {
     id: 'production',
@@ -153,7 +153,7 @@ export const QUANT_MODULES: QuantModule[] = [
     subtitleVi:
       'Tiền huấn luyện 671B bằng FP8 với DeepGEMM, tránh sai lầm GQA 8×, và Apple MLX so với GGUF.',
     accent: 'emerald',
-    slideRefs: 'Slides 10–12',
+    slideRefs: 'Slides 9–11',
   },
   {
     id: 'decision-framework',
@@ -167,7 +167,7 @@ export const QUANT_MODULES: QuantModule[] = [
     subtitleVi:
       'Chọn chính xác định dạng, runtime và backend phục vụ dựa trên silicon mục tiêu và độ đồng thời.',
     accent: 'cyan',
-    slideRefs: 'Slide 13',
+    slideRefs: 'Slide 12',
   },
   {
     id: 'backup',
@@ -545,8 +545,23 @@ export interface AlgorithmCard {
   id: string;
   name: string;
   category: string;
-  summary: string;
-  bullets: { strong?: string; text: string }[];
+  /** Precisely what the method is, in one line. */
+  tagline: string;
+  /** The core principle / why it works. */
+  principle: string;
+  /** The mathematical identity or objective it relies on. */
+  formula: string;
+  /** Step-by-step mechanism. */
+  steps: string[];
+  /** The equivalent-INT / dequantization GPU kernel it maps to. */
+  kernel: string;
+  /** The GPU-level mechanic that makes it cheap at runtime. */
+  runtime: string;
+  /** Headline measured results. */
+  metrics: { label: string; value: string }[];
+  /** Situations where this method is the right default. */
+  bestFor: string[];
+  /** Primary limitation / cost. */
   warning?: string;
   accent: AccentKey;
 }
@@ -556,12 +571,26 @@ export const ALGORITHM_CARDS: AlgorithmCard[] = [
     id: 'llm-int8',
     name: 'LLM.int8()',
     category: 'Outlier Channels',
-    summary:
-      'In models above 6.7B, ~0.1% of activation channels spike >6.0. Uniform INT8 stretches the scale and destroys precision for the other 99.9%. The matrix is decomposed into FP16 outlier columns and INT8 normal columns, then summed.',
-    bullets: [
-      { strong: 'Fix:', text: 'Outlier columns in native FP16, normal columns in INT8.' },
-      { strong: 'Scale:', text: 'Halves VRAM with zero accuracy loss.' },
+    tagline: 'Mixed-precision decomposition that isolates the 0.1% of activation channels that break uniform INT8.',
+    principle:
+      'Above ~6.7B params, transformer activations contain a handful of channels whose magnitude spikes past 6.0 across every token. A single per-tensor INT8 scale must stretch to cover that spike, so the other 99.9% of values collapse into a few quantization levels. LLM.int8() splits the matmul along channels instead of forcing one scale over all of them.',
+    formula: 'Y = X_fp16 · W_fp16  +  S_x·S_w·(X_int8 · W_int8)',
+    steps: [
+      'Scan each activation row at runtime for channels whose magnitude exceeds the 6.0 threshold.',
+      'Multiply the ~0.1% outlier channels in native FP16 — full precision, no scale.',
+      'Multiply the remaining 99.9% normal channels in INT8 with a shared scale.',
+      'Sum the FP16 and INT8 partial products back into the FP16 output stream.',
     ],
+    kernel: 'Custom mixed-precision GEMM — int8 plus fp16 branches',
+    runtime:
+      'Outlier detection and two GEMMs per layer mean routing overhead usually exceeds the compute saved. It is a memory tool, not a speed tool.',
+    metrics: [
+      { label: 'VRAM', value: '−50% (halved)' },
+      { label: 'Accuracy loss', value: '≈0%' },
+      { label: 'Latency vs FP16', value: 'often slower' },
+      { label: 'Outlier rate', value: '0.1–1%' },
+    ],
+    bestFor: ['Fitting a >7B model on a GPU that cannot hold FP16 weights', 'Memory-bound offline workloads where throughput is secondary'],
     warning: 'Mixed-precision routing adds latency — often slower than native FP16. Use for memory fitting, not speedups.',
     accent: 'amber',
   },
@@ -569,62 +598,80 @@ export const ALGORITHM_CARDS: AlgorithmCard[] = [
     id: 'qlora-nf4',
     name: 'QLoRA & NF4',
     category: 'Fine-Tuning on One GPU',
-    summary:
-      'NF4 sets bin thresholds with equal probability mass per bin — information-theoretically optimal for roughly Gaussian weights.',
-    bullets: [
-      { strong: 'Double Quantization:', text: 'Quantizes the scales themselves (32-bit → 8-bit, block 256), saving ~0.37 bpw.' },
-      { strong: 'Paged Optimizers:', text: 'Page optimizer states to CPU RAM during allocation spikes, preventing OOM.' },
-      { strong: 'Impact:', text: 'Fine-tune a 65B model on a single 48GB GPU with no quality loss.' },
+    tagline: 'A frozen 4-bit NF4 base plus tiny FP16 LoRA adapters — fine-tune 65B on a single 48GB GPU.',
+    principle:
+      'Pretrained weights are roughly Gaussian, so uniform linear bins waste levels on the distribution tails. NF4 (NormalFloat4) places its 16 bin thresholds so that each bin carries equal probability mass — information-theoretically optimal for a bell curve. The base stays frozen in 4-bit; gradients flow only through small FP16 adapters.',
+    formula: 'NF4: 16 bins, equal probability area  ·  Y = W_nf4·x  +  (B·A)·x',
+    steps: [
+      'Store the frozen base linear weights in NF4, dequantizing to FP16 on the fly.',
+      'Add trainable LoRA A/B adapters in FP16 and train only those (≈1–2% of params).',
+      'Apply double quantization: quantize the scale factors too (32-bit → 8-bit, block 256).',
+      'Use paged optimizers to spill optimizer state to CPU RAM during allocation spikes.',
     ],
+    kernel: 'bitsandbytes NF4 dequantization + FP16 GEMM / LoRA adapters',
+    runtime:
+      'Dequantization happens per forward pass, but the frozen 4-bit weights cut the memory footprint ~4× versus FP16 fine-tuning, so the whole model and optimizer fit in one GPU.',
+    metrics: [
+      { label: 'Base weights', value: '4-bit NF4' },
+      { label: 'Double-quant saving', value: '~0.37 bpw' },
+      { label: 'Hardware', value: '1× 48GB' },
+      { label: 'Quality vs 16-bit', value: 'matches full FT' },
+    ],
+    bestFor: ['Parameter fine-tuning on a consumer/prosumer GPU', 'Task adaptation where the base model must stay unchanged'],
     accent: 'cyan',
   },
   {
     id: 'gptq',
     name: 'GPTQ',
     category: 'Second-Order Error Compensation',
-    summary:
-      'Quantizes weights column by column; each rounding error is measured and subtracted from adjacent unquantized weights, guided by the inverse Hessian.',
-    bullets: [
-      { strong: 'Speed:', text: 'Fixed column ordering + lazy batch updates quantize 175B in under 4 hours on one A100.' },
-      { strong: 'Weakness:', text: 'Prone to overfitting the calibration data.' },
+    tagline: 'Quantize weights one column at a time and let the remaining columns absorb each rounding error.',
+    principle:
+      'Naive round-to-nearest collapses at 4-bit. GPTQ forms a layer-wise reconstruction objective and minimizes it with a second-order (Hessian) expansion: after each column is rounded, the induced error is propagated into the still-unquantized columns weighted by the inverse Hessian estimated from calibration activations.',
+    formula: 'min_Ŵ || WX − ŴX ||₂²   with   H⁻¹ = (2XXᵀ + λI)⁻¹',
+    steps: [
+      'Pick a fixed left-to-right column order so one inverse-Hessian factorization is shared.',
+      'Quantize column wᵢ to INT4 and measure the rounding error e = wᵢ − round(wᵢ).',
+      'Update the remaining columns: W −= e · (H⁻¹)ᵢ / (H⁻¹)ᵢᵢ.',
+      'Batch the updates in L2/SRAM over ~128 columns before writing back to DRAM.',
     ],
+    kernel: 'Marlin / ExLlama INT4 kernels (universal: vLLM, TensorRT-LLM, AutoGPTQ)',
+    runtime:
+      'Per-channel scales plus group-wise INT4 give near-FP16 quality at ~4 bpw with mature, fast weights-only kernels. Error is baked in at quantization time, so nothing extra runs at inference.',
+    metrics: [
+      { label: 'Bits / weight', value: '~4 bpw' },
+      { label: 'Calibration (70B)', value: '30–60 min' },
+      { label: '175B quantize', value: 'under 4h · 1×A100' },
+      { label: 'Domain robustness', value: 'overfits calib.' },
+    ],
+    bestFor: ['Legacy GPTQ repositories and custom architectures', 'Workloads already standardized on AutoGPTQ'],
+    warning: 'Directly fits the calibration distribution, so it can overfit it — AWQ generalizes better across domains.',
     accent: 'rose',
   },
   {
     id: 'awq',
     name: 'AWQ',
     category: 'Activation-Aware Weight Quantization',
-    summary:
-      'Protects the salient ~1% of weights tied to high-magnitude activation channels. Salient weights are scaled UP by s and activations DOWN by 1/s — an exactly equivalent transform.',
-    bullets: [
-      { strong: 'Zero Overhead:', text: 'The 1/s folds into the preceding LayerNorm/Linear bias, so runtime is pure INT4.' },
-      { strong: 'Robustness:', text: 'Superior cross-domain generalization and fastest calibration (5–10 min).' },
+    tagline: 'Protect the salient ~1% of weights with a mathematically exact rescale — zero runtime overhead.',
+    principle:
+      'Salience is defined by activation magnitude, not weight magnitude: the ~1% of weight channels fed by high-energy activations dominate output error. AWQ scales those weights up and the matching activations down by the same factor — an exact identity — so the salient weights round more gently, then everything quantizes to uniform INT4.',
+    formula: 'W′ = W · diag(s)   X′ = X · diag(s)⁻¹   ⟹   X·W = X′·W′',
+    steps: [
+      'Profile calibration activations to find the top ~1% salient channels (per-channel scale s).',
+      'Scale salient weights up by s and their input activations down by 1/s.',
+      'Quantize all weights to uniform INT4 — no mixed precision, no special cases.',
+      'Fold 1/s into the preceding LayerNorm or Linear bias at graph-build time.',
     ],
+    kernel: 'AWQ INT4 with Marlin / FlashInfer (vLLM, TensorRT-LLM, TGI)',
+    runtime:
+      'Because 1/s is absorbed upstream and s is baked into the quantized weights, the deployed graph is plain INT4 — the protection costs literally nothing at inference.',
+    metrics: [
+      { label: 'Bits / weight', value: '~4 bpw' },
+      { label: 'Calibration (70B)', value: '5–10 min (6× faster)' },
+      { label: 'Protected weights', value: '~1% salient' },
+      { label: 'Kernel latency', value: 'highest (Marlin)' },
+    ],
+    bestFor: ['New vLLM / TensorRT-LLM deployments', 'Cross-domain serving where GPTQ would overfit calibration'],
     accent: 'emerald',
-  },
-  {
-    id: 'smoothquant',
-    name: 'SmoothQuant',
-    category: 'Difficulty Migration (W8A8)',
-    summary:
-      'Activations have extreme outliers while weights are uniform. An equivalent transform migrates quantization difficulty from activations to weights.',
-    bullets: [
-      { strong: 'Identity:', text: 'Y = (X · diag(s)⁻¹) · (diag(s) · W) = X̂ · Ŵ' },
-      { strong: 'Balancing:', text: 'sⱼ = max(|Xⱼ|)^α / max(|Wⱼ|)^(1−α); α = 0.5 splits difficulty evenly.' },
-    ],
-    accent: 'cyan',
-  },
-  {
-    id: 'quarot-spinquant',
-    name: 'QuaRot & SpinQuant',
-    category: 'Orthogonal Rotation (W4A4)',
-    summary:
-      'At 4-bit, per-channel scaling breaks down. Multiplying activations and weights by an orthogonal matrix R (RᵀR = I) disperses outliers across channels, guaranteeing incoherence.',
-    bullets: [
-      { strong: 'Identity:', text: 'Y = (X R)(Rᵀ W)' },
-      { strong: 'Methods:', text: 'QuaRot uses a fixed randomized Hadamard rotation; SpinQuant learns per-layer rotations via Cayley SGD, closing the W4A4 gap to <3% perplexity delta.' },
-    ],
-    accent: 'purple',
   },
 ];
 
@@ -673,9 +720,11 @@ export const SHOOTOUT_ROWS: ShootoutRow[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Slide 9 — Modern floating-point formats                              */
+/* Slide 8 — Modern floating-point formats                              */
 /* ------------------------------------------------------------------ */
 export interface FormatCard {
+  /** Stable key used to select the matching SVG visual. */
+  id: 'fp8' | 'ocp-mx' | 'nvfp4';
   badge: string;
   badgeNote: string;
   title: string;
@@ -688,6 +737,7 @@ export interface FormatCard {
 
 export const FORMAT_CARDS: FormatCard[] = [
   {
+    id: 'fp8',
     badge: 'Cloud Standard',
     badgeNote: 'Ada & Hopper',
     title: 'FP8 (E4M3 vs. E5M2)',
@@ -709,6 +759,7 @@ export const FORMAT_CARDS: FormatCard[] = [
     footerTone: 'ok',
   },
   {
+    id: 'ocp-mx',
     badge: 'Open Standard',
     badgeNote: 'Cross-Vendor',
     title: 'OCP Microscaling (MX)',
@@ -723,6 +774,7 @@ export const FORMAT_CARDS: FormatCard[] = [
     footerTone: 'warn',
   },
   {
+    id: 'nvfp4',
     badge: 'Blackwell Only',
     badgeNote: 'B100 / B200',
     title: 'NVFP4 Dual Scaling',
@@ -739,7 +791,7 @@ export const FORMAT_CARDS: FormatCard[] = [
 ];
 
 /* ------------------------------------------------------------------ */
-/* Slide 10–12 — Production case studies                                */
+/* Slides 9–11 — Production case studies                                */
 /* ------------------------------------------------------------------ */
 export interface DeepSeekPoint {
   label: string;
@@ -1186,18 +1238,9 @@ export const SLIDE_META: SlideMeta[] = [
       'Cả hai đều đạt ~4 bpw. AWQ thắng về tốc độ hiệu chuẩn, độ bền theo miền và hiệu năng kernel — mặc định chọn nó trừ khi bạn có kho GPTQ kế thừa.',
   },
   {
-    module: 'Module 3 — Algorithms',
-    title: 'Slide 8: Activation Outliers — SmoothQuant & Layer Rotations',
-    titleVi: 'Slide 8: Outlier Kích Hoạt — SmoothQuant & Phép Quay Tầng',
-    speakerNote:
-      'To quantize activations you must kill outliers. SmoothQuant shifts the difficulty into the weights; rotations spread outliers across channels for W4A4.',
-    speakerNoteVi:
-      'Muốn lượng tử hóa kích hoạt bạn phải diệt outlier. SmoothQuant đẩy độ khó vào trọng số; phép quay rải outlier khắp kênh cho W4A4.',
-  },
-  {
     module: 'Module 4 — Formats',
-    title: 'Slide 9: Modern Low-Bit Floating-Point Formats — FP8, OCP MX, NVFP4',
-    titleVi: 'Slide 9: Định Dạng Dấu Phẩy Động Bit Thấp Hiện Đại — FP8, OCP MX, NVFP4',
+    title: 'Slide 8: Modern Low-Bit Floating-Point Formats — FP8, OCP MX, NVFP4',
+    titleVi: 'Slide 8: Định Dạng Dấu Phẩy Động Bit Thấp Hiện Đại — FP8, OCP MX, NVFP4',
     speakerNote:
       'FP8 is the safe cloud default today. MX is the open cross-vendor bet. NVFP4 is the fastest but Blackwell-only — check your fleet before promising it.',
     speakerNoteVi:
@@ -1205,8 +1248,8 @@ export const SLIDE_META: SlideMeta[] = [
   },
   {
     module: 'Module 5 — Production',
-    title: 'Slide 10: DeepSeek-V3 — Pre-Training 671B Parameters in FP8',
-    titleVi: 'Slide 10: DeepSeek-V3 — Tiền Huấn Luyện 671B Tham Số Bằng FP8',
+    title: 'Slide 9: DeepSeek-V3 — Pre-Training 671B Parameters in FP8',
+    titleVi: 'Slide 9: DeepSeek-V3 — Tiền Huấn Luyện 671B Tham Số Bằng FP8',
     speakerNote:
       'Proof that FP8 works for pre-training, not just inference. The trick is fine-grained tiling to keep the short FP8 accumulator honest.',
     speakerNoteVi:
@@ -1214,8 +1257,8 @@ export const SLIDE_META: SlideMeta[] = [
   },
   {
     module: 'Module 5 — Production',
-    title: 'Slide 11: KV Cache — Size It Right, Then Quantize It',
-    titleVi: 'Slide 11: KV Cache — Tính Đúng Kích Thước, Rồi Lượng Tử Hóa',
+    title: 'Slide 10: KV Cache — Size It Right, Then Quantize It',
+    titleVi: 'Slide 10: KV Cache — Tính Đúng Kích Thước, Rồi Lượng Tử Hóa',
     speakerNote:
       'Two moves. First size it correctly with KV heads — the 8× GQA trap has burned many capacity plans. Then quantize: FP8 today, ~2-bit KV when you need more.',
     speakerNoteVi:
@@ -1223,8 +1266,8 @@ export const SLIDE_META: SlideMeta[] = [
   },
   {
     module: 'Module 5 — Production',
-    title: 'Slide 12: Local & Edge — MLX vs. GGUF (llama.cpp)',
-    titleVi: 'Slide 12: Cục Bộ & Edge — MLX so với GGUF (llama.cpp)',
+    title: 'Slide 11: Local & Edge — MLX vs. GGUF (llama.cpp)',
+    titleVi: 'Slide 11: Cục Bộ & Edge — MLX so với GGUF (llama.cpp)',
     speakerNote:
       'Same hardware, two ecosystems. MLX wins decode on modern Macs; llama.cpp wins portability and rescues M1/M2 prefill because it uses fp16 instead of bf16.',
     speakerNoteVi:
@@ -1232,8 +1275,8 @@ export const SLIDE_META: SlideMeta[] = [
   },
   {
     module: 'Module 6 — Closing',
-    title: 'Slide 13: Decision Flowchart + 5 Rules of Thumb',
-    titleVi: 'Slide 13: Sơ Đồ Quyết Định + 5 Quy Tắc Kinh Nghiệm',
+    title: 'Slide 12: Decision Flowchart + 5 Rules of Thumb',
+    titleVi: 'Slide 12: Sơ Đồ Quyết Định + 5 Quy Tắc Kinh Nghiệm',
     speakerNote:
       'Pick your branch by hardware, then remember the five rules. If you only remember one: verify the hardware ISA before you promise a format.',
     speakerNoteVi:
