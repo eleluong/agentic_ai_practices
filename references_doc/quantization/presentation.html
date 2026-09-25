@@ -1,0 +1,2609 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Quantization — Interactive Executive Presentation & Engineering Guide</title>
+    <meta name="description" content="From Integer Arithmetic to FP4: Architectural Paradigms, Real Memory Costs, and Hardware Realities for AI Engineers, MLOps, and Infrastructure Leads.">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        },
+                        dark: {
+                            bg: '#080d1a',
+                            card: '#0f172a',
+                            surface: '#131e36',
+                            border: '#1e293b',
+                            hover: '#24324f'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #080d1a;
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism & Glow styles */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.45);
+        }
+
+        .glass-card-hover:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 0 30px -5px rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .glow-blue {
+            box-shadow: 0 0 35px -5px rgba(59, 130, 246, 0.25);
+        }
+
+        .glow-emerald {
+            box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.25);
+        }
+
+        .glow-purple {
+            box-shadow: 0 0 35px -5px rgba(168, 85, 247, 0.25);
+        }
+
+        .glow-amber {
+            box-shadow: 0 0 35px -5px rgba(245, 158, 11, 0.25);
+        }
+
+        /* Animated connection lines */
+        .flow-line {
+            stroke-dasharray: 6;
+            animation: flowDash 1.2s linear infinite;
+        }
+
+        @keyframes flowDash {
+            to {
+                stroke-dashoffset: -12;
+            }
+        }
+
+        /* Custom scrollbars */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #080d1a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Presentation Slide Mode Fullscreen Overlay */
+        #slide-deck-modal.active {
+            display: flex;
+        }
+
+        .tab-btn.active {
+            background-color: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        /* Code & table styles */
+        .data-table th, .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+        .data-table tr {
+            border-bottom: 1px solid rgba(30, 41, 59, 0.8);
+            transition: background-color 0.15s ease;
+        }
+        .data-table tr:hover {
+            background-color: rgba(30, 41, 59, 0.5);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- Top Global Header -->
+    <header class="sticky top-0 z-40 backdrop-blur-xl bg-dark-bg/90 border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold shadow-lg shadow-blue-500/25">
+                        <i class="fa-solid fa-microchip text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-extrabold text-lg text-white tracking-tight">LLM Quantization</span>
+                            <span class="text-[11px] px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 font-mono font-medium">Production Deck</span>
+                        </div>
+                        <p class="text-xs text-slate-400 hidden sm:block">Architectural Paradigms, Real Memory Costs & Hardware Realities</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden lg:flex items-center space-x-1 text-xs font-medium">
+                    <a href="#overview" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">0. Overview</a>
+                    <a href="#foundations" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">1. Foundations</a>
+                    <a href="#strategy" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">2. Strategy</a>
+                    <a href="#algorithms" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">3. Algorithms</a>
+                    <a href="#formats" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">4. Formats</a>
+                    <a href="#production" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">5. Production</a>
+                    <a href="#decision-framework" class="px-3 py-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition">6. Decision Flow</a>
+                </nav>
+
+                <!-- Actions: Slide Mode & Live Calculator -->
+                <div class="flex items-center space-x-2.5">
+                    <a href="#calculator" class="text-xs px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-calculator text-blue-400"></i>
+                        <span class="hidden sm:inline">VRAM Calculator</span>
+                    </a>
+                    <button onclick="openSlideDeck(0)" class="text-xs px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold shadow-md shadow-blue-500/25 transition flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i>
+                        <span>Slide Mode</span>
+                        <span class="hidden md:inline text-[10px] bg-white/20 px-1.5 py-0.5 rounded font-mono">15 Slides</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow">
+
+        <!-- Hero / Header Banner -->
+        <section class="relative py-12 lg:py-16 overflow-hidden border-b border-slate-800 bg-gradient-to-b from-slate-900/60 via-dark-bg to-dark-bg">
+            <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.18),rgba(255,255,255,0))]"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+                <div class="text-center max-w-4xl mx-auto">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-800/90 border border-slate-700 text-xs font-medium text-slate-300 mb-6 shadow-inner">
+                        <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Executive & Engineering Architecture Deck
+                        <span class="text-slate-500">|</span>
+                        <span class="text-cyan-400 font-mono">Tailored for AI Engineers, MLOps & Infra Leads</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white mb-6 leading-tight">
+                        LLM Quantization <br/>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-300">
+                            From Integer Arithmetic to FP4
+                        </span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-slate-300 leading-relaxed mb-8 max-w-3xl mx-auto font-normal">
+                        Quantization is not a compression trick for toy models — it is the primary enabler of frontier-scale AI.
+                        Master the architectural trade-offs across <span class="text-white font-semibold">Memory Bandwidth vs Compute</span>,
+                        avoid production traps, and size KV caches without 8× blunders.
+                    </p>
+
+                    <!-- Quick Metrics Strip -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto mb-8">
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                            <div class="text-2xl font-bold text-blue-400 font-mono">2×–4×</div>
+                            <div class="text-xs text-slate-400 mt-0.5">Footprint Collapse</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                            <div class="text-2xl font-bold text-emerald-400 font-mono">3×–5×</div>
+                            <div class="text-xs text-slate-400 mt-0.5">Energy & TCO Savings</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                            <div class="text-2xl font-bold text-amber-400 font-mono">≥4-Bit</div>
+                            <div class="text-xs text-slate-400 mt-0.5">Near-Zero Loss Frontier</div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800">
+                            <div class="text-2xl font-bold text-purple-400 font-mono">671B MoE</div>
+                            <div class="text-xs text-slate-400 mt-0.5">FP8 Pre-Trained (DeepSeek)</div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Bar -->
+                    <div class="flex flex-wrap items-center justify-center gap-3">
+                        <button onclick="openSlideDeck(0)" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-lg shadow-blue-500/25 transition flex items-center gap-2">
+                            <i class="fa-solid fa-display"></i>
+                            Launch Full Presentation Deck
+                        </button>
+                        <a href="#trilemma" class="px-5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium text-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-shapes text-indigo-400"></i>
+                            Explore Trilemma Radar
+                        </a>
+                        <a href="#empirical-table" class="px-5 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium text-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line text-emerald-400"></i>
+                            Empirical Loss Table
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MODULE 0: OVERVIEW & THE ENGINEERING TRILEMMA -->
+        <!-- ========================================== -->
+        <section id="overview" class="py-14 border-b border-slate-800 scroll-mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Section Header -->
+                <div class="flex items-center gap-2 text-blue-400 text-xs font-mono uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-compass"></i> Module 00 — Opening & Foundations
+                </div>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Slide 1 & 2: Why Quantize & The Engineering Trilemma</h2>
+                        <p class="text-sm text-slate-400 mt-1">Memory bandwidth vs compute bottlenecks, and the delicate balance between VRAM, Speed, and Reasoning Fidelity.</p>
+                    </div>
+                    <button onclick="openSlideDeck(1)" class="self-start md:self-auto text-xs px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i> Present Slide 1 & 2
+                    </button>
+                </div>
+
+                <!-- 3 Pillars Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <!-- Card 1: Memory -->
+                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden group border-slate-800 hover:border-blue-500/40 transition">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center justify-center mb-4 text-lg">
+                            <i class="fa-solid fa-server"></i>
+                        </div>
+                        <div class="text-xs font-mono text-blue-400 uppercase tracking-wider mb-1">Pillar 01</div>
+                        <h3 class="text-lg font-bold text-white mb-2">Memory — Frontier Enabler</h3>
+                        <ul class="text-xs text-slate-300 space-y-2 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-blue-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>Warehouse collapse:</strong> 16-bit weights require 800GB–2TB+ for 405B–1T models. FP8/FP4 fits them onto a single 8-GPU node.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-blue-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>Workstation unlock:</strong> 70B models shrink from 140GB down to &lt;40GB, running smoothly on 1 GPU.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-blue-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>KV Cache space:</strong> Leaves headroom for 32k–128k context windows which otherwise outgrow weights.</span>
+                            </li>
+                        </ul>
+                        <div class="p-2.5 rounded-lg bg-blue-950/40 border border-blue-800/40 text-[11px] text-blue-300">
+                            <strong>Key insight:</strong> Eliminates inter-node tensor parallel bottlenecks across InfiniBand.
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Speed -->
+                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden group border-slate-800 hover:border-emerald-500/40 transition">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mb-4 text-lg">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div class="text-xs font-mono text-emerald-400 uppercase tracking-wider mb-1">Pillar 02</div>
+                        <h3 class="text-lg font-bold text-white mb-2">Speed — Match the Bottleneck</h3>
+                        <ul class="text-xs text-slate-300 space-y-2 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>Low Batch (Chat/Agents):</strong> Memory-bandwidth bound. Weights transfer time dominates. Weight-only W4A16 gives direct speedup.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-emerald-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>High Batch (Serving):</strong> Compute bound. Tensor Cores saturated. Requires native low-bit GEMMs (FP8, NVFP4).</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>Dequant Trap:</strong> Naive routing (e.g. LLM.int8) saves VRAM but is <em>slower</em> than FP16 due to dispatch overhead.</span>
+                            </li>
+                        </ul>
+                        <div class="p-2.5 rounded-lg bg-emerald-950/40 border border-emerald-800/40 text-[11px] text-emerald-300">
+                            <strong>Key insight:</strong> First diagnose whether your pipeline is memory-bound or compute-bound!
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Economics -->
+                    <div class="glass-card rounded-2xl p-6 relative overflow-hidden group border-slate-800 hover:border-purple-500/40 transition">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30 flex items-center justify-center mb-4 text-lg">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                        <div class="text-xs font-mono text-purple-400 uppercase tracking-wider mb-1">Pillar 03</div>
+                        <h3 class="text-lg font-bold text-white mb-2">Economics & TCO</h3>
+                        <ul class="text-xs text-slate-300 space-y-2 mb-4">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-purple-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>3×–5× Cost Reduction:</strong> Slashes energy per token and cloud GPU hosting expense drastically.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-purple-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>Faster Cold Starts:</strong> Docker container pulls and checkpoint sync times drop in half or more.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-purple-400 mt-0.5 text-[10px]"></i>
+                                <span><strong>Edge Democratization:</strong> Runs production models on Apple Silicon (MLX), CPUs, and single consumer RTX GPUs.</span>
+                            </li>
+                        </ul>
+                        <div class="p-2.5 rounded-lg bg-purple-950/40 border border-purple-800/40 text-[11px] text-purple-300">
+                            <strong>Key insight:</strong> Headline bit-widths lie: always calculate scales & hardware ISA compatibility.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Visuals: Chart.js Frontier & Trilemma Radar -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6" id="trilemma">
+                    <!-- Left: Model Footprint Chart (Chart.js) -->
+                    <div class="lg:col-span-7 glass-card rounded-2xl p-6 border-slate-800">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-base font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-column text-blue-400"></i> Model VRAM Footprint vs Bit Precision
+                                </h4>
+                                <p class="text-xs text-slate-400">Weights alone (GB) across typical frontier model sizes before KV cache allocation.</p>
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">Chart.js Live</span>
+                        </div>
+                        <div class="h-64 sm:h-72">
+                            <canvas id="chart-model-footprint"></canvas>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between text-xs text-slate-400">
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-500"></span> BF16 / FP16</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> FP8 (E4M3)</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> INT4 / AWQ</span>
+                            <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> NVFP4 (~4.5 bpw)</span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Trilemma Radar (Chart.js) -->
+                    <div class="lg:col-span-5 glass-card rounded-2xl p-6 border-slate-800">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-base font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-compass-drafting text-purple-400"></i> The Engineering Trilemma
+                                </h4>
+                                <p class="text-xs text-slate-400">Balancing VRAM Footprint, Latency/Throughput, and Reasoning Fidelity.</p>
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30">Radar View</span>
+                        </div>
+                        <div class="h-64 sm:h-72">
+                            <canvas id="chart-trilemma-radar"></canvas>
+                        </div>
+                        <div class="mt-2 text-center text-[11px] text-slate-400 italic">
+                            *No format maximizes all three. Cutting VRAM without matching the bottleneck slows execution.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Universal Quantization Pipeline & Effective bpw Granularity (Replacing Mermaid 1 & 2) -->
+                <div class="mt-8 glass-card rounded-2xl p-6 border-slate-800">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-800 gap-2">
+                        <div>
+                            <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Core Pipeline Architecture</span>
+                            <h4 class="text-lg font-bold text-white">The Universal Quantization Pipeline & Effective Bitrate</h4>
+                        </div>
+                        <div class="text-xs text-slate-400">
+                            Effective bpw Formula: <code class="bg-slate-800 px-2 py-0.5 rounded text-cyan-300 font-mono">b + (bits_scale + bits_ZP)/g</code>
+                        </div>
+                    </div>
+
+                    <!-- Flow Nodes Pipeline -->
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 relative mb-6">
+                        <!-- Step 1 -->
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-blue-500/40 relative">
+                            <div class="text-[10px] font-mono text-blue-400 font-semibold mb-1">01. INPUT TENSORS</div>
+                            <div class="text-sm font-bold text-white">Real Values X</div>
+                            <div class="text-xs text-slate-400 mt-1">FP16 / BF16 weights & activations from base model</div>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-cyan-500/40 relative">
+                            <div class="text-[10px] font-mono text-cyan-400 font-semibold mb-1">02. QUANTIZE</div>
+                            <div class="text-sm font-bold text-white">Map & Round</div>
+                            <div class="text-xs text-slate-400 mt-1 font-mono">Q = clip(round(X / S) + Z)</div>
+                        </div>
+                        <!-- Step 3 -->
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-indigo-500/40 relative">
+                            <div class="text-[10px] font-mono text-indigo-400 font-semibold mb-1">03. STORAGE</div>
+                            <div class="text-sm font-bold text-white">Stored Codes + Metadata</div>
+                            <div class="text-xs text-slate-400 mt-1">INT4 / INT8 / FP4 payload + scale S & zero-point Z</div>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-purple-500/40 relative">
+                            <div class="text-[10px] font-mono text-purple-400 font-semibold mb-1">04. DEQUANTIZE</div>
+                            <div class="text-sm font-bold text-white">Runtime Reconstruct</div>
+                            <div class="text-xs text-slate-400 mt-1 font-mono">X̂ = S × (Q - Z)</div>
+                        </div>
+                        <!-- Step 5 -->
+                        <div class="p-3.5 rounded-xl bg-slate-900/90 border border-emerald-500/40 relative">
+                            <div class="text-[10px] font-mono text-emerald-400 font-semibold mb-1">05. EXECUTION</div>
+                            <div class="text-sm font-bold text-white">MatMul / Tensor Core</div>
+                            <div class="text-xs text-slate-400 mt-1">Direct low-bit GEMM or fused kernel matmul</div>
+                        </div>
+                    </div>
+
+                    <!-- Granularity & Effective bpw Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs data-table">
+                            <thead>
+                                <tr class="text-slate-400 border-b border-slate-700 bg-slate-900/60 font-mono">
+                                    <th>Quantization Scheme</th>
+                                    <th>Element Bitwidth</th>
+                                    <th>Scale Metadata</th>
+                                    <th>Group Size (g)</th>
+                                    <th>Effective bpw</th>
+                                    <th>Engineering Assessment</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-slate-200">
+                                <tr>
+                                    <td class="font-semibold text-white">INT4 + FP16 Scale</td>
+                                    <td>4-bit</td>
+                                    <td>16-bit FP16</td>
+                                    <td>128</td>
+                                    <td class="font-mono text-cyan-300 font-bold">4.125 bpw</td>
+                                    <td>Standard AWQ/GPTQ; small metadata tax (+3.1%)</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">OCP MXFP4 (E8M0)</td>
+                                    <td>4-bit</td>
+                                    <td>8-bit Exponent Only</td>
+                                    <td>32</td>
+                                    <td class="font-mono text-cyan-300 font-bold">4.250 bpw</td>
+                                    <td>Pure power-of-two bit shift; open cross-vendor standard</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">NVFP4 (Blackwell)</td>
+                                    <td>4-bit (E2M1)</td>
+                                    <td>E4M3 Inner + FP32 Outer</td>
+                                    <td>16</td>
+                                    <td class="font-mono text-cyan-300 font-bold">~4.500 bpw</td>
+                                    <td>Dual-level scaling; 5th Gen Tensor Core native (~2× dense FP8)</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-semibold text-white">GGUF Q4_K_M (K-Quant)</td>
+                                    <td>4-bit to 6-bit</td>
+                                    <td>6-bit superblock scales</td>
+                                    <td>32 (in 256 SB)</td>
+                                    <td class="font-mono text-cyan-300 font-bold">~4.850 bpw</td>
+                                    <td>Promotes sensitive tensors (attn_v, ffn_down); gold standard for edge</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MODULE 1: FOUNDATIONS & REAL VRAM COST     -->
+        <!-- ========================================== -->
+        <section id="foundations" class="py-14 border-b border-slate-800 scroll-mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-2 text-cyan-400 text-xs font-mono uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-chart-line"></i> Module 01 — Foundations & Empirical Trade-Offs
+                </div>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Slide 3: Footprint vs. Accuracy & The Tail Divergence Cliff</h2>
+                        <p class="text-sm text-slate-400 mt-1">Why 4-bit is the production sweet spot, and why 99.9% tail KLD reveals silent reasoning collapses.</p>
+                    </div>
+                    <button onclick="openSlideDeck(3)" class="self-start md:self-auto text-xs px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i> Present Slide 3
+                    </button>
+                </div>
+
+                <!-- 4 Analytical Key Takeaways -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="glass-card p-4 rounded-xl border-slate-800">
+                        <div class="text-xs font-mono text-emerald-400 mb-1">01. Near-Zero Plateau (5–8b)</div>
+                        <div class="text-sm font-semibold text-white">Q6 matches Q8 fidelity</div>
+                        <p class="text-xs text-slate-400 mt-1">UD-Q6_K_XL (169.2GB) scores 94.09% top-1 vs Q8_0 (94.12%), saving 19GB with negligible 0.027 mean KLD.</p>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border-slate-800">
+                        <div class="text-xs font-mono text-blue-400 mb-1">02. Sweet Spot (4-bit)</div>
+                        <div class="text-sm font-semibold text-white">41% VRAM Savings</div>
+                        <p class="text-xs text-slate-400 mt-1">UD-Q4_K_XL (111.3GB) maintains 92.26% top-1 with tightly bounded divergence (0.047 mean KLD, 1.55 99.9% KLD).</p>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border-slate-800">
+                        <div class="text-xs font-mono text-rose-400 mb-1">03. Sub-4-Bit Cliff</div>
+                        <div class="text-sm font-semibold text-white">8.4× Error Surge</div>
+                        <p class="text-xs text-slate-400 mt-1">Dropping to UD-IQ1_S (72.5GB) saves only 39GB more, but mean KLD surges 8.4× and tail explodes to 7.21!</p>
+                    </div>
+                    <div class="glass-card p-4 rounded-xl border-slate-800">
+                        <div class="text-xs font-mono text-amber-400 mb-1">04. 99.9% Tail Metric</div>
+                        <div class="text-sm font-semibold text-white">The Production Breaker</div>
+                        <p class="text-xs text-slate-400 mt-1">Top-1 accuracy masks catastrophic rare events: hallucinated syntax, infinite loops, and broken JSON schemas.</p>
+                    </div>
+                </div>
+
+                <!-- Combined Chart.js Chart: Accuracy vs Tail Divergence -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8" id="empirical-table">
+                    <div class="lg:col-span-7 glass-card rounded-2xl p-6 border-slate-800">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h4 class="text-base font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-chart-line text-cyan-400"></i> Top-1 Accuracy (%) vs 99.9% Tail KLD
+                                </h4>
+                                <p class="text-xs text-slate-400">Dual-axis: Top-1 Accuracy (left axis) vs 99.9% Tail KLD Divergence (right axis, red line).</p>
+                            </div>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Empirical Run</span>
+                        </div>
+                        <div class="h-72">
+                            <canvas id="chart-empirical-tradeoff"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Data Table with Highlight -->
+                    <div class="lg:col-span-5 glass-card rounded-2xl p-6 border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-table-list text-blue-400"></i> Benchmark Breakdown (405B Model)
+                                </h4>
+                                <span class="text-[11px] text-slate-400 font-mono">10 Quant Tiers</span>
+                            </div>
+                            <div class="overflow-x-auto max-h-72 overflow-y-auto">
+                                <table class="w-full text-xs data-table">
+                                    <thead class="sticky top-0 bg-slate-900 font-mono text-slate-400 border-b border-slate-800">
+                                        <tr>
+                                            <th>Quant</th>
+                                            <th>GB</th>
+                                            <th>Top-1</th>
+                                            <th>99.9% KLD</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="empirical-tbody" class="font-mono text-[11px]">
+                                        <!-- Rendered dynamically via JS for clean presentation -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i> Notice the exponential slope in 99.9% KLD below 111 GB (4-bit).
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MODULE 2: STRATEGY (PTQ vs QAT & CALIBRATION)-->
+        <!-- ========================================== -->
+        <section id="strategy" class="py-14 border-b border-slate-800 scroll-mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-2 text-indigo-400 text-xs font-mono uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-chess"></i> Module 02 — Quantization Strategy & Calibration
+                </div>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Slide 4 & 5: PTQ vs. QAT & The Calibration Trap</h2>
+                        <p class="text-sm text-slate-400 mt-1">Zero-cost PTQ, Parameter-Efficient QAT (PE-QAT), calibration dataset distribution shifts, and why Perplexity lies.</p>
+                    </div>
+                    <button onclick="openSlideDeck(4)" class="self-start md:self-auto text-xs px-3 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/30 hover:bg-indigo-500 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i> Present Slide 4 & 5
+                    </button>
+                </div>
+
+                <!-- Comparison Cards: PTQ vs QAT vs PE-QAT -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- PTQ -->
+                    <div class="glass-card rounded-2xl p-6 border-slate-800 hover:border-blue-500/40 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-blue-400 font-semibold px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">PTQ</span>
+                            <span class="text-xs text-slate-400">~95% Deployments</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Post-Training Quantization</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Forward pass only over 128–512 calibration samples. Zero backprop, zero gradient compute. Quantizes in 5 to 60 minutes on a single node.
+                        </p>
+                        <div class="space-y-1.5 text-xs text-slate-400 border-t border-slate-800 pt-3">
+                            <div><strong class="text-slate-200">Compute Cost:</strong> Near $0 (Minutes)</div>
+                            <div><strong class="text-slate-200">Sweet Spot:</strong> 8-bit & 4-bit (AWQ, GPTQ)</div>
+                            <div><strong class="text-slate-200">Failure Mode:</strong> Unbounded cascades below 4-bit</div>
+                        </div>
+                    </div>
+
+                    <!-- PE-QAT -->
+                    <div class="glass-card rounded-2xl p-6 border-slate-800 hover:border-purple-500/40 transition relative overflow-hidden">
+                        <div class="absolute -right-10 -top-10 w-28 h-28 bg-purple-500/10 rounded-full blur-xl pointer-events-none"></div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-purple-400 font-semibold px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20">Modern Fix</span>
+                            <span class="text-xs text-emerald-400 font-semibold">Recommended for &lt;4-bit</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">PE-QAT / ZeroQAT</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Freeze the base model weights completely; train <strong>only LoRA adapters or step-size clipping bounds (&lt;2% parameters)</strong> under simulated quantization noise.
+                        </p>
+                        <div class="space-y-1.5 text-xs text-slate-400 border-t border-slate-800 pt-3">
+                            <div><strong class="text-slate-200">Compute Cost:</strong> Single developer node (1–4 hours)</div>
+                            <div><strong class="text-slate-200">Sweet Spot:</strong> 2-bit to 3-bit regimes</div>
+                            <div><strong class="text-slate-200">Advantage:</strong> Near full-QAT quality without cluster bills</div>
+                        </div>
+                    </div>
+
+                    <!-- Full QAT -->
+                    <div class="glass-card rounded-2xl p-6 border-slate-800 hover:border-slate-700 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-slate-400 font-semibold px-2 py-0.5 rounded bg-slate-800 border border-slate-700">Full QAT</span>
+                            <span class="text-xs text-amber-400">Cluster Compute</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">Quantization-Aware Training</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Retrains or continues pre-training with fake-quantization nodes. Backprop calculates gradients via straight-through estimators (STE).
+                        </p>
+                        <div class="space-y-1.5 text-xs text-slate-400 border-t border-slate-800 pt-3">
+                            <div><strong class="text-slate-200">Compute Cost:</strong> Massive (Hundreds of GPU cluster hours)</div>
+                            <div><strong class="text-slate-200">Sweet Spot:</strong> Pre-training from scratch (DeepSeek FP8)</div>
+                            <div><strong class="text-slate-200">Disadvantage:</strong> Cost-prohibitive for standard teams</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calibration & Eval Traps Alert Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-amber-500/30">
+                        <div class="text-amber-400 text-sm font-bold flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Trap 1: Generic Calibration Corpus
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Calibrating on WikiText-2 or C4 causes brutal domain mismatch. If serving SQL or legal contracts, calibrate on <strong>128–512 domain-specific sequences</strong> at <strong>2048–4096 tokens</strong> (not short 512 snippets).
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-blue-500/30">
+                        <div class="text-blue-400 text-sm font-bold flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-gears"></i> Trap 2: Runtime Kernel & Precision Parity
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Calibration statistics MUST match your production serving runtime: exact attention backend (Eager vs FlashAttention-2 vs FlashInfer) and compute datatypes (FP16 vs BF16 vs FP8).
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-slate-900/90 border border-rose-500/30">
+                        <div class="text-rose-400 text-sm font-bold flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-bug"></i> Trap 3: Perplexity (PPL) Lies!
+                        </div>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Perplexity frequently remains completely stable while strict JSON adherence, multi-hop reasoning, and code syntax break down. <strong>Always gate release on task suites (GSM8K, MMLU, JSON schema).</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MODULE 3: ALGORITHMS (OUTLIERS, AWQ, ROTATION)-->
+        <!-- ========================================== -->
+        <section id="algorithms" class="py-14 border-b border-slate-800 scroll-mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-2 text-purple-400 text-xs font-mono uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-code-branch"></i> Module 03 — Weight & Activation Algorithms
+                </div>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Slide 6, 7 & 8: Taming Outliers & The Production Face-Off</h2>
+                        <p class="text-sm text-slate-400 mt-1">LLM.int8() outlier channels, QLoRA NF4, GPTQ vs. AWQ shootout, and SmoothQuant difficulty migration.</p>
+                    </div>
+                    <button onclick="openSlideDeck(6)" class="self-start md:self-auto text-xs px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/30 hover:bg-purple-500 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i> Present Slide 6–8
+                    </button>
+                </div>
+
+                <!-- Interactive Visual Architecture: Outliers, AWQ & SmoothQuant -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Outlier Decomposition & QLoRA -->
+                    <div class="glass-card rounded-2xl p-6 border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-bolt-lightning text-amber-400"></i> LLM.int8() & QLoRA NF4
+                                </h3>
+                                <span class="text-xs font-mono text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Slide 6</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                                Above 6.7B parameters, ~0.1% of activation channels spike to extreme values (>6.0). Naive INT8 scales blow up. LLM.int8() decomposes the matrix into FP16 outlier columns and INT8 normal columns.
+                            </p>
+
+                            <!-- Interactive Visual Flow -->
+                            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 space-y-3 font-mono text-xs">
+                                <div class="flex items-center justify-between p-2 rounded bg-slate-800/60">
+                                    <span class="text-slate-300">Input Activations X</span>
+                                    <span class="text-cyan-300">Check |X_c| &gt; 6.0</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-center text-[11px]">
+                                    <div class="p-2 rounded bg-blue-950/60 border border-blue-500/40 text-blue-300">
+                                        <div class="font-bold">0.1% Outliers</div>
+                                        <div class="text-[10px] text-slate-400">FP16 Native GEMM</div>
+                                    </div>
+                                    <div class="p-2 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300">
+                                        <div class="font-bold">99.9% Normal</div>
+                                        <div class="text-[10px] text-slate-400">INT8 Scaled GEMM</div>
+                                    </div>
+                                </div>
+                                <div class="text-center p-1.5 rounded bg-purple-900/30 text-purple-300 text-[11px]">
+                                    Sum Outputs: Y = FP16_out + INT8_out
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QLoRA 3 Tricks Callout -->
+                        <div class="mt-4 pt-3 border-t border-slate-800 grid grid-cols-3 gap-2 text-center text-[10px]">
+                            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                <div class="text-cyan-400 font-bold">NF4 Quant</div>
+                                <div class="text-slate-400">Equal info per bin</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                <div class="text-cyan-400 font-bold">Double Quant</div>
+                                <div class="text-slate-400">Saves ~0.37 bpw</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-900 border border-slate-800">
+                                <div class="text-cyan-400 font-bold">Paged Optimizers</div>
+                                <div class="text-slate-400">Zero OOM on spikes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SmoothQuant & Orthogonal Rotations (Slide 8) -->
+                    <div class="glass-card rounded-2xl p-6 border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-sliders text-cyan-400"></i> SmoothQuant & Layer Rotations (W4A4)
+                                </h3>
+                                <span class="text-xs font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">Slide 8</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                                For W8A8 and W4A4, activations are the primary failure point. SmoothQuant migrates difficulty from activations to weights with an exact mathematical identity.
+                            </p>
+
+                            <!-- SmoothQuant Visualizer Box -->
+                            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-xs">
+                                <div class="font-mono text-cyan-300 text-center mb-3">
+                                    Y = (X · diag(s)⁻¹) · (diag(s) · W) = X̂ · Ŵ
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 text-center text-[11px] mb-3">
+                                    <div class="p-2 rounded bg-slate-800/80 border border-cyan-500/30">
+                                        <div class="font-bold text-cyan-300">X̂ (Activations)</div>
+                                        <div class="text-slate-400">Scaled down by s; outliers suppressed</div>
+                                    </div>
+                                    <div class="p-2 rounded bg-slate-800/80 border border-blue-500/30">
+                                        <div class="font-bold text-blue-300">Ŵ (Weights)</div>
+                                        <div class="text-slate-400">Scaled up by s; absorbs difficulty</div>
+                                    </div>
+                                </div>
+                                <div class="p-2 rounded bg-slate-950 text-slate-300 text-[11px] font-mono text-center">
+                                    Balancing factor: α = 0.5 splits quantization difficulty 50/50
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QuaRot / SpinQuant note -->
+                        <div class="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-400">
+                            <strong class="text-purple-300">QuaRot & SpinQuant:</strong> Disperses outliers across all channels via orthogonal rotation matrix R (Cayley SGD), enabling viable W4A4 with &lt;3% perplexity delta!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GPTQ vs. AWQ Shootout Table & Speed Benchmark (Slide 7) -->
+                <div class="glass-card rounded-2xl p-6 border-slate-800">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                        <div>
+                            <span class="text-xs font-mono text-emerald-400 uppercase tracking-wider">Slide 7 Shootout</span>
+                            <h3 class="text-lg font-bold text-white">GPTQ vs. AWQ: The Production Face-Off</h3>
+                        </div>
+                        <div class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30">
+                            Production Verdict: Standardize on AWQ
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <!-- Table -->
+                        <div class="lg:col-span-8 overflow-x-auto">
+                            <table class="w-full text-xs data-table">
+                                <thead class="bg-slate-900/80 font-mono text-slate-400 border-b border-slate-800">
+                                    <tr>
+                                        <th>Evaluation Dimension</th>
+                                        <th>GPTQ</th>
+                                        <th>AWQ</th>
+                                        <th>Recommendation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="font-semibold text-white">Core Mathematical Principle</td>
+                                        <td>Hessian inverse error compensation</td>
+                                        <td>Salient channel weight scaling</td>
+                                        <td class="text-slate-400 font-mono">Both reach ~4 bpw</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold text-white">Calibration Speed (70B)</td>
+                                        <td>30–60 minutes</td>
+                                        <td class="text-emerald-400 font-bold">5–10 minutes</td>
+                                        <td class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> AWQ (6× Faster)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold text-white">Domain Generalization</td>
+                                        <td>Prone to overfitting calibration text</td>
+                                        <td class="text-emerald-400 font-bold">Superior cross-domain retention</td>
+                                        <td class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> AWQ</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold text-white">Inference Kernel Support</td>
+                                        <td>Universal (vLLM, TensorRT-LLM, AutoGPTQ)</td>
+                                        <td>Universal (vLLM, TensorRT-LLM, TGI)</td>
+                                        <td class="text-slate-400 font-mono">Tie (Marlin backed)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="font-semibold text-white">Serving Kernel Latency</td>
+                                        <td>High (Marlin kernels)</td>
+                                        <td class="text-emerald-400 font-bold">Highest (Marlin / FlashInfer)</td>
+                                        <td class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> AWQ</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Chart.js Calibration & Latency Chart -->
+                        <div class="lg:col-span-4 h-56">
+                            <canvas id="chart-gptq-awq"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MODULE 4: FORMATS (FP8, OCP MX, NVFP4)    -->
+        <!-- ========================================== -->
+        <section id="formats" class="py-14 border-b border-slate-800 scroll-mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-2 text-blue-400 text-xs font-mono uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-microchip"></i> Module 04 — Modern Floating-Point Formats
+                </div>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Slide 9: FP8, OCP Microscaling (MX), and Blackwell NVFP4</h2>
+                        <p class="text-sm text-slate-400 mt-1">Why exponents beat integer grids at low bits, and the hardware reality check across Hopper, Ada, and Blackwell.</p>
+                    </div>
+                    <button onclick="openSlideDeck(8)" class="self-start md:self-auto text-xs px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/30 hover:bg-blue-500 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i> Present Slide 9
+                    </button>
+                </div>
+
+                <!-- 3 Formats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- FP8 -->
+                    <div class="glass-card rounded-2xl p-6 border-slate-800 hover:border-blue-500/40 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-blue-400 font-semibold px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">Cloud Standard</span>
+                            <span class="text-xs text-slate-400">Ada & Hopper</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">FP8 (E4M3 vs. E5M2)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Floating-point scales absorb activation outliers natively. Dynamic per-token scaling prevents clipping without retraining.
+                        </p>
+
+                        <!-- Bit Representation Box -->
+                        <div class="space-y-2 mb-4 font-mono text-xs">
+                            <div class="p-2.5 rounded bg-slate-900 border border-blue-500/30">
+                                <div class="text-blue-300 font-bold">E4M3 (Range ±448)</div>
+                                <div class="text-[11px] text-slate-400">1 sign | 4 exponent | 3 mantissa</div>
+                                <div class="text-[10px] text-slate-500">Inference weights, activations, KV cache</div>
+                            </div>
+                            <div class="p-2.5 rounded bg-slate-900 border border-indigo-500/30">
+                                <div class="text-indigo-300 font-bold">E5M2 (Range ±57,344)</div>
+                                <div class="text-[11px] text-slate-400">1 sign | 5 exponent | 2 mantissa</div>
+                                <div class="text-[10px] text-slate-500">Training gradients (prevents underflow)</div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-emerald-400 font-mono">
+                            vLLM flag: --kv-cache-dtype fp8
+                        </div>
+                    </div>
+
+                    <!-- OCP MX -->
+                    <div class="glass-card rounded-2xl p-6 border-slate-800 hover:border-cyan-500/40 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-cyan-400 font-semibold px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/20">Open Standard</span>
+                            <span class="text-xs text-slate-400">Cross-Vendor</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">OCP Microscaling (MX)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Block of <strong>32 elements</strong> shares a single <strong>8-bit exponent scale (E8M0)</strong>. Pure power-of-two bit shift arithmetic.
+                        </p>
+
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2 mb-4 text-xs font-mono">
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span>MXFP4 Effective:</span>
+                                <span class="text-cyan-300 font-bold">~4.25 bpw</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-300">
+                                <span>MXFP6 Effective:</span>
+                                <span class="text-cyan-300 font-bold">~6.25 bpw</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-1">
+                                Applied to BOTH weights AND activations natively.
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-amber-300">
+                            ⚠ Awaiting native accelerator silicon instruction rollouts.
+                        </div>
+                    </div>
+
+                    <!-- NVFP4 -->
+                    <div class="glass-card rounded-2xl p-6 border-slate-800 hover:border-emerald-500/40 transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-mono text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">Blackwell Only</span>
+                            <span class="text-xs text-emerald-400 font-bold">B100 / B200</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white mb-2">NVFP4 Dual Scaling</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Raw E2M1 FP4 only spans -6.0 to +6.0. NVIDIA solves saturation via nested two-tier scales:
+                        </p>
+
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2 mb-4 text-xs font-mono">
+                            <div class="p-2 rounded bg-slate-800/70 border border-emerald-500/30">
+                                <span class="text-emerald-400 font-bold">Outer Scale (FP32):</span>
+                                <div class="text-[10px] text-slate-400">1 per entire tensor (prevents global saturation)</div>
+                            </div>
+                            <div class="p-2 rounded bg-slate-800/70 border border-teal-500/30">
+                                <span class="text-teal-300 font-bold">Inner Scale (E4M3 FP8):</span>
+                                <div class="text-[10px] text-slate-400">1 per 16 elements (fine local range)</div>
+                            </div>
+                            <div class="text-[11px] text-cyan-300 font-bold text-center">
+                                Effective footprint ≈ 4.5 bpw
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-rose-300">
+                            ⚠ Hard requirement: Cannot execute on Hopper (H100) or Ada!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart.js Format Bitwidth & Throughput Comparison -->
+                <div class="glass-card rounded-2xl p-6 border-slate-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h4 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-gauge-high text-cyan-400"></i> Effective bpw vs Tensor Core FLOPS Multiplier
+                            </h4>
+                            <p class="text-xs text-slate-400">Relative compute throughput compared to dense BF16 baseline.</p>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Hardware Multiplier</span>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="chart-format-throughput"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MODULE 5: PRODUCTION CASE STUDIES          -->
+        <!-- ========================================== -->
+        <section id="production" class="py-14 border-b border-slate-800 scroll-mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-2 text-emerald-400 text-xs font-mono uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-industry"></i> Module 05 — Production Case Studies & Realities
+                </div>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Slide 10, 11 & 12: DeepSeek-V3, KV Cache & Edge</h2>
+                        <p class="text-sm text-slate-400 mt-1">Pre-training 671B in FP8 with DeepGEMM, avoiding the 8× GQA sizing blunder, and Apple MLX vs. GGUF.</p>
+                    </div>
+                    <button onclick="openSlideDeck(9)" class="self-start md:self-auto text-xs px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i> Present Slide 10–12
+                    </button>
+                </div>
+
+                <!-- DeepSeek-V3 FP8 Pre-Training Feature (Slide 10) -->
+                <div class="glass-card rounded-2xl p-6 border-slate-800 mb-8 relative overflow-hidden">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 gap-2">
+                        <div>
+                            <span class="text-xs font-mono text-cyan-400 uppercase tracking-wider">Slide 10 Breakthrough</span>
+                            <h3 class="text-xl font-bold text-white">DeepSeek-V3: Pre-Training 671B Parameters from Scratch in FP8</h3>
+                        </div>
+                        <span class="text-xs font-mono px-3 py-1 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                            DeepGEMM: Custom Hopper wgmma CUDA Kernels
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="text-xs font-mono text-slate-400 mb-1">01. THE RISK</div>
+                            <div class="text-sm font-bold text-white mb-1">Narrow Accumulator</div>
+                            <p class="text-xs text-slate-300">FP8 accumulator has ~13–14 effective bits vs 23 for FP32. Long dot products compound rounding errors, causing training divergence.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="text-xs font-mono text-cyan-400 mb-1">02. THE ARCHITECTURE</div>
+                            <div class="text-sm font-bold text-white mb-1">Fine-Grained Tiling</div>
+                            <p class="text-xs text-slate-300">Activations sliced into <code class="text-cyan-300 font-mono">[1 × 128]</code> token tiles. Weights blocked into <code class="text-blue-300 font-mono">[128 × 128]</code> GEMM tiles to keep reductions short.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="text-xs font-mono text-emerald-400 mb-1">03. THE OUTCOME</div>
+                            <div class="text-sm font-bold text-white mb-1">Zero Quality Loss</div>
+                            <p class="text-xs text-slate-300">671B MoE pre-trained end-to-end with high stability, saving over 50% cluster training memory and millions in training costs.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 11: KV Cache Sizing Trap & Interactive VRAM Calculator -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8" id="calculator">
+                    <!-- Left: KV Cache Sizing Trap & Formulas -->
+                    <div class="lg:col-span-6 glass-card rounded-2xl p-6 border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-memory text-rose-400"></i> KV Cache: Size It Right, Then Quantize It
+                                </h3>
+                                <span class="text-xs font-mono text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">Slide 11</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                                At 32k–128k context lengths, <strong>KV cache memory dwarfs the model weights themselves</strong>.
+                            </p>
+
+                            <!-- Formula Pill -->
+                            <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 font-mono text-xs text-cyan-300 mb-4 text-center">
+                                KV Memory / Token = 2 × (Layers) × (KV Heads) × (Head Dim) × (Bytes/Elem)
+                            </div>
+
+                            <!-- The 8x GQA Trap Callout -->
+                            <div class="p-4 rounded-xl bg-rose-950/40 border border-rose-500/40 text-xs text-rose-200 mb-4 space-y-1">
+                                <div class="font-bold flex items-center gap-2 text-rose-300">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> The 8× GQA Capacity Sizing Blunder:
+                                </div>
+                                <p class="text-[11px] leading-relaxed text-slate-300">
+                                    Under Grouped-Query Attention (GQA), modern models (Llama 3, Qwen 2.5) share KV heads across query heads.
+                                    <strong>Llama-3-70B has 64 query heads but only 8 KV heads!</strong>
+                                    Sizing with query heads overstates KV cache by exactly <strong>8×</strong>. Always read <code class="text-white font-mono">num_key_value_heads</code> in <code class="text-white font-mono">config.json</code>!
+                                </p>
+                            </div>
+
+                            <!-- Quantization Tiers -->
+                            <div class="grid grid-cols-2 gap-3 text-xs">
+                                <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                                    <div class="font-bold text-blue-400">Tier 1: FP8 KV Cache</div>
+                                    <div class="text-[11px] text-slate-400 mt-1">vLLM <code>--kv-cache-dtype fp8</code>. Halves memory with &lt;0.1% accuracy drop. Double context length instantly.</div>
+                                </div>
+                                <div class="p-3 rounded-lg bg-slate-900 border border-slate-800">
+                                    <div class="font-bold text-purple-400">Tier 2: ~2-bit (KIVI)</div>
+                                    <div class="text-[11px] text-slate-400 mt-1">Keys per-channel, Values per-token. Recent 32–128 tokens in FP16. Reaches 2-bit with minimal PPL loss.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Interactive VRAM & KV Cache Calculator (Chart.js) -->
+                    <div class="lg:col-span-6 glass-card rounded-2xl p-6 border-slate-800">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-cyan-400"></i> Interactive Serving VRAM Estimator
+                            </h4>
+                            <span class="text-[10px] font-mono text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/20">Live Calculation</span>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="grid grid-cols-3 gap-2.5 mb-4 text-xs">
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-mono block mb-1">Model Architecture</label>
+                                <select id="calc-model" onchange="updateVramCalculator()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-white font-mono text-xs focus:outline-none focus:border-blue-500">
+                                    <option value="8b">Llama 3 8B (32 layers, 8 KV)</option>
+                                    <option value="70b" selected>Llama 3 70B (80 layers, 8 KV)</option>
+                                    <option value="405b">Llama 3.1 405B (126 layers, 8 KV)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-mono block mb-1">Weight Precision</label>
+                                <select id="calc-weight-dtype" onchange="updateVramCalculator()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-white font-mono text-xs focus:outline-none focus:border-blue-500">
+                                    <option value="16">FP16 / BF16 (16-bit)</option>
+                                    <option value="8">FP8 (8-bit)</option>
+                                    <option value="4" selected>AWQ / INT4 (~4.5 bpw)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-[10px] text-slate-400 font-mono block mb-1">KV Cache Dtype</label>
+                                <select id="calc-kv-dtype" onchange="updateVramCalculator()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-1.5 text-white font-mono text-xs focus:outline-none focus:border-blue-500">
+                                    <option value="16">FP16 (2 bytes)</option>
+                                    <option value="8" selected>FP8 (1 byte)</option>
+                                    <option value="2">KIVI / 2-bit (0.25 bytes)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Context Slider -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-400">Context Length per Request:</span>
+                                <span id="calc-ctx-val" class="font-mono text-cyan-300 font-bold">32,768 tokens (32k)</span>
+                            </div>
+                            <input id="calc-ctx-slider" type="range" min="2048" max="131072" step="2048" value="32768" oninput="updateVramCalculator()" class="w-full accent-blue-500 cursor-pointer">
+                        </div>
+
+                        <!-- Live Chart.js: Weight VRAM vs KV Cache VRAM across concurrency -->
+                        <div class="h-48 mb-3">
+                            <canvas id="chart-vram-breakdown"></canvas>
+                        </div>
+
+                        <div id="calc-summary" class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-[11px] text-slate-300 font-mono flex justify-between">
+                            <span>Weights: <strong id="vram-w-val" class="text-white">39.4 GB</strong></span>
+                            <span>KV Cache (1 user): <strong id="vram-kv-val" class="text-cyan-400">5.2 GB</strong></span>
+                            <span>Total VRAM: <strong id="vram-tot-val" class="text-emerald-400">44.6 GB</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 12: Local & Edge (Apple MLX vs. GGUF / llama.cpp) -->
+                <div class="glass-card rounded-2xl p-6 border-slate-800">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                        <div>
+                            <span class="text-xs font-mono text-amber-400 uppercase tracking-wider">Slide 12 Edge Shootout</span>
+                            <h3 class="text-lg font-bold text-white">Apple MLX vs. GGUF (llama.cpp)</h3>
+                        </div>
+                        <div class="text-xs text-slate-400">
+                            Two ecosystems for Apple Silicon, CPU & commodity workstations
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Apple MLX -->
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i class="fa-brands fa-apple text-slate-200"></i> Apple MLX
+                                </span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-500/20 text-blue-400">Fastest Mac Decode</span>
+                            </div>
+                            <ul class="text-xs text-slate-300 space-y-2 mb-4">
+                                <li>• <strong>Format:</strong> Affine 2/4/8-bit with group size 64.</li>
+                                <li>• <strong>Standout:</strong> Metal kernels fuse dequantization + matmul into single threadgroups without CPU roundtrips.</li>
+                                <li>• <strong>Performance:</strong> Superior token generation (decode) speed on M3/M4.</li>
+                                <li class="text-amber-300">• <strong>⚠ Hardware Trap:</strong> Defaults to <code class="font-mono">bfloat16</code> which is emulated on M1/M2 → causes sluggish prefill at long context!</li>
+                            </ul>
+                        </div>
+
+                        <!-- GGUF / llama.cpp -->
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm font-bold text-white flex items-center gap-2">
+                                    <i class="fa-solid fa-cube text-indigo-400"></i> GGUF / llama.cpp
+                                </span>
+                                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400">Universal Portability</span>
+                            </div>
+                            <ul class="text-xs text-slate-300 space-y-2 mb-4">
+                                <li>• <strong>Format:</strong> K-quants & I-quants packaged in a single <code class="font-mono">.gguf</code> file loaded instantly via <code class="font-mono">mmap</code>.</li>
+                                <li>• <strong>Gold standard:</strong> <code class="font-mono text-cyan-300">Q4_K_M (~4.85 bpw)</code> promotes sensitive attention matrices to 6-bit.</li>
+                                <li>• <strong>Extreme limit:</strong> I-Matrix calibration enables usable 2–3 bit models (<code class="font-mono">IQ3_XXS</code>).</li>
+                                <li class="text-rose-300">• <strong>⚠ Hardware Reality:</strong> CPU fast path uses 8-bit integer SIMD (AVX-512 VNNI / ARM NEON); no native 16-bit integer dot product exists!</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- MODULE 6: DECISION FLOWCHART & RULES       -->
+        <!-- ========================================== -->
+        <section id="decision-framework" class="py-14 border-b border-slate-800 scroll-mt-16">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-2 text-cyan-400 text-xs font-mono uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-diagram-project"></i> Module 06 — Closing & Decision Framework
+                </div>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Slide 13: Decision Flowchart & 5 Production Rules of Thumb</h2>
+                        <p class="text-sm text-slate-400 mt-1">Select your exact format, runtime, and serving backend based on target silicon and concurrency requirements.</p>
+                    </div>
+                    <button onclick="openSlideDeck(12)" class="self-start md:self-auto text-xs px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500 hover:text-white transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i> Present Slide 13
+                    </button>
+                </div>
+
+                <!-- Interactive Decision Tree Flow (Replacing Mermaid 17) -->
+                <div class="glass-card rounded-2xl p-6 border-slate-800 mb-8">
+                    <div class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-4">
+                        Step 1: Choose Target Hardware Tier
+                    </div>
+
+                    <!-- Tier Selector Tabs -->
+                    <div class="flex flex-wrap gap-2 mb-6" id="tree-tabs">
+                        <button onclick="switchDecisionTree('cloud')" id="btn-tree-cloud" class="tab-btn active px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-cloud text-blue-400"></i> Enterprise Cloud (NVIDIA Hopper / Ada / Blackwell)
+                        </button>
+                        <button onclick="switchDecisionTree('workstation')" id="btn-tree-workstation" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-desktop text-purple-400"></i> Workstation (RTX 3090 / 4090 / 5090)
+                        </button>
+                        <button onclick="switchDecisionTree('edge')" id="btn-tree-edge" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-laptop text-emerald-400"></i> Local Mac / CPU / Edge Device
+                        </button>
+                    </div>
+
+                    <!-- Dynamic Decision Cards Container -->
+                    <div id="decision-tree-content">
+                        <!-- Cloud Branches (Default) -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-5 rounded-xl bg-slate-900/90 border border-emerald-500/40">
+                                <div class="text-[10px] font-mono text-emerald-400 font-bold mb-1">BRANCH A — BLACKWELL B100/B200</div>
+                                <h4 class="text-base font-bold text-white mb-2">NVFP4 via TensorRT-LLM</h4>
+                                <p class="text-xs text-slate-300 mb-3">Maximum compute throughput (up to 4× BF16 FLOPS) with dual-level FP32/E4M3 scaling. Slashes inter-node bottlenecks.</p>
+                                <div class="text-[11px] text-emerald-400 font-mono font-semibold">Primary: Highest token throughput</div>
+                            </div>
+
+                            <div class="p-5 rounded-xl bg-slate-900/90 border border-blue-500/40">
+                                <div class="text-[10px] font-mono text-blue-400 font-bold mb-1">BRANCH B — HOPPER / ADA (BATCH &gt; 32)</div>
+                                <h4 class="text-base font-bold text-white mb-2">FP8 (W8A8) via vLLM / SGLang</h4>
+                                <p class="text-xs text-slate-300 mb-3">Compute-bound serving at scale. Native FP8 Tensor Core GEMMs + FP8 KV cache. Zero accuracy degradation on modern models.</p>
+                                <div class="text-[11px] text-blue-400 font-mono font-semibold">Primary: High-concurrency production</div>
+                            </div>
+
+                            <div class="p-5 rounded-xl bg-slate-900/90 border border-cyan-500/40">
+                                <div class="text-[10px] font-mono text-cyan-400 font-bold mb-1">BRANCH C — HOPPER / ADA (BATCH 1–16)</div>
+                                <h4 class="text-base font-bold text-white mb-2">AWQ W4A16 (Marlin Kernels)</h4>
+                                <p class="text-xs text-slate-300 mb-3">Memory-bandwidth bound low-latency serving (chat/agents). Fits large models into minimal GPUs with peak memory transfer rates.</p>
+                                <div class="text-[11px] text-cyan-400 font-mono font-semibold">Primary: Low latency & VRAM constrained</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The 5 Golden Rules of Thumb -->
+                <div class="glass-card rounded-2xl p-6 border-slate-800">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-emerald-400"></i> The 5 Production Rules of Thumb
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-3 text-xs">
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="text-blue-400 font-bold font-mono mb-1">RULE 01</div>
+                            <div class="font-bold text-white mb-1">Balance the Trilemma</div>
+                            <p class="text-slate-400 text-[11px]">Cutting VRAM does not guarantee faster latency. Know whether you are memory-bandwidth or compute bound.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="text-cyan-400 font-bold font-mono mb-1">RULE 02</div>
+                            <div class="font-bold text-white mb-1">Account for Metadata</div>
+                            <p class="text-slate-400 text-[11px]">Nominal 4-bit is misleading. Always add 10%–20% memory buffer for zero-points, group scales, and runtimes.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="text-purple-400 font-bold font-mono mb-1">RULE 03</div>
+                            <div class="font-bold text-white mb-1">In-Domain Calibration</div>
+                            <p class="text-slate-400 text-[11px]">Calibrate with 256+ in-domain texts at 2048–4096 tokens. Never release on PPL alone; test JSON & reasoning tasks.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="text-amber-400 font-bold font-mono mb-1">RULE 04</div>
+                            <div class="font-bold text-white mb-1">Verify Hardware ISA</div>
+                            <p class="text-slate-400 text-[11px]">NVFP4 is Blackwell-only. Apple M1/M2 requires FP16 to avoid slow emulated bf16 prefill. Check before promising.</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+                            <div class="text-emerald-400 font-bold font-mono mb-1">RULE 05</div>
+                            <div class="font-bold text-white mb-1">Quantize KV Cache</div>
+                            <p class="text-slate-400 text-[11px]">Enable FP8 KV in vLLM to instantly double context capacity. Size using <code>num_key_value_heads</code> to avoid 8× error.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BACKUP MODULE: HARDWARE MATRIX & REPOS     -->
+        <!-- ========================================== -->
+        <section id="backup" class="py-14 border-b border-slate-800 scroll-mt-16 bg-slate-950/40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center gap-2 text-slate-400 text-xs font-mono uppercase tracking-wider mb-2">
+                    <i class="fa-solid fa-box-archive"></i> Backup Material — Verification & Toolkits
+                </div>
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-white tracking-tight">Backup Slides B1 & B2: Repositories & Hardware Reality Checks</h2>
+                        <p class="text-sm text-slate-400 mt-1">Official serving repos, kernel toolkits, and compatibility constraints.</p>
+                    </div>
+                    <button onclick="openSlideDeck(13)" class="self-start md:self-auto text-xs px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i> Present Backup Slides
+                    </button>
+                </div>
+
+                <!-- Hardware Fact Check Table -->
+                <div class="glass-card rounded-2xl p-6 border-slate-800 mb-8">
+                    <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-cyan-400"></i> Hardware & Format Reality Check Matrix
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs data-table">
+                            <thead class="bg-slate-900 font-mono text-slate-400 border-b border-slate-800">
+                                <tr>
+                                    <th>Feature / Precision</th>
+                                    <th>Hardware Status & Constraints</th>
+                                    <th>Production Engineering Advice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold text-emerald-400">NVFP4 Support</td>
+                                    <td>Blackwell-only (B100 / B200 / GB200)</td>
+                                    <td>Do not promise or specify for Hopper (H100) or Ada (L40S).</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold text-blue-400">FP8 (E4M3 / E5M2)</td>
+                                    <td>Supported on Ada Lovelace, Hopper, Blackwell</td>
+                                    <td>The production-ready cloud default for high-concurrency serving.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold text-amber-400">Bfloat16 on Apple Silicon</td>
+                                    <td>Native hardware on M3 / M4; emulated on M1 / M2</td>
+                                    <td>On M1/M2 Macs, use llama.cpp (FP16) to avoid 3×–5× slower prefill.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold text-purple-400">AVX-512 SIMD Dot Products</td>
+                                    <td>Native 8-bit integer only (VNNI)</td>
+                                    <td>No 16-bit integer dot product; decomposes into slower sequences.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold text-cyan-400">"4-Bit" VRAM Requirement</td>
+                                    <td>Nominal 4.0 bpw ignores scales & zero-points</td>
+                                    <td>Always add 10%–20% headroom buffer for metadata & KV cache.</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold text-rose-400">GQA Head Count Sizing</td>
+                                    <td>KV Heads &lt;&lt; Query Heads in modern LLMs</td>
+                                    <td>Always size KV cache using <code>num_key_value_heads</code>.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ecosystem Toolkits Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+                        <div class="text-xs font-mono text-blue-400 font-semibold mb-2">SERVING ENGINES & KERNELS</div>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li><strong class="text-white">vLLM:</strong> Production LLM serving (FP8, AWQ, Marlin kernels, FP8 KV cache).</li>
+                            <li><strong class="text-white">TensorRT-LLM:</strong> Enterprise NVIDIA serving; NVFP4 & FP8 optimized.</li>
+                            <li><strong class="text-white">DeepGEMM:</strong> DeepSeek open-source Hopper FP8 wgmma kernel library.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+                        <div class="text-xs font-mono text-emerald-400 font-semibold mb-2">LOCAL & EDGE RUNTIMES</div>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li><strong class="text-white">llama.cpp:</strong> GGUF, K-quants, I-matrix, SIMD assembly kernels.</li>
+                            <li><strong class="text-white">MLX:</strong> Apple Silicon native framework for M1–M4 GPUs.</li>
+                            <li><strong class="text-white">Ollama:</strong> Packaged local model execution with GGUF defaults.</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-5 rounded-xl bg-slate-900 border border-slate-800">
+                        <div class="text-xs font-mono text-purple-400 font-semibold mb-2">QUANTIZATION TOOLKITS</div>
+                        <ul class="text-xs text-slate-300 space-y-2">
+                            <li><strong class="text-white">AutoAWQ:</strong> Fast salient activation-aware weight quantization.</li>
+                            <li><strong class="text-white">AutoGPTQ:</strong> Second-order Hessian inverse error compensation.</li>
+                            <li><strong class="text-white">bitsandbytes:</strong> NF4 & 8-bit optimizers for single-GPU fine-tuning.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="border-t border-slate-800/80 bg-dark-bg py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <div>
+                Based on <span class="text-slate-300 font-semibold">presentation_script.md</span> & <span class="text-slate-300 font-semibold">quantization_visuals.md</span>.
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="openSlideDeck(0)" class="text-blue-400 hover:text-blue-300 transition flex items-center gap-1 font-mono">
+                    <i class="fa-solid fa-play"></i> Launch Presentation
+                </button>
+                <a href="#overview" class="hover:text-slate-300 transition">Back to Top ↑</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================== -->
+    <!-- FULLSCREEN PRESENTATION SLIDE DECK MODAL                       -->
+    <!-- ============================================================== -->
+    <div id="slide-deck-modal" class="fixed inset-0 z-50 bg-[#060a14] hidden flex-col">
+        <!-- Slide Top Bar -->
+        <div class="h-14 border-b border-slate-800/80 px-6 flex items-center justify-between bg-dark-bg/90 backdrop-blur-md">
+            <div class="flex items-center space-x-3">
+                <span class="h-7 w-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                    <i class="fa-solid fa-layer-group"></i>
+                </span>
+                <span class="text-xs font-mono text-slate-300" id="slide-module-tag">Module 0: Overview</span>
+                <span class="text-slate-600">|</span>
+                <span class="text-xs font-bold text-white tracking-wide truncate max-w-xs sm:max-w-md" id="slide-title-tag">Slide Title</span>
+            </div>
+
+            <!-- Controls: Slide Counter, Notes Toggle, Fullscreen, Close -->
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleSpeakerNotes()" id="btn-notes" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5" title="Toggle Speaker Notes (N)">
+                    <i class="fa-solid fa-comment-dots text-amber-400"></i>
+                    <span class="hidden sm:inline">Speaker Note</span>
+                </button>
+                <div class="text-xs font-mono text-slate-400 bg-slate-900 px-3 py-1 rounded border border-slate-800">
+                    <span id="current-slide-num" class="text-white font-bold">1</span> / <span id="total-slide-num">15</span>
+                </div>
+                <button onclick="closeSlideDeck()" class="text-slate-400 hover:text-white px-2 py-1 transition text-sm" title="Exit (Esc)">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Slide Content Area -->
+        <div class="flex-grow flex items-center justify-center p-4 sm:p-8 overflow-y-auto relative">
+            <div id="slide-body" class="w-full max-w-5xl max-h-full">
+                <!-- Dynamically injected slide content -->
+            </div>
+        </div>
+
+        <!-- Speaker Notes Drawer (Toggled) -->
+        <div id="speaker-notes-drawer" class="border-t border-amber-500/30 bg-slate-950/95 px-6 py-3 hidden">
+            <div class="max-w-5xl mx-auto flex items-start gap-3">
+                <div class="text-amber-400 text-sm mt-0.5"><i class="fa-solid fa-bullhorn"></i></div>
+                <div>
+                    <div class="text-[11px] font-mono text-amber-400 font-bold uppercase tracking-wider">Speaker Note (The one essential takeaway to say out loud):</div>
+                    <div id="speaker-note-text" class="text-xs sm:text-sm text-slate-200 mt-0.5 italic"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide Bottom Navigation Bar -->
+        <div class="h-14 border-t border-slate-800/80 px-6 flex items-center justify-between bg-dark-bg/90 backdrop-blur-md">
+            <!-- Jump Selector -->
+            <select id="slide-jump-select" onchange="jumpToSlide(this.value)" class="bg-slate-900 text-slate-300 border border-slate-800 text-xs rounded-lg px-2.5 py-1 font-mono focus:outline-none focus:border-blue-500 max-w-[220px] sm:max-w-xs">
+                <!-- Dynamically generated options -->
+            </select>
+
+            <!-- Navigation Buttons -->
+            <div class="flex items-center space-x-2">
+                <button onclick="prevSlide()" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Prev</span>
+                </button>
+                <button onclick="nextSlide()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-500/25 transition flex items-center gap-1.5">
+                    <span class="hidden sm:inline">Next</span> <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- APPLICATION LOGIC & CHART.JS INITIALIZATION                    -->
+    <!-- ============================================================== -->
+    <script>
+        // Empirical Table Dataset (from presentation_script.md Slide 3 & Backup B2)
+        const empiricalData = [
+            { quant: "UD-IQ1_S", gb: 72.5, top1: 77.325, meanKLD: 0.396070, tailKLD: 7.2126, bpw: "1.5 bpw" },
+            { quant: "UD-IQ1_M", gb: 74.5, top1: 79.691, meanKLD: 0.314739, tailKLD: 6.1965, bpw: "1.75 bpw" },
+            { quant: "UD-Q2_K_XL", gb: 78.9, top1: 82.715, meanKLD: 0.224607, tailKLD: 4.9121, bpw: "2.2 bpw" },
+            { quant: "UD-IQ3_XXS", gb: 82.0, top1: 85.414, meanKLD: 0.165120, tailKLD: 4.0375, bpw: "2.6 bpw" },
+            { quant: "UD-Q3_K_XL", gb: 90.0, top1: 88.315, meanKLD: 0.106504, tailKLD: 3.0538, bpw: "3.2 bpw" },
+            { quant: "UD-IQ4_XS", gb: 93.7, top1: 89.554, meanKLD: 0.083630, tailKLD: 2.3677, bpw: "3.6 bpw" },
+            { quant: "UD-Q4_K_XL", gb: 111.3, top1: 92.255, meanKLD: 0.046893, tailKLD: 1.5468, bpw: "4.2 bpw", highlight: true },
+            { quant: "UD-Q5_K_XL", gb: 158.3, top1: 93.680, meanKLD: 0.030415, tailKLD: 1.0036, bpw: "5.1 bpw" },
+            { quant: "UD-Q6_K_XL", gb: 169.2, top1: 94.089, meanKLD: 0.027091, tailKLD: 0.8416, bpw: "6.2 bpw" },
+            { quant: "Q8_0", gb: 188.2, top1: 94.122, meanKLD: 0.026574, tailKLD: 0.8118, bpw: "8.0 bpw", baseline: true }
+        ];
+
+        // Populate empirical table
+        const empiricalTbody = document.getElementById('empirical-tbody');
+        if (empiricalTbody) {
+            empiricalTbody.innerHTML = empiricalData.map(row => `
+                <tr class="${row.highlight ? 'bg-blue-900/30 text-blue-300 font-bold' : ''}">
+                    <td class="font-semibold ${row.highlight ? 'text-blue-300' : 'text-slate-200'}">${row.quant}</td>
+                    <td>${row.gb}</td>
+                    <td class="${row.top1 >= 92 ? 'text-emerald-400' : 'text-slate-300'}">${row.top1.toFixed(2)}%</td>
+                    <td class="${row.tailKLD > 4 ? 'text-rose-400' : 'text-slate-300'}">${row.tailKLD.toFixed(2)}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Initialize Chart.js Charts with custom dark theme
+        let modelFootprintChart, trilemmaRadarChart, empiricalChart, gptqAwqChart, throughputChart, vramChart;
+
+        function initCharts() {
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = "'JetBrains Mono', monospace";
+            Chart.defaults.font.size = 11;
+
+            // 1. Model Footprint Chart (Bar)
+            const ctxModel = document.getElementById('chart-model-footprint')?.getContext('2d');
+            if (ctxModel) {
+                modelFootprintChart = new Chart(ctxModel, {
+                    type: 'bar',
+                    data: {
+                        labels: ['8B Model', '70B Model', '405B Frontier', '1T MoE'],
+                        datasets: [
+                            {
+                                label: 'FP16 / BF16 (16-bit)',
+                                data: [16, 140, 810, 2000],
+                                backgroundColor: 'rgba(100, 116, 139, 0.7)',
+                                borderColor: '#94a3b8',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'FP8 (8-bit)',
+                                data: [8, 70, 405, 1000],
+                                backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                                borderColor: '#3b82f6',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'INT4 / AWQ (~4.1 bpw)',
+                                data: [4.1, 36, 208, 512],
+                                backgroundColor: 'rgba(6, 182, 212, 0.7)',
+                                borderColor: '#06b6d4',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'NVFP4 (~4.5 bpw)',
+                                data: [4.5, 39.4, 228, 560],
+                                backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                                borderColor: '#10b981',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) => ` ${ctx.dataset.label}: ${ctx.raw} GB VRAM`
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'logarithmic',
+                                grid: { color: 'rgba(30, 41, 59, 0.6)' },
+                                title: { display: true, text: 'VRAM in GB (Log Scale)' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. Trilemma Radar Chart
+            const ctxRadar = document.getElementById('chart-trilemma-radar')?.getContext('2d');
+            if (ctxRadar) {
+                trilemmaRadarChart = new Chart(ctxRadar, {
+                    type: 'radar',
+                    data: {
+                        labels: [
+                            'VRAM Compression',
+                            'Low-Batch Latency',
+                            'High-Batch Throughput',
+                            'Reasoning Retention',
+                            'Domain Robustness'
+                        ],
+                        datasets: [
+                            {
+                                label: 'AWQ (W4A16)',
+                                data: [90, 95, 60, 94, 92],
+                                borderColor: '#06b6d4',
+                                backgroundColor: 'rgba(6, 182, 212, 0.2)',
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'FP8 (W8A8)',
+                                data: [65, 75, 95, 98, 98],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'NVFP4 (W4A4)',
+                                data: [92, 90, 100, 92, 90],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                                borderWidth: 2
+                            },
+                            {
+                                label: 'BF16 (Baseline)',
+                                data: [20, 50, 50, 100, 100],
+                                borderColor: '#64748b',
+                                borderDash: [4, 4],
+                                backgroundColor: 'transparent',
+                                borderWidth: 1.5
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: { color: 'rgba(51, 65, 85, 0.4)' },
+                                grid: { color: 'rgba(51, 65, 85, 0.4)' },
+                                pointLabels: { font: { size: 10 }, color: '#cbd5e1' },
+                                ticks: { display: false, max: 100, min: 0 }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 10, font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 3. Empirical Trade-Off Chart (Line + Bar Dual Axis)
+            const ctxEmpirical = document.getElementById('chart-empirical-tradeoff')?.getContext('2d');
+            if (ctxEmpirical) {
+                empiricalChart = new Chart(ctxEmpirical, {
+                    type: 'line',
+                    data: {
+                        labels: empiricalData.map(d => d.quant),
+                        datasets: [
+                            {
+                                label: 'Top-1 Accuracy (%)',
+                                data: empiricalData.map(d => d.top1),
+                                borderColor: '#38bdf8',
+                                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                                yAxisID: 'yTop1',
+                                tension: 0.3,
+                                fill: true,
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            },
+                            {
+                                label: '99.9% Tail KLD (Lower = Better)',
+                                data: empiricalData.map(d => d.tailKLD),
+                                borderColor: '#f43f5e',
+                                backgroundColor: 'rgba(244, 63, 94, 0.15)',
+                                yAxisID: 'yKLD',
+                                tension: 0.3,
+                                borderDash: [4, 4],
+                                pointRadius: 4,
+                                pointHoverRadius: 6
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            yTop1: {
+                                type: 'linear',
+                                position: 'left',
+                                min: 70,
+                                max: 100,
+                                title: { display: true, text: 'Top-1 (%)' },
+                                grid: { color: 'rgba(30, 41, 59, 0.6)' }
+                            },
+                            yKLD: {
+                                type: 'linear',
+                                position: 'right',
+                                min: 0,
+                                max: 8,
+                                title: { display: true, text: '99.9% Tail KLD' },
+                                grid: { drawOnChartArea: false }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 9 }, maxRotation: 45 }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 4. GPTQ vs AWQ Calibration Time & Latency
+            const ctxGptqAwq = document.getElementById('chart-gptq-awq')?.getContext('2d');
+            if (ctxGptqAwq) {
+                gptqAwqChart = new Chart(ctxGptqAwq, {
+                    type: 'bar',
+                    data: {
+                        labels: ['70B Calibration Time (mins)', 'Kernel Eval Latency (ms)'],
+                        datasets: [
+                            {
+                                label: 'GPTQ',
+                                data: [45, 18.2],
+                                backgroundColor: 'rgba(148, 163, 184, 0.6)',
+                                borderColor: '#94a3b8',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'AWQ',
+                                data: [8, 14.5],
+                                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                                borderColor: '#10b981',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { grid: { color: 'rgba(30, 41, 59, 0.6)' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // 5. Format Throughput Multiplier
+            const ctxThroughput = document.getElementById('chart-format-throughput')?.getContext('2d');
+            if (ctxThroughput) {
+                throughputChart = new Chart(ctxThroughput, {
+                    type: 'bar',
+                    data: {
+                        labels: ['BF16 (Dense)', 'FP8 (Hopper)', 'NVFP4 (Blackwell)', 'OCP MXFP4 (Estimated)'],
+                        datasets: [{
+                            label: 'Tensor Core Relative Compute Throughput',
+                            data: [1.0, 2.0, 4.0, 3.8],
+                            backgroundColor: [
+                                'rgba(100, 116, 139, 0.6)',
+                                'rgba(59, 130, 246, 0.7)',
+                                'rgba(16, 185, 129, 0.8)',
+                                'rgba(6, 182, 212, 0.7)'
+                            ],
+                            borderColor: ['#64748b', '#3b82f6', '#10b981', '#06b6d4'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Throughput Multiplier (× BF16)' },
+                                grid: { color: 'rgba(30, 41, 59, 0.6)' }
+                            },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+
+            // 6. Interactive VRAM Calculator Chart
+            updateVramCalculator();
+        }
+
+        // Live VRAM & KV Cache Calculator Logic
+        function updateVramCalculator() {
+            const modelVal = document.getElementById('calc-model')?.value || '70b';
+            const weightBits = parseFloat(document.getElementById('calc-weight-dtype')?.value || '4');
+            const kvBits = parseFloat(document.getElementById('calc-kv-dtype')?.value || '8');
+            const ctxTokens = parseInt(document.getElementById('calc-ctx-slider')?.value || '32768');
+
+            const ctxValEl = document.getElementById('calc-ctx-val');
+            if (ctxValEl) {
+                ctxValEl.innerText = `${ctxTokens.toLocaleString()} tokens (${(ctxTokens / 1024).toFixed(0)}k)`;
+            }
+
+            // Model parameters: { layers, kvHeads, headDim, totalParamsB }
+            let spec = { layers: 80, kvHeads: 8, headDim: 128, paramsB: 70 };
+            if (modelVal === '8b') spec = { layers: 32, kvHeads: 8, headDim: 128, paramsB: 8 };
+            if (modelVal === '405b') spec = { layers: 126, kvHeads: 8, headDim: 128, paramsB: 405 };
+
+            // Weight Memory in GB (effective bpw includes 10% metadata buffer)
+            const effectiveWeightBpw = weightBits === 4 ? 4.5 : weightBits;
+            const weightVramGB = (spec.paramsB * effectiveWeightBpw) / 8;
+
+            // KV Cache Memory per token in Bytes: 2 * layers * kvHeads * headDim * (bytesPerElem)
+            const bytesPerElem = kvBits / 8;
+            const kvBytesPerToken = 2 * spec.layers * spec.kvHeads * spec.headDim * bytesPerElem;
+
+            // KV Cache for 1 user
+            const kvVramGB1 = (kvBytesPerToken * ctxTokens) / (1024 * 1024 * 1024);
+
+            // Update DOM Summary
+            const wVal = document.getElementById('vram-w-val');
+            const kvVal = document.getElementById('vram-kv-val');
+            const totVal = document.getElementById('vram-tot-val');
+            if (wVal) wVal.innerText = `${weightVramGB.toFixed(1)} GB`;
+            if (kvVal) kvVal.innerText = `${kvVramGB1.toFixed(1)} GB`;
+            if (totVal) totVal.innerText = `${(weightVramGB + kvVramGB1).toFixed(1)} GB`;
+
+            // Draw Concurrency Curve: 1, 4, 8, 16, 32 users
+            const concurrencyTiers = [1, 4, 8, 16, 32];
+            const weightData = concurrencyTiers.map(() => weightVramGB);
+            const kvData = concurrencyTiers.map(c => kvVramGB1 * c);
+
+            const ctxVram = document.getElementById('chart-vram-breakdown')?.getContext('2d');
+            if (ctxVram) {
+                if (vramChart) {
+                    vramChart.data.datasets[0].data = weightData;
+                    vramChart.data.datasets[1].data = kvData;
+                    vramChart.update();
+                } else {
+                    vramChart = new Chart(ctxVram, {
+                        type: 'bar',
+                        data: {
+                            labels: concurrencyTiers.map(c => `${c} Stream${c > 1 ? 's' : ''}`),
+                            datasets: [
+                                {
+                                    label: 'Model Weights (Static)',
+                                    data: weightData,
+                                    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                                    stack: 'combined'
+                                },
+                                {
+                                    label: 'KV Cache (Dynamic)',
+                                    data: kvData,
+                                    backgroundColor: 'rgba(244, 63, 94, 0.7)',
+                                    stack: 'combined'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    stacked: true,
+                                    grid: { color: 'rgba(30, 41, 59, 0.6)' },
+                                    title: { display: true, text: 'Total VRAM (GB)' }
+                                },
+                                x: { stacked: true, grid: { display: false } }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        // Decision Tree Tab Switcher
+        function switchDecisionTree(type) {
+            document.querySelectorAll('#tree-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById(`btn-tree-${type}`);
+            if (btn) btn.classList.add('active');
+
+            const container = document.getElementById('decision-tree-content');
+            if (!container) return;
+
+            if (type === 'cloud') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-emerald-500/40">
+                            <div class="text-[10px] font-mono text-emerald-400 font-bold mb-1">BRANCH A — BLACKWELL B100/B200</div>
+                            <h4 class="text-base font-bold text-white mb-2">NVFP4 via TensorRT-LLM</h4>
+                            <p class="text-xs text-slate-300 mb-3">Maximum compute throughput (up to 4× BF16 FLOPS) with dual-level FP32/E4M3 scaling. Slashes inter-node bottlenecks.</p>
+                            <div class="text-[11px] text-emerald-400 font-mono font-semibold">Primary: Highest token throughput</div>
+                        </div>
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-blue-500/40">
+                            <div class="text-[10px] font-mono text-blue-400 font-bold mb-1">BRANCH B — HOPPER / ADA (BATCH &gt; 32)</div>
+                            <h4 class="text-base font-bold text-white mb-2">FP8 (W8A8) via vLLM / SGLang</h4>
+                            <p class="text-xs text-slate-300 mb-3">Compute-bound serving at scale. Native FP8 Tensor Core GEMMs + FP8 KV cache. Zero accuracy degradation on modern models.</p>
+                            <div class="text-[11px] text-blue-400 font-mono font-semibold">Primary: High-concurrency production</div>
+                        </div>
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-cyan-500/40">
+                            <div class="text-[10px] font-mono text-cyan-400 font-bold mb-1">BRANCH C — HOPPER / ADA (BATCH 1–16)</div>
+                            <h4 class="text-base font-bold text-white mb-2">AWQ W4A16 (Marlin Kernels)</h4>
+                            <p class="text-xs text-slate-300 mb-3">Memory-bandwidth bound low-latency serving (chat/agents). Fits large models into minimal GPUs with peak memory transfer rates.</p>
+                            <div class="text-[11px] text-cyan-400 font-mono font-semibold">Primary: Low latency & VRAM constrained</div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'workstation') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-purple-500/40">
+                            <div class="text-[10px] font-mono text-purple-400 font-bold mb-1">BRANCH A — SERVING & LOCAL INFERENCE</div>
+                            <h4 class="text-base font-bold text-white mb-2">AWQ W4A16 via vLLM / Ollama</h4>
+                            <p class="text-xs text-slate-300 mb-3">Fits 70B models inside 2× RTX 3090/4090 (48GB combined) or 8B models into a single 16GB VRAM card at 45+ tokens/sec.</p>
+                            <div class="text-[11px] text-purple-400 font-mono font-semibold">Primary: Local developer workstation serving</div>
+                        </div>
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-amber-500/40">
+                            <div class="text-[10px] font-mono text-amber-400 font-bold mb-1">BRANCH B — FINE-TUNING & ADAPTER ADAPTATION</div>
+                            <h4 class="text-base font-bold text-white mb-2">QLoRA with NF4 (bitsandbytes)</h4>
+                            <p class="text-xs text-slate-300 mb-3">Train LoRA adapters on a 65B/70B model using a single 48GB GPU. NormalFloat4 + double quantization preserves 16-bit fidelity.</p>
+                            <div class="text-[11px] text-amber-400 font-mono font-semibold">Primary: Single-node model fine-tuning</div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'edge') {
+                container.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-blue-500/40">
+                            <div class="text-[10px] font-mono text-blue-400 font-bold mb-1">TIER 1 — STANDARD DEPLOYMENT</div>
+                            <h4 class="text-base font-bold text-white mb-2">GGUF Q4_K_M (llama.cpp)</h4>
+                            <p class="text-xs text-slate-300 mb-3">Gold standard ~4.85 bpw. Promotes attention tensors to 5/6-bit. Flawless balance of size and reasoning fidelity.</p>
+                            <div class="text-[11px] text-blue-400 font-mono font-semibold">Platform: CPU / Mac / Edge devices</div>
+                        </div>
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-emerald-500/40">
+                            <div class="text-[10px] font-mono text-emerald-400 font-bold mb-1">TIER 2 — MAXIMUM ACCURACY</div>
+                            <h4 class="text-base font-bold text-white mb-2">GGUF Q5_K_M (~5.5 bpw)</h4>
+                            <p class="text-xs text-slate-300 mb-3">Virtually undetectable degradation from full 16-bit precision. Ideal when RAM is slightly less constrained.</p>
+                            <div class="text-[11px] text-emerald-400 font-mono font-semibold">Platform: High-RAM Apple Silicon (64GB+)</div>
+                        </div>
+                        <div class="p-5 rounded-xl bg-slate-900/90 border border-rose-500/40">
+                            <div class="text-[10px] font-mono text-rose-400 font-bold mb-1">TIER 3 — EXTREME MEMORY CONSTRAINT</div>
+                            <h4 class="text-base font-bold text-white mb-2">GGUF IQ3_XXS (with I-Matrix)</h4>
+                            <p class="text-xs text-slate-300 mb-3">Sub-3.1 bpw. Uses calibration importance matrix to salvage reasoning. Fits 70B models in under 28GB RAM.</p>
+                            <div class="text-[11px] text-rose-400 font-mono font-semibold">Platform: Constrained 32GB Mac / Laptop</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // ==============================================================
+        // SLIDE PRESENTATION ENGINE (15 COMPLETE SLIDES)
+        // ==============================================================
+        const slides = [
+            // Slide 1
+            {
+                module: "Module 0 — Opening",
+                title: "Slide 1: Why Quantize — Memory, Speed, and TCO",
+                speakerNote: "Quantization is not a compression trick for small models — it is the enabler of frontier-scale AI. Three payoffs: memory, speed, TCO. But headline bit-widths lie.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 font-mono text-xs border border-blue-500/30">Executive Overview</span>
+                            <span class="text-slate-400 text-xs">Architectural Paradigms & Hardware Realities</span>
+                        </div>
+                        <h2 class="text-3xl sm:text-4xl font-black text-white">Why Quantize: Memory, Speed, and TCO</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-blue-500/40 space-y-2">
+                                <div class="text-blue-400 text-2xl font-bold font-mono">01. MEMORY</div>
+                                <div class="text-sm font-bold text-white">Frontier Scale Enabler</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    16-bit weights alone cost <strong>800GB–2TB+</strong> for 405B–1T+ models. Quantization collapses them 2×–4× onto single 8-GPU nodes, eliminating cross-node tensor parallel network choke points.
+                                </p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 space-y-2">
+                                <div class="text-emerald-400 text-2xl font-bold font-mono">02. SPEED</div>
+                                <div class="text-sm font-bold text-white">Match the Bottleneck</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    <strong>Low batch (chat/agents):</strong> Memory-bandwidth bound → weight-only W4A16.<br/>
+                                    <strong>High batch (serving):</strong> Compute bound → native low-bit GEMMs (FP8, NVFP4).
+                                </p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-purple-500/40 space-y-2">
+                                <div class="text-purple-400 text-2xl font-bold font-mono">03. ECONOMICS</div>
+                                <div class="text-sm font-bold text-white">Democratization & TCO</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Cuts energy ($/token) and cloud hosting <strong>3×–5×</strong>. Enables running production models on Apple Silicon (MLX), CPU edge (GGUF), and RTX workstations.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                            <strong>The Engineering Trap:</strong> Nominal "4-bit" misleads. Always account for metadata overhead (scales/zero-points) and hardware ISA execution support.
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 2
+            {
+                module: "Module 0 — Opening",
+                title: "Slide 2: The Engineering Trilemma — Memory, Speed, and Accuracy",
+                speakerNote: "You can't maximize all three. Cutting VRAM does not guarantee speedups — first know whether you are bandwidth-bound or compute-bound.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 font-mono text-xs border border-purple-500/30">Trade-Off Analysis</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">The Engineering Trilemma</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800">
+                                <div class="text-sm font-mono text-blue-400 font-bold mb-2">1. MEMORY (VRAM)</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Fits 70B models (&lt;40GB) onto 1 GPU instead of 2–4. Eliminates inter-node bottlenecks and reserves critical headroom for 32k–128k context KV cache.
+                                </p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800">
+                                <div class="text-sm font-mono text-emerald-400 font-bold mb-2">2. SPEED (LATENCY VS TPS)</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Low-batch is memory-bound; high-batch is compute-bound. <em>Warning:</em> Naive dequantization (LLM.int8) saves VRAM but slows inference relative to FP16!
+                                </p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800">
+                                <div class="text-sm font-mono text-rose-400 font-bold mb-2">3. ACCURACY (FIDELITY)</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    <strong>The 4-Bit Threshold:</strong> ≥4-bit retains 99%+ accuracy via PTQ. Below 4-bit, reasoning collapses unless advanced rotations/PE-QAT are applied.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-center font-mono text-xs text-cyan-300">
+                            Effective Bitrate Rule: effective_bpw = element_bits + (scale_bits + zero_point_bits) / group_size
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 3
+            {
+                module: "Module 1 — Foundations",
+                title: "Slide 3: Empirical Trade-Offs — Footprint vs. Accuracy & Tail Divergence",
+                speakerNote: "4-bit is the sweet spot: 41% smaller than Q8 with high fidelity. Below 4-bit the tail blows up — and the tail is where production breaks.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 font-mono text-xs border border-cyan-500/30">Benchmark Data</span>
+                            <span class="text-slate-400 text-xs">Empirical Frontier Analysis (405B Model)</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">The Quality Frontier & Tail Blowup</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3 text-xs text-slate-300">
+                                <div><strong class="text-white">Near-Zero Loss Plateau (5–8 bit):</strong> Q6 retains 94.09% top-1 (matching Q8_0 at 94.12%), saving 19GB with mean KLD 0.027.</div>
+                                <div><strong class="text-cyan-300">The 4-Bit Sweet Spot:</strong> UD-Q4_K_XL slashes footprint by <strong>41%</strong> compared to Q8_0 while keeping 92.26% top-1 and bounded divergence.</div>
+                                <div><strong class="text-rose-400">The Sub-4-Bit Cliff:</strong> Dropping to UD-IQ1_S saves only ~39GB, but mean KLD jumps 8.4× and 99.9% tail KLD explodes to <strong>7.2126</strong>.</div>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-xs font-mono text-amber-400 font-bold">WHY 99.9% TAIL KLD MATTERS</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Standard top-1 accuracy hides catastrophic rare failure modes. A high 99.9% tail KLD causes sudden runtime breakdowns: malformed JSON, recursive loop traps, and corrupted function calling.
+                                </p>
+                                <div class="p-2.5 rounded bg-slate-950 font-mono text-[11px] text-cyan-300">
+                                    Q4_K_XL (111GB) = 1.55 tail KLD vs IQ1_S (72GB) = 7.21 tail KLD
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 4
+            {
+                module: "Module 2 — Strategy",
+                title: "Slide 4: PTQ vs. QAT (and PE-QAT)",
+                speakerNote: "PTQ is free and covers 95% of deployments down to 4-bit. Below that, PE-QAT buys near-QAT quality for <2% of a cluster bill.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-400 font-mono text-xs border border-indigo-500/30">Strategic Framework</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">PTQ vs. QAT (and PE-QAT)</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                            <div class="p-6 rounded-2xl bg-slate-900/90 border border-blue-500/30 space-y-3">
+                                <div class="text-sm font-mono text-blue-400 font-bold">POST-TRAINING QUANT (PTQ)</div>
+                                <ul class="text-xs text-slate-300 space-y-2">
+                                    <li>• Forward pass only on 128–512 calibration samples.</li>
+                                    <li>• No gradient computation; completes in 5–60 minutes.</li>
+                                    <li>• Near $0 compute cost; covers 95% of deployments down to 4-bit.</li>
+                                    <li class="text-amber-300">• Risk: Unbounded error cascades below 4-bit.</li>
+                                </ul>
+                            </div>
+                            <div class="p-6 rounded-2xl bg-slate-900/90 border border-purple-500/30 space-y-3">
+                                <div class="text-sm font-mono text-purple-400 font-bold">PE-QAT (THE MODERN SOLUTION)</div>
+                                <ul class="text-xs text-slate-300 space-y-2">
+                                    <li>• Freeze the base model entirely.</li>
+                                    <li>• Train only LoRA adapters or step clipping bounds (&lt;2% params).</li>
+                                    <li>• Simulates quantization noise with straight-through estimators.</li>
+                                    <li class="text-emerald-300">• Achieves near-QAT quality at 2–3 bits on a single workstation in hours!</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 font-mono text-center">
+                            <strong>The Rule:</strong> Use PTQ down to 4-bit (AWQ, GPTQ). Switch to PE-QAT or rotation methods for 2–3 bit.
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 5
+            {
+                module: "Module 2 — Strategy",
+                title: "Slide 5: Calibration & Evaluation — The Production Gotchas",
+                speakerNote: "Calibration corpus is the #1 source of PTQ variance — use in-domain data at native length. And never ship on PPL alone; run a task suite.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 font-mono text-xs border border-rose-500/30">Production Traps</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">Calibration & Evaluation Gotchas</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-amber-500/40 space-y-2">
+                                <div class="text-xs font-mono text-amber-400 font-bold">TRAP 1: CORPUS MISMATCH</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Generic corpora (WikiText-2, C4) cause severe domain mismatch. Use <strong>128–512 domain-specific samples</strong> (code, medical, logs) at <strong>2048–4096 native length</strong>.
+                                </p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-blue-500/40 space-y-2">
+                                <div class="text-xs font-mono text-blue-400 font-bold">TRAP 2: RUNTIME PARITY</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Calibration statistics MUST match serving runtimes: identical attention kernel (FlashAttention vs FlashInfer) and compute precision (BF16 vs FP16 vs FP8).
+                                </p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-rose-500/40 space-y-2">
+                                <div class="text-xs font-mono text-rose-400 font-bold">TRAP 3: PERPLEXITY LIES</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Perplexity often stays flat while code generation, math reasoning (GSM8K), and structured JSON schema compliance collapse. <strong>Gate deployments on task suites!</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 6
+            {
+                module: "Module 3 — Algorithms",
+                title: "Slide 6: Outliers & Fine-Tuning — LLM.int8() and QLoRA/NF4",
+                speakerNote: "Outliers are why naive INT8 fails — and why LLM.int8() trades speed for memory. QLoRA/NF4 is how you fine-tune a 65B model on one workstation.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 font-mono text-xs border border-purple-500/30">Weight & Activation Algorithms</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">Taming Outliers: LLM.int8() & QLoRA</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-sm font-mono text-amber-400 font-bold">LLM.int8() OUTLIER CHANNELS</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    In models &gt;6.7B, ~0.1% of channels spike &gt;6.0. Decomposes matrix: outlier columns in native FP16, normal columns in INT8, then sums.
+                                </p>
+                                <div class="text-xs text-amber-300">
+                                    ⚠ Reality: Halves VRAM with zero loss, but mixed routing overhead makes it slower than native FP16!
+                                </div>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-sm font-mono text-cyan-400 font-bold">QLoRA & NORMALFLOAT4 (NF4)</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Information-theoretically optimal bins with equal probability mass for Gaussian weights.
+                                </p>
+                                <ul class="text-xs text-slate-400 space-y-1">
+                                    <li>• <strong>Double Quant:</strong> Quantizes scales 32b → 8b, saving ~0.37 bpw.</li>
+                                    <li>• <strong>Paged Optimizers:</strong> Evicts spikes to CPU RAM, preventing OOM.</li>
+                                    <li>• Fine-tunes 65B/70B models on a single 48GB workstation GPU.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 7
+            {
+                module: "Module 3 — Algorithms",
+                title: "Slide 7: GPTQ vs. AWQ — The Production Face-Off",
+                speakerNote: "Both reach ~4 bpw. AWQ wins on calibration speed, domain robustness, and kernel performance — default to it unless you have a legacy GPTQ repo.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-xs border border-emerald-500/30">Serving Shootout</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">GPTQ vs. AWQ: Production Shootout</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-sm font-mono text-slate-400 font-bold">GPTQ (SECOND-ORDER COMPENSATION)</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Quantizes column by column, subtracting rounding errors from unquantized weights via the inverse Hessian.
+                                </p>
+                                <div class="text-xs text-slate-400">Calibration: 30–60 mins (70B). Prone to overfitting calibration texts.</div>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 space-y-2">
+                                <div class="text-sm font-mono text-emerald-400 font-bold">AWQ (SALIENT CHANNEL SCALING) ★ WINNER</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Protects top 1% salient weights. Scales weights UP by s and activations DOWN by 1/s. Folds 1/s into prior LayerNorm → pure INT4 runtime with zero overhead!
+                                </p>
+                                <div class="text-xs text-emerald-300 font-bold">Calibration: 5–10 mins. Superior cross-domain generalizability.</div>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-center text-slate-300">
+                            <strong>Production Verdict:</strong> Default to AWQ for modern vLLM/TensorRT-LLM stacks.
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 8
+            {
+                module: "Module 3 — Algorithms",
+                title: "Slide 8: Activation Outliers — SmoothQuant & Layer Rotations",
+                speakerNote: "To quantize activations you must kill outliers. SmoothQuant shifts the difficulty into the weights; rotations spread outliers across channels for W4A4.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 font-mono text-xs border border-cyan-500/30">Activation Outliers</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">SmoothQuant & Orthogonal Rotations</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-sm font-mono text-cyan-400 font-bold">SMOOTHQUANT (DIFFICULTY MIGRATION)</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Activations have extreme outliers; weights are uniform. Migrate difficulty with equivalent transform:
+                                </p>
+                                <div class="p-2 rounded bg-slate-950 font-mono text-xs text-cyan-300 text-center">
+                                    Y = (X · diag(s)⁻¹) · (diag(s) · W)
+                                </div>
+                                <p class="text-xs text-slate-400">α = 0.5 balances difficulty evenly, enabling standard INT8 GEMMs on both tensors.</p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-sm font-mono text-purple-400 font-bold">QUAROT & SPINQUANT (W4A4 ROTATIONS)</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    At 4-bit, per-channel scaling is insufficient. Multiply activations and weights by orthogonal matrix R:
+                                </p>
+                                <div class="p-2 rounded bg-slate-950 font-mono text-xs text-purple-300 text-center">
+                                    Y = (X R)(Rᵀ W)
+                                </div>
+                                <p class="text-xs text-slate-400">Disperses outliers across all channels (incoherence), closing the W4A4 perplexity gap to &lt;3%.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 9
+            {
+                module: "Module 4 — Formats",
+                title: "Slide 9: Modern Low-Bit Floating-Point Formats — FP8, OCP MX, NVFP4",
+                speakerNote: "FP8 is the safe cloud default today. MX is the open cross-vendor bet. NVFP4 is the fastest but Blackwell-only — check your fleet before promising it.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 font-mono text-xs border border-blue-500/30">Silicon Precision</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">FP8, OCP MX, and NVFP4</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-blue-500/40 space-y-2">
+                                <div class="text-xs font-mono text-blue-400 font-bold">FP8 (E4M3 / E5M2)</div>
+                                <p class="text-xs text-slate-300">Supported on Ada & Hopper. Exponents absorb outliers naturally. Dynamic per-token scaling handles activations. Production cloud default.</p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-cyan-500/40 space-y-2">
+                                <div class="text-xs font-mono text-cyan-400 font-bold">OCP MX (E8M0 SCALE)</div>
+                                <p class="text-xs text-slate-300">Block of 32 elements shares an 8-bit scale (pure power-of-two shift). MXFP4 ≈ 4.25 bpw. Open standard for next-gen silicon.</p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 space-y-2">
+                                <div class="text-xs font-mono text-emerald-400 font-bold">NVFP4 (BLACKWELL)</div>
+                                <p class="text-xs text-slate-300">Nested two-tier scaling: FP32 outer scale + E4M3 scale per 16 elements. Effective ~4.5 bpw. Up to 4× dense BF16 compute throughput.</p>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs text-rose-300">
+                            ⚠ <strong>Hardware Reality Check:</strong> NVFP4 requires Blackwell (B100/B200) and cannot run on Hopper or Ada!
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 10
+            {
+                module: "Module 5 — Production",
+                title: "Slide 10: DeepSeek-V3 — Pre-Training 671B Parameters in FP8",
+                speakerNote: "Proof that FP8 works for pre-training, not just inference. The trick is fine-grained tiling to keep the short FP8 accumulator honest.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-400 font-mono text-xs border border-cyan-500/30">Production Case Study</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">DeepSeek-V3: FP8 Pre-Training at 671B Scale</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-3 text-xs text-slate-300">
+                                <div><strong class="text-white">The Breakthrough:</strong> 671B MoE model trained entirely from scratch in FP8 mixed precision without divergence.</div>
+                                <div><strong class="text-cyan-300">The Architectural Risk:</strong> FP8 accumulation mantissa has only ~13–14 effective bits vs 23 for FP32. Long reduction dimensions cause catastrophic error drift.</div>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2 text-xs">
+                                <div class="text-xs font-mono text-emerald-400 font-bold">FINE-GRAINED TILING & DEEPGEMM</div>
+                                <ul class="text-slate-300 space-y-1.5">
+                                    <li>• <strong>Activations:</strong> Sliced into <code class="font-mono text-cyan-300">[1 × 128]</code> token tiles.</li>
+                                    <li>• <strong>Weights:</strong> Blocked into <code class="font-mono text-blue-300">[128 × 128]</code> GEMM tiles.</li>
+                                    <li>• <strong>DeepGEMM:</strong> Custom open-source CUDA C++ kernels with hand-tuned Hopper <code class="font-mono">wgmma</code> instructions.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 11
+            {
+                module: "Module 5 — Production",
+                title: "Slide 11: KV Cache — Size It Right, Then Quantize It",
+                speakerNote: "Two moves. First size it correctly with KV heads — the 8× GQA trap has burned many capacity plans. Then quantize: FP8 today, ~2-bit KV when you need more.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-rose-500/20 text-rose-400 font-mono text-xs border border-rose-500/30">Long-Context Serving</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">KV Cache: Sizing & Quantization</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-rose-500/40 space-y-2">
+                                <div class="text-xs font-mono text-rose-400 font-bold">1. SIZE IT RIGHT (AVOID 8× GQA TRAP)</div>
+                                <p class="text-xs text-slate-300 leading-relaxed">
+                                    Under GQA, modern LLMs share KV heads. Llama-3-70B has 64 query heads but only <strong>8 KV heads</strong>. Sizing with query heads overstates memory by 8×! Always check <code class="font-mono text-cyan-300">num_key_value_heads</code>.
+                                </p>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-emerald-500/40 space-y-2">
+                                <div class="text-xs font-mono text-emerald-400 font-bold">2. THEN QUANTIZE IT</div>
+                                <ul class="text-xs text-slate-300 space-y-1.5">
+                                    <li>• <strong>Tier 1 (FP8 KV Cache):</strong> <code>--kv-cache-dtype fp8</code> in vLLM. Halves VRAM with &lt;0.1% quality loss.</li>
+                                    <li>• <strong>Tier 2 (Sub-4-bit KIVI):</strong> Keys per-channel, Values per-token; recent 64 tokens in FP16. Reaches ~2-bit KV cleanly.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-center text-slate-300 font-mono">
+                            Impact: 2×–4× increase in concurrent serving throughput at 32k–128k context!
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 12
+            {
+                module: "Module 5 — Production",
+                title: "Slide 12: Local & Edge — MLX vs. GGUF (llama.cpp)",
+                speakerNote: "Same hardware, two ecosystems. MLX wins decode on modern Macs; llama.cpp wins portability and rescues M1/M2 prefill because it uses fp16 instead of bf16.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 font-mono text-xs border border-amber-500/30">Edge & Workstation</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">Apple MLX vs. GGUF / llama.cpp</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-sm font-mono text-white font-bold">APPLE MLX</div>
+                                <ul class="text-xs text-slate-300 space-y-1.5">
+                                    <li>• Metal kernels fuse dequant + matmul directly on unified memory.</li>
+                                    <li>• Fastest generation (decode) speed for 7B–70B on Apple Silicon.</li>
+                                    <li class="text-amber-300">• ⚠ Trap: Defaults to bf16 — emulated on M1/M2 → slow prefill!</li>
+                                </ul>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-sm font-mono text-indigo-400 font-bold">GGUF / LLAMA.CPP</div>
+                                <ul class="text-xs text-slate-300 space-y-1.5">
+                                    <li>• Single mmap file containing K-quants & I-quants.</li>
+                                    <li>• Q4_K_M (~4.85 bpw) promotes sensitive attention matrices to 6-bit.</li>
+                                    <li>• I-Matrix calibration enables usable 2–3 bit models (IQ3_XXS).</li>
+                                    <li class="text-rose-300">• ⚠ Hardware fact: CPU fast path is 8-bit integer SIMD only.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 13
+            {
+                module: "Module 6 — Closing",
+                title: "Slide 13: Decision Flowchart + 5 Rules of Thumb",
+                speakerNote: "Pick your branch by hardware, then remember the five rules. If you only remember one: verify the hardware ISA before you promise a format.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-mono text-xs border border-emerald-500/30">Decision Framework</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">Decision Flowchart & Production Rules</h2>
+                        <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 font-mono text-xs space-y-2 text-slate-300">
+                            <div><strong>1. Enterprise Cloud:</strong> Blackwell → NVFP4 (TRT-LLM) | Hopper/Ada (Batch &gt; 32) → FP8 W8A8 | Low Batch → AWQ W4A16</div>
+                            <div><strong>2. Workstation:</strong> Serving → AWQ W4A16 | Fine-Tuning → QLoRA NF4 (bitsandbytes)</div>
+                            <div><strong>3. Edge / CPU / Mac:</strong> Standard → GGUF Q4_K_M | Max Accuracy → Q5_K_M | Constrained → IQ3_XXS</div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-[11px] text-slate-300 pt-2">
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800"><strong class="text-blue-400">1. Trilemma:</strong> Match bottleneck</div>
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800"><strong class="text-cyan-400">2. Metadata:</strong> Add 15% buffer</div>
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800"><strong class="text-purple-400">3. Calibrate:</strong> In-domain 2048+</div>
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800"><strong class="text-amber-400">4. Hardware:</strong> Check native ISA</div>
+                            <div class="p-3 rounded-lg bg-slate-900 border border-slate-800"><strong class="text-emerald-400">5. KV Cache:</strong> FP8 + KV heads</div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 14 (Backup B1)
+            {
+                module: "Backup Material",
+                title: "Backup Slide B1: Essential References & Production Repos",
+                speakerNote: "Official repositories for all serving runtimes, quantization toolkits, and edge libraries covered in the presentation.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-mono text-xs border border-slate-700">Backup Reference</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">Essential References & Repositories</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-xs font-mono text-blue-400 font-bold">SERVING ENGINES</div>
+                                <ul class="text-xs text-slate-300 space-y-2">
+                                    <li>• <strong>vLLM:</strong> vllm-project/vllm</li>
+                                    <li>• <strong>TensorRT-LLM:</strong> NVIDIA/TensorRT-LLM</li>
+                                    <li>• <strong>DeepGEMM:</strong> deepseek-ai/DeepGEMM</li>
+                                    <li>• <strong>SGLang:</strong> sgl-project/sglang</li>
+                                </ul>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-xs font-mono text-emerald-400 font-bold">LOCAL & EDGE</div>
+                                <ul class="text-xs text-slate-300 space-y-2">
+                                    <li>• <strong>llama.cpp:</strong> ggerganov/llama.cpp</li>
+                                    <li>• <strong>MLX:</strong> ml-explore/mlx</li>
+                                    <li>• <strong>Ollama:</strong> ollama/ollama</li>
+                                </ul>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-xs font-mono text-purple-400 font-bold">QUANT TOOLKITS</div>
+                                <ul class="text-xs text-slate-300 space-y-2">
+                                    <li>• <strong>AutoAWQ:</strong> casper-hansen/AutoAWQ</li>
+                                    <li>• <strong>AutoGPTQ:</strong> AutoGPTQ/AutoGPTQ</li>
+                                    <li>• <strong>bitsandbytes:</strong> bitsandbytes-foundation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            // Slide 15 (Backup B2)
+            {
+                module: "Backup Material",
+                title: "Backup Slide B2: Full Empirical Table & Hardware Fact Check",
+                speakerNote: "Complete 10-tier precision table from 72.5 GB to 188.2 GB, accompanied by hardware ISA constraints across Nvidia and Apple Silicon.",
+                render: () => `
+                    <div class="glass-card rounded-3xl p-8 border-slate-800 space-y-6">
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 font-mono text-xs border border-slate-700">Backup Reference</span>
+                        </div>
+                        <h2 class="text-3xl font-black text-white">Empirical Table & Hardware Fact Check</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-xs font-mono text-cyan-400 font-bold">PRECISION TIERS SUMMARY</div>
+                                <div class="text-xs text-slate-300 space-y-1 font-mono">
+                                    <div>• UD-IQ1_S: 72.5GB | Top-1: 77.3% | Tail KLD: 7.21</div>
+                                    <div>• UD-Q2_K_XL: 78.9GB | Top-1: 82.7% | Tail KLD: 4.91</div>
+                                    <div>• UD-Q3_K_XL: 90.0GB | Top-1: 88.3% | Tail KLD: 3.05</div>
+                                    <div class="text-blue-300 font-bold">• UD-Q4_K_XL: 111.3GB | Top-1: 92.3% | Tail KLD: 1.55</div>
+                                    <div>• UD-Q6_K_XL: 169.2GB | Top-1: 94.1% | Tail KLD: 0.84</div>
+                                    <div>• Q8_0: 188.2GB | Top-1: 94.1% | Tail KLD: 0.81</div>
+                                </div>
+                            </div>
+                            <div class="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-2">
+                                <div class="text-xs font-mono text-rose-400 font-bold">HARDWARE CONSTRAINTS</div>
+                                <ul class="text-xs text-slate-300 space-y-1">
+                                    <li>• <strong>NVFP4:</strong> Blackwell only (B100/B200).</li>
+                                    <li>• <strong>FP8:</strong> Ada Lovelace, Hopper, Blackwell.</li>
+                                    <li>• <strong>Bfloat16 on Apple:</strong> M3/M4 native; emulated on M1/M2.</li>
+                                    <li>• <strong>AVX-512 SIMD:</strong> 8-bit integer dot products only.</li>
+                                    <li>• <strong>GQA Sizing:</strong> Size KV cache with num_key_value_heads.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        let currentSlideIndex = 0;
+        let speakerNotesVisible = true;
+
+        function openSlideDeck(slideIndex = 0) {
+            currentSlideIndex = Math.min(Math.max(slideIndex, 0), slides.length - 1);
+            const modal = document.getElementById('slide-deck-modal');
+            if (modal) {
+                modal.classList.add('active');
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                populateSlideJumpSelect();
+                showCurrentSlide();
+            }
+        }
+
+        function closeSlideDeck() {
+            const modal = document.getElementById('slide-deck-modal');
+            if (modal) {
+                modal.classList.remove('active');
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function populateSlideJumpSelect() {
+            const select = document.getElementById('slide-jump-select');
+            if (!select) return;
+            select.innerHTML = slides.map((s, idx) => `
+                <option value="${idx}" ${idx === currentSlideIndex ? 'selected' : ''}>
+                    ${idx + 1}. ${s.title.split(':')[0]}
+                </option>
+            `).join('');
+        }
+
+        function jumpToSlide(index) {
+            currentSlideIndex = parseInt(index);
+            showCurrentSlide();
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                currentSlideIndex--;
+                showCurrentSlide();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                currentSlideIndex++;
+                showCurrentSlide();
+            }
+        }
+
+        function toggleSpeakerNotes() {
+            speakerNotesVisible = !speakerNotesVisible;
+            const drawer = document.getElementById('speaker-notes-drawer');
+            const btn = document.getElementById('btn-notes');
+            if (drawer) {
+                if (speakerNotesVisible) {
+                    drawer.classList.remove('hidden');
+                    btn?.classList.add('bg-amber-500/20', 'text-amber-300', 'border-amber-500/40');
+                } else {
+                    drawer.classList.add('hidden');
+                    btn?.classList.remove('bg-amber-500/20', 'text-amber-300', 'border-amber-500/40');
+                }
+            }
+        }
+
+        function showCurrentSlide() {
+            const slide = slides[currentSlideIndex];
+            if (!slide) return;
+
+            // Update top bar metadata
+            const moduleEl = document.getElementById('slide-module-tag');
+            const titleEl = document.getElementById('slide-title-tag');
+            const currentNumEl = document.getElementById('current-slide-num');
+            const totalNumEl = document.getElementById('total-slide-num');
+            const noteTextEl = document.getElementById('speaker-note-text');
+            const select = document.getElementById('slide-jump-select');
+
+            if (moduleEl) moduleEl.innerText = slide.module;
+            if (titleEl) titleEl.innerText = slide.title;
+            if (currentNumEl) currentNumEl.innerText = currentSlideIndex + 1;
+            if (totalNumEl) totalNumEl.innerText = slides.length;
+            if (noteTextEl) noteTextEl.innerText = `"${slide.speakerNote}"`;
+            if (select) select.value = currentSlideIndex;
+
+            // Render body
+            const bodyEl = document.getElementById('slide-body');
+            if (bodyEl) {
+                bodyEl.innerHTML = slide.render();
+            }
+        }
+
+        // Keyboard navigation for presentation mode
+        window.addEventListener('keydown', (e) => {
+            const modal = document.getElementById('slide-deck-modal');
+            if (!modal || modal.classList.contains('hidden')) return;
+
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'Escape') {
+                closeSlideDeck();
+            } else if (e.key === 'n' || e.key === 'N') {
+                toggleSpeakerNotes();
+            }
+        });
+
+        // Initialize on DOM load
+        window.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            populateSlideJumpSelect();
+            toggleSpeakerNotes(); // initialize speaker note state
+        });
+    </script>
+</body>
+</html>

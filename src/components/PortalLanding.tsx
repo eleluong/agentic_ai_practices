@@ -1,9 +1,9 @@
-import { ShieldCheck, Cpu, Zap, ArrowRight, Activity, Code, Server, Bot, MessageSquare, Workflow, Bug } from 'lucide-react';
+import { ShieldCheck, Cpu, Zap, ArrowRight, Activity, Code, Server, Bot, MessageSquare, Workflow, Bug, Binary } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../data/translations';
 
 interface PortalLandingProps {
-  onSelectTopic: (topic: 'governance' | 'optimization' | 'patterns' | 'agentic' | 'debug') => void;
+  onSelectTopic: (topic: 'governance' | 'optimization' | 'patterns' | 'agentic' | 'debug' | 'quantization') => void;
 }
 
 export const PortalLanding = ({ onSelectTopic }: PortalLandingProps) => {
@@ -252,6 +252,49 @@ export const PortalLanding = ({ onSelectTopic }: PortalLandingProps) => {
             <ArrowRight className="w-4 h-4 ml-2" />
           </div>
         </div>
+
+        {/* Card 6: LLM Quantization & Precision */}
+        <div
+          onClick={() => onSelectTopic('quantization')}
+          className="group relative bg-white/80 border border-slate-200/80 rounded-2xl p-8 hover:border-cyan-400 hover:shadow-xl hover:shadow-cyan-500/5 transition duration-300 flex flex-col justify-between cursor-pointer min-h-[420px]"
+        >
+          <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 via-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition duration-300 rounded-2xl pointer-events-none"></div>
+
+          <div>
+            <div className="w-12 h-12 bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20 mb-6 group-hover:scale-110 transition duration-300">
+              <Binary className="w-6 h-6 text-white" />
+            </div>
+
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight group-hover:text-cyan-600 transition">
+              {t.portal.quantCardTitle}
+            </h2>
+            <p className="mt-3 text-slate-500 text-sm leading-relaxed">
+              {t.portal.quantCardDesc}
+            </p>
+
+            <div className="mt-6 border-t border-slate-100 pt-6 space-y-3">
+              <div className="flex justify-between items-center text-xs font-semibold text-slate-400">
+                <span>{t.portal.quantCardVisualizer}</span>
+                <span className="text-cyan-600">{t.portal.quantCardActive}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-500 text-center">
+                <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-col items-center justify-center">
+                  <Activity className="w-4 h-4 text-cyan-500 mb-1" />
+                  <span>{t.portal.quantChipFormats}</span>
+                </div>
+                <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-col items-center justify-center">
+                  <Server className="w-4 h-4 text-blue-500 mb-1" />
+                  <span>{t.portal.quantChipAlgorithms}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 flex items-center text-cyan-600 font-bold text-sm group-hover:translate-x-1 transition duration-150">
+            <span>{t.portal.quantCardExplore}</span>
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </div>
+        </div>
       </div>
 
       {/* Dynamic Statistics Bar / Bottom Section */}
@@ -267,7 +310,7 @@ export const PortalLanding = ({ onSelectTopic }: PortalLandingProps) => {
         </div>
         <div className="flex space-x-8 text-center shrink-0">
           <div>
-            <span className="block text-2xl font-extrabold text-slate-800">4</span>
+            <span className="block text-2xl font-extrabold text-slate-800">5</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t.portal.statsHubs}</span>
           </div>
           <div className="border-r border-slate-200"></div>

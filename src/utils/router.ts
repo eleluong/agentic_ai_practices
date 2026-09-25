@@ -2,7 +2,14 @@
  * Lightweight client-side router matching pathways to views.
  */
 
-export type AppView = 'portal' | 'governance' | 'optimization' | 'patterns' | 'agentic' | 'debug';
+export type AppView =
+  | 'portal'
+  | 'governance'
+  | 'optimization'
+  | 'patterns'
+  | 'agentic'
+  | 'debug'
+  | 'quantization';
 
 /**
  * Resolves the pathname to one of the application views.
@@ -29,6 +36,14 @@ export const getPathView = (pathname: string): AppView => {
   if (path.startsWith('/agentic_types') || path.startsWith('/agentic')) {
     return 'agentic';
   }
+
+  if (
+    path.startsWith('/ai_quantization') ||
+    path.startsWith('/quantization') ||
+    path.startsWith('/quant')
+  ) {
+    return 'quantization';
+  }
   
   return 'portal';
 };
@@ -48,6 +63,8 @@ export const getViewPath = (view: AppView): string => {
       return '/agentic_types';
     case 'debug':
       return '/agentic_debug';
+    case 'quantization':
+      return '/ai_quantization';
     case 'portal':
     default:
       return '/';
