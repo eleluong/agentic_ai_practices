@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+:root {
+  /* Single source of truth for the deck's monospace stack (SVG + CSS). */
+  --font-mono-deck: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
 body {
   font-family: 'Inter', sans-serif;
 }
@@ -10,7 +15,7 @@ body {
    the rest of the site (now a single flowing page, not a nested deck).
    ============================================================ */
 .font-mono-deck {
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-mono-deck);
 }
 
 .glass-card {

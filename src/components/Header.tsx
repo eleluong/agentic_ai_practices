@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ShieldCheck, Cpu, Sparkles, ArrowLeft, Menu, X, Zap, Bot, Bug, Binary } from 'lucide-react';
+import { ShieldCheck, Cpu, Sparkles, ArrowLeft, Menu, X, Zap, Bot, Bug, Binary, Gauge } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../data/translations';
 import { QUANT_MODULES } from '../data/quantizationData';
+import { INFERENCE_MODULES } from '../data/inferenceData';
 
-type HeaderView = 'portal' | 'governance' | 'optimization' | 'patterns' | 'agentic' | 'debug' | 'quantization';
+type HeaderView = 'portal' | 'governance' | 'optimization' | 'patterns' | 'agentic' | 'debug' | 'quantization' | 'inference';
 
 interface HeaderProps {
   scrollToSection: (id: string) => void;
@@ -30,6 +31,8 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
       setCurrentView('debug');
     } else if (target === 'quantization-link') {
       setCurrentView('quantization');
+    } else if (target === 'inference-link') {
+      setCurrentView('inference');
     } else {
       scrollToSection(target);
     }
@@ -85,6 +88,13 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
           title: t.portal.quantCardTitle,
           subtitle: t.header.logoQuantSubtitle,
           gradient: "from-cyan-500 via-blue-600 to-indigo-600"
+        };
+      case 'inference':
+        return {
+          icon: <Gauge className="w-5 h-5 text-white" />,
+          title: t.portal.inferenceCardTitle,
+          subtitle: t.header.logoInferenceSubtitle,
+          gradient: "from-indigo-500 via-violet-600 to-fuchsia-600"
         };
       default:
         return {
@@ -152,11 +162,18 @@ export const Header = ({ scrollToSection, currentView, setCurrentView }: HeaderP
         target: m.id,
       }));
     }
+    if (currentView === 'inference') {
+      return INFERENCE_MODULES.map((m) => ({
+        label: lang === 'vi' ? m.navLabelVi : m.navLabel,
+        target: m.id,
+      }));
+    }
     return [
       { label: t.header.navGov, target: 'governance-link' },
       { label: t.header.navOpt, target: 'optimization-link' },
       { label: lang === 'vi' ? 'Mô Hình AI' : 'AI Patterns', target: 'patterns-link' },
       { label: t.header.navQuant, target: 'quantization-link' },
+      { label: t.header.navInference, target: 'inference-link' },
       { label: t.header.navAgentic, target: 'agentic-link' },
       { label: t.header.navDebug, target: 'debug-link' },
     ];

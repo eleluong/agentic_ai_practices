@@ -1,9 +1,9 @@
-import { ShieldCheck, Cpu, Zap, ArrowRight, Activity, Code, Server, Bot, MessageSquare, Workflow, Bug, Binary } from 'lucide-react';
+import { ShieldCheck, Cpu, Zap, ArrowRight, Activity, Code, Server, Bot, MessageSquare, Workflow, Bug, Binary, Gauge } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../data/translations';
 
 interface PortalLandingProps {
-  onSelectTopic: (topic: 'governance' | 'optimization' | 'patterns' | 'agentic' | 'debug' | 'quantization') => void;
+  onSelectTopic: (topic: 'governance' | 'optimization' | 'patterns' | 'agentic' | 'debug' | 'quantization' | 'inference') => void;
 }
 
 export const PortalLanding = ({ onSelectTopic }: PortalLandingProps) => {
@@ -295,6 +295,49 @@ export const PortalLanding = ({ onSelectTopic }: PortalLandingProps) => {
             <ArrowRight className="w-4 h-4 ml-2" />
           </div>
         </div>
+
+        {/* Card 7: LLM Inference Systems */}
+        <div
+          onClick={() => onSelectTopic('inference')}
+          className="group relative bg-white/80 border border-slate-200/80 rounded-2xl p-8 hover:border-indigo-400 hover:shadow-xl hover:shadow-indigo-500/5 transition duration-300 flex flex-col justify-between cursor-pointer min-h-[420px]"
+        >
+          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500/5 via-violet-500/5 to-fuchsia-500/5 opacity-0 group-hover:opacity-100 transition duration-300 rounded-2xl pointer-events-none"></div>
+
+          <div>
+            <div className="w-12 h-12 bg-gradient-to-tr from-indigo-500 via-violet-600 to-fuchsia-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 mb-6 group-hover:scale-110 transition duration-300">
+              <Gauge className="w-6 h-6 text-white" />
+            </div>
+
+            <h2 className="text-2xl font-bold text-slate-900 tracking-tight group-hover:text-indigo-600 transition">
+              {t.portal.inferenceCardTitle}
+            </h2>
+            <p className="mt-3 text-slate-500 text-sm leading-relaxed">
+              {t.portal.inferenceCardDesc}
+            </p>
+
+            <div className="mt-6 border-t border-slate-100 pt-6 space-y-3">
+              <div className="flex justify-between items-center text-xs font-semibold text-slate-400">
+                <span>{t.portal.inferenceCardVisualizer}</span>
+                <span className="text-indigo-600">{t.portal.inferenceCardActive}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-[10px] font-bold text-slate-500 text-center">
+                <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-col items-center justify-center">
+                  <Activity className="w-4 h-4 text-indigo-500 mb-1" />
+                  <span>{t.portal.inferenceChipRoofline}</span>
+                </div>
+                <div className="bg-slate-50 border border-slate-100 rounded-lg p-2 flex flex-col items-center justify-center">
+                  <Server className="w-4 h-4 text-violet-500 mb-1" />
+                  <span>{t.portal.inferenceChipKv}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 flex items-center text-indigo-600 font-bold text-sm group-hover:translate-x-1 transition duration-150">
+            <span>{t.portal.inferenceCardExplore}</span>
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </div>
+        </div>
       </div>
 
       {/* Dynamic Statistics Bar / Bottom Section */}
@@ -310,7 +353,7 @@ export const PortalLanding = ({ onSelectTopic }: PortalLandingProps) => {
         </div>
         <div className="flex space-x-8 text-center shrink-0">
           <div>
-            <span className="block text-2xl font-extrabold text-slate-800">5</span>
+            <span className="block text-2xl font-extrabold text-slate-800">6</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t.portal.statsHubs}</span>
           </div>
           <div className="border-r border-slate-200"></div>

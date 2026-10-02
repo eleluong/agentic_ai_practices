@@ -14,6 +14,7 @@ import AIPatterns from './components/AIPatterns';
 import AgentTypesBlog from './components/AgentTypesBlog';
 import AgenticDebug from './components/AgenticDebug';
 import QuantizationHub from './components/quantization/QuantizationHub';
+import InferenceHub from './components/InferenceHub';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { translations } from './data/translations';
 import { getPathView, getViewPath, type AppView } from './utils/router';
@@ -106,6 +107,10 @@ function AppContent() {
         {currentView === 'quantization' && (
           <QuantizationHub scrollToSection={scrollToSection} />
         )}
+
+        {currentView === 'inference' && (
+          <InferenceHub scrollToSection={scrollToSection} />
+        )}
       </main>
 
       {/* Footer */}
@@ -119,6 +124,7 @@ function AppContent() {
             {currentView === 'agentic' && t.footer.agenticText}
             {currentView === 'debug' && t.footer.debugText}
             {currentView === 'quantization' && t.footer.quantizationText}
+            {currentView === 'inference' && t.footer.inferenceText}
           </p>
           <p>{t.footer.copyText}</p>
         </div>

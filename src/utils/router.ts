@@ -9,7 +9,8 @@ export type AppView =
   | 'patterns'
   | 'agentic'
   | 'debug'
-  | 'quantization';
+  | 'quantization'
+  | 'inference';
 
 /**
  * Resolves the pathname to one of the application views.
@@ -44,6 +45,14 @@ export const getPathView = (pathname: string): AppView => {
   ) {
     return 'quantization';
   }
+
+  if (
+    path.startsWith('/ai_inference') ||
+    path.startsWith('/inference') ||
+    path.startsWith('/infer')
+  ) {
+    return 'inference';
+  }
   
   return 'portal';
 };
@@ -65,6 +74,8 @@ export const getViewPath = (view: AppView): string => {
       return '/agentic_debug';
     case 'quantization':
       return '/ai_quantization';
+    case 'inference':
+      return '/ai_inference';
     case 'portal':
     default:
       return '/';
